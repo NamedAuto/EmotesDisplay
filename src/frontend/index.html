@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Chat Emotes</title>
+    <!--    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script> &lt;!&ndash; Include Socket.IO &ndash;&gt;-->
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        /* Basic styling for emotes */
+        #emoteContainer {
+            position: relative;
+            width: 500px; /* Adjust size as needed */
+            height: 500px;
+            border: 1px solid black; /* Optional border for visualization */
+            overflow: hidden;
+        }
+
+        .emote {
+            position: absolute; /* Ensure emotes are absolutely positioned */
+            max-width: 50px; /* Optional: Adjust max size of emotes */
+            max-height: 50px; /* Optional: Adjust max size of emotes */
+        }
+
+    </style>
+</head>
+<body>
+<h1>YouTube Chat Emotes</h1>
+<h1>Socket.IO + Image Serving</h1>
+
+<img id="yourImageElementId" alt="Description of image">
+
+<div id="emoteContainer"></div>
+
+</body>
+</html>

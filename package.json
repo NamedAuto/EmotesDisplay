@@ -1,0 +1,50 @@
+{
+  "name": "test-chat",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "prestart": "tsc --project tsconfig.json",
+    "start": "node dist/backend/server.js",
+    "build-front": "webpack --config src/config/webpack.config.ts --mode production",
+    "build-back": "tsc --project tsconfig.json",
+    "dev-front": "webpack serve --config src/config/webpack.config.ts --mode development --open",
+    "dev-backend": "tsc --watch"
+  },
+  "private": true,
+  "dependencies": {
+    "@googleapis/youtube": "^20.0.0",
+    "axios": "^1.7.9",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "google-auth-library": "^9.15.0",
+    "googleapis": "^144.0.0",
+    "helmet": "^8.0.0",
+    "js-yaml": "^4.1.0",
+    "pkg": "^5.8.1",
+    "pnpm": "^9.15.0",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
+    "tmi.js": "^1.8.5",
+    "webpack-dev-middleware": "^7.4.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^22.10.2",
+    "@types/tmi.js": "^1.8.6",
+    "@types/webpack": "^5.28.5",
+    "babel-loader": "^9.2.1",
+    "css-loader": "^7.1.2",
+    "html-webpack-plugin": "^5.6.3",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.2.0",
+    "yaml-loader": "^0.8.1"
+  }
+}

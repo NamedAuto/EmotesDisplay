@@ -1,0 +1,23 @@
+youtube:
+  # Your google API key here
+  apiKey:
+
+  # Your video id goes here
+  videoId:
+
+  # delay before the server gets the next message
+  messageDelay: 5000
+
+
+# port used for the server
+backend:
+  port: 8080
+
+# port used for the browser
+frontend:
+  port: 3000
+
+# modify the size of the emote image
+emote:
+  width: 50
+  height: 50
