@@ -1,5 +1,6 @@
 import {io, Socket} from 'socket.io-client';
 import {config, loadConfig} from "./configureConfig";
+import './styles.css';
 
 console.log("YAY")
 

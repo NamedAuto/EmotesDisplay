@@ -1,0 +1,52 @@
+body, html {
+    height: 100%;
+    margin: 0;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: transparent;
+}
+
+#triangleContainer {
+    position: relative;
+    width: 1920px;
+    height: 1080px;
+    overflow: visible;
+}
+
+#triangle-image {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+#triangleCanvas {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    background-color: rgba(255, 255, 255, 0);
+}
+
+.emote {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    /*background-color: lightblue;*/
+    /*border-radius: 50%;*/
+    z-index: 3;
+}
