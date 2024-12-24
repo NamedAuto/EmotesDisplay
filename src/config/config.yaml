@@ -5,6 +5,15 @@ youtube:
   # Your video id goes here
   videoId:
 
+  # Delay before new message is received from YouTube
+  # This number is in seconds
+  messageDelay: 5
+
+
+port:
+  # Port used for the server
+  backend: 8080
+
   # Port used for the browser
   frontend: 3000
 
