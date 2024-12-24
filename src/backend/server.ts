@@ -52,9 +52,13 @@ async function main() {
         configureEndpoints();
 
         // setupSimple()
-        // getYoutubeMessages()
 
-        setInterval(emit, 1000);
+        if (config.testing.test) {
+            setInterval(emit, 500);
+        } else {
+            getYoutubeMessages()
+        }
+
 
         // listen()
         console.log('Emote Map:', emoteMap);
@@ -74,6 +78,7 @@ function setupYoutube() {
 }
 
 const keys = Object.keys(emoteMap);
+
 function emit() {
     const randomIndex = Math.floor(Math.random() * keys.length);
 
@@ -95,7 +100,7 @@ async function getYoutubeMessages() {
         console.log(liveChatId);
         if (liveChatId) {
             let nextPageToken: string | null | undefined;
-            let pollingIntervalMillis = Number(config.youtube.messageDelay) | 3000;
+            let pollingIntervalMillis = Number(config.youtube.messageDelay * 1000) | 3000;
 
             // liveChatId becomes undefined soon after a stream ends
             while (liveChatId) {

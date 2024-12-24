@@ -5,19 +5,31 @@ youtube:
   # Your video id goes here
   videoId:
 
-  # delay before the server gets the next message
-  messageDelay: 5000
+  # Port used for the browser
+  frontend: 3000
 
 
-# port used for the server
-backend:
-  port: 8080
+aspectRatio:
+  width: 1920
+  height: 1080
 
-# port used for the browser
-frontend:
-  port: 3000
+  # Images larger than 1920x1080 are scaled down to 1920x1080 and then
+  # scaled further down to prevent emotes from going out of view when at the edge
 
-# modify the size of the emote image
-emote:
-  width: 50
-  height: 50
+  scale: 0.9
+
+  # Emote sizes
+  emote:
+    width: 50
+    height: 50
+
+testing:
+  # show emotes to see an example of how this program works
+  # true = yes to test
+  # false = false to test
+  test: false
+
+  # How long to wait before the next emote pops up on the screen during a test
+  # A lower number means the emotes pop up faster
+  # This number is in seconds
+  speedOfEmotes: 0.5

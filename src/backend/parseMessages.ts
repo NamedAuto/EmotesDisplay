@@ -6,7 +6,7 @@ const emotesURL = '/emotes/';
 
 export function parseMessageForEmotes(message: string): string[] {
     const emoteURLs: string[] = [];
-    const url = localURL + config.backend.port + emotesURL;
+    const url = localURL + config.port.backend + emotesURL;
 
     const regex = /:_.*?:/g;
     const matches = message.match(regex);

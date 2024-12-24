@@ -10,7 +10,7 @@ export let io: Server
 function configureIo() {
     io = new Server(server, {
         cors: {
-            origin: localURL + config.frontend.port,
+            origin: localURL + config.port.frontend,
             methods: ['GET', 'POST'],
             allowedHeaders: ['Content-Type', 'Access-Control-Allow-Origin'],
             credentials: true
@@ -20,7 +20,7 @@ function configureIo() {
     io.on('connection', (socket) => {
         console.log('Handshake headers:', socket.handshake.headers);
         const origin = socket.handshake.headers.origin;
-        if (origin !== `http://localhost:${config.frontend.port}`) {
+        if (origin !== `http://localhost:${config.port.frontend}`) {
             console.log('Invalid origin:', origin);
             socket.disconnect();
         } else {
@@ -31,7 +31,7 @@ function configureIo() {
             console.log('Client disconnected:', socket.id);
         });
 
-        const url = localURL + config.backend.port + emotesURL;
+        const url = localURL + config.port.backend + emotesURL;
         socket.emit('new-emote', {url: url + 'islapanik'})
         socket.emit('new-emote', {url: url + 'TomoeLaugh'})
     });
@@ -39,7 +39,7 @@ function configureIo() {
 
 function configureCORS() {
     app.use(cors({
-        origin: localURL + config.frontend.port,
+        origin: localURL + config.port.frontend,
         methods: ['GET', 'POST'],
         allowedHeaders: ['Content-Type', 'Access-Control-Allow-Origin', 'Origin', 'Sec-WebSocket-Protocol'],
     }));
@@ -51,8 +51,8 @@ function configureHelmet() {
         helmet.contentSecurityPolicy({
             directives: {
                 defaultSrc: ["'self'"],
-                imgSrc: ["'self'", localURL + config.backend.port, 'blob:'],
-                connectSrc: ["'self'", `ws://localhost:${config.backend.port}`, localURL + config.backend.port],
+                imgSrc: ["'self'", localURL + config.port.backend, 'blob:'],
+                connectSrc: ["'self'", `ws://localhost:${config.port.backend}`, localURL + config.port.backend],
                 scriptSrc: ["'self'"],
                 styleSrc: ["'self'"],
             },
@@ -70,8 +70,8 @@ function configureCrossOriginHeaders() {
 }
 
 export function listen() {
-    server.listen(config.backend.port, () => {
-        console.log(`Socket.io server is running on ${localURL + config.backend.port}`);
+    server.listen(config.port.backend, () => {
+        console.log(`Socket.io server is running on ${localURL + config.port.backend}`);
     });
 }
 

@@ -35,7 +35,7 @@ function configureConfigEndpoint() {
     });
 
     app.get('/config/ports', (req, res) => {
-        res.json({backendPort: config.backend.port, frontendPort: config.frontend.port});
+        res.json({backendPort: config.port.backend, frontendPort: config.port.frontend});
     });
 }
 

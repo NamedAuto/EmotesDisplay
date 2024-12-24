@@ -23,6 +23,7 @@ function main() {
         const boundary = document.getElementById('triangleContainer');
         if (boundary) {
             setupSocket(boundary);
+            loadImageOntoCanvas();
         }
     }
 }
@@ -30,7 +31,7 @@ function main() {
 initialize()
 
 function setupSocket(boundary: HTMLElement) {
-    socket = io(`http://localhost:${config.backend.port}`, {
+    socket = io(`http://localhost:${config.port.backend}`, {
         transports: ['websocket'],
     });
 
@@ -59,8 +60,9 @@ const triangleCanvas = document.getElementById('triangleCanvas') as HTMLCanvasEl
 const ctx = triangleCanvas.getContext('2d', {willReadFrequently: true})!;
 
 function setContainerAndCanvasSize() {
-    const maxWidth = 1920 - 50;
-    const maxHeight = 1080- 50;
+    const scale = config.aspectRatio.scale;
+    const maxWidth = config.aspectRatio.width * scale;
+    const maxHeight = config.aspectRatio.height * scale;
     const imageWidth = triangleImage.naturalWidth;
     const imageHeight = triangleImage.naturalHeight;
     let newWidth = imageWidth;
@@ -85,23 +87,6 @@ function loadImageOntoCanvas(): void {
     triangleImage.onload = () => {
         setContainerAndCanvasSize();
         ctx.clearRect(0, 0, triangleCanvas.width, triangleCanvas.height);
-        // const imageAspectRatio = triangleImage.width / triangleImage.height
-        //
-        //
-        // if (imageAspectRatio >= 1) {
-        //     triangleContainer.style.width = '1000px';
-        //     triangleContainer.style.height = `${1000 / imageAspectRatio}px`;
-        //     triangleCanvas.width = 1000;
-        //     triangleCanvas.height = 1000 / imageAspectRatio;
-        // } else {
-        //     triangleContainer.style.width = `${1000 * imageAspectRatio}px`;
-        //     triangleContainer.style.height = '1000px';
-        //     triangleCanvas.width = 1000 * imageAspectRatio;
-        //     triangleCanvas.height = 1000
-        // }
-        //
-        // triangleCanvas.width = triangleImage.width;
-        // triangleCanvas.height = triangleImage.height;
         ctx.drawImage(triangleImage, 0, 0, triangleCanvas.width, triangleCanvas.height);
     };
     triangleImage.src = triangleImage.src; // Trigger the onload event
@@ -143,9 +128,6 @@ function placeEmote(emoteUrl: string): void {
     emote.style.transform = 'translate(-50%, -50%)';
     triangleContainer.appendChild(emote);
 }
-
-// Load the image onto the canvas
-loadImageOntoCanvas();
 
 
 
