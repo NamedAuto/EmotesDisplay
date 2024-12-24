@@ -6,14 +6,9 @@ const emotePath = '../../public/emotes';
 const yamlPath = '../../src/config/config.yaml';
 
 function configureEmotesEndpoint() {
-    console.log("ENDPOINT EMOTES")
     app.get('/emotes/:filename', (req, res) => {
-        console.log("ENDPOINT EMOTES 2222222222")
-
         const filename = req.params.filename;
-        const extensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp']; // Add any other extensions you want to support
-        // TODO: Test different files, although I don't have large files of these
-        // const extensions = ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.tif', '.webp', '.svg', '.ico',
+        const extensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
 
         let filePath;
         for (const ext of extensions) {

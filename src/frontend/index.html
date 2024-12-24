@@ -7,30 +7,42 @@
     <!--    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script> &lt;!&ndash; Include Socket.IO &ndash;&gt;-->
     <script src="/socket.io/socket.io.js"></script>
     <style>
-        /* Basic styling for emotes */
-        #emoteContainer {
+        #triangleContainer {
+
+            width: 0;
+            height: 0;
+            background-color: transparent;
+            border-left: 200px solid transparent;
+            border-right: 200px solid transparent;
+            border-bottom: 600px solid rgba(0, 0, 255, 0.5); /* Semi-transparent blue */
             position: relative;
-            width: 500px; /* Adjust size as needed */
-            height: 500px;
-            border: 1px solid black; /* Optional border for visualization */
-            overflow: hidden;
+            overflow: visible;
+            z-index: 1;
         }
 
         .emote {
-            position: absolute; /* Ensure emotes are absolutely positioned */
-            max-width: 50px; /* Optional: Adjust max size of emotes */
-            max-height: 50px; /* Optional: Adjust max size of emotes */
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            background-color: lightblue;
+            border-radius: 50%;
+            z-index: 2;
         }
+
 
     </style>
 </head>
 <body>
-<h1>YouTube Chat Emotes</h1>
-<h1>Socket.IO + Image Serving</h1>
+<!--<h1>YouTube Chat Emotes</h1>-->
+<!--<h1>Socket.IO + Image Serving</h1>-->
 
-<img id="yourImageElementId" alt="Description of image">
-
-<div id="emoteContainer"></div>
+<!--<img id="yourImageElementId" alt="Description of image">-->
+<div id="triangleContainer">
+<!--    <div id="emoteContainer">-->
+        <!--    <div id="triangleOverlay"></div>-->
+<!--    </div>-->
+</div>
 
 </body>
 </html>

@@ -2,7 +2,6 @@ import {Server} from "socket.io";
 import cors from "cors";
 import helmet from "helmet";
 import {app, config, server} from "./server";
-import http from "http";
 
 const localURL = 'http://localhost:';
 const emotesURL = '/emotes/'

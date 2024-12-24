@@ -1,32 +1,17 @@
 import {io, Socket} from 'socket.io-client';
-import yaml from "js-yaml";
-import {Config} from "../config/Config";
+import {config, loadConfig} from "./configureConfig";
 
 console.log("YAY")
 
 let socket: Socket;
-let config: Config;
-
-async function loadConfig() {
-    try {
-        const response = await fetch('http://localhost:3000/config/config.yaml');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const yamlText = await response.text();
-        config = yaml.load(yamlText) as Config;
-        console.log('Configuration loaded:', config);
-
-        // Now you can use the config object as needed in your application
-    } catch (error) {
-        console.error('Error fetching config:', error);
-    }
-}
 
 async function initialize() {
     try {
         await loadConfig();
-        setupSocket();
+
+        document.addEventListener('DOMContentLoaded', main);
+
+        // setupSocket();
         main();
     } catch (error) {
         console.error('Error loading config:', error);
@@ -34,12 +19,17 @@ async function initialize() {
 }
 
 function main() {
-
+    {
+        const boundary = document.getElementById('triangleContainer');
+        if (boundary) {
+            setupSocket(boundary);
+        }
+    }
 }
 
 initialize()
 
-function setupSocket() {
+function setupSocket(boundary: HTMLElement) {
     socket = io(`http://localhost:${config.backend.port}`, {
         transports: ['websocket'],
     });
@@ -52,7 +42,9 @@ function setupSocket() {
 
     socket.on('new-emote', (data: { url: string }) => {
         console.log('Received new emote:    ', data.url);
-        displayEmote(data.url)
+        // displayEmote(data.url)
+        // addEmote(boundary, data.url);
+        createEmoteImage(boundary, data.url);
         // placeEmote(data.url)
     });
 
@@ -61,72 +53,67 @@ function setupSocket() {
     });
 }
 
-function displayEmote(emoteURL: string) {
-    console.log(`Image URL received: ${emoteURL}`);
-    const container = document.getElementById('emoteContainer') as HTMLElement;
-    const emote = createImgElement(emoteURL)
+// Function to generate random position inside the triangle
+function getRandomPosition(width: number, height: number, size: number) {
+    // const x1 = -200, y1 = 600;
+    // const x2 = 200, y2 = 600;
+    // const x3 = 0, y3 = 0;
 
-    emote.onload = () => {
-        const {x, y} = getRandomPosition(container, emote)
-        emote.style.left = `${x}px`;
-        emote.style.top = `${y}px`;
-        container.appendChild(emote);
+    // const width = 400;
+    // const height = 600;
+
+    let u = Math.random();
+    let v = Math.random();
+
+    if (u + v > 1) {
+        u = 1 - u;
+        v = 1 - v;
     }
 
-    container.appendChild(emote)
-}
+    // const x = (1 - u - v) * x1 + u * x2 + v * x3;
+    // const y = (1 - u - v) * y1 + u * y2 + v * y3;
 
-function createImgElement(emoteURL: string) {
-    const emote = document.createElement('img');
-    emote.src = emoteURL;
-    emote.className = 'emote';
-    emote.alt = 'Image from server';
-    emote.style.width = `${config.emote.width}px`; // Adjust the size as needed
-    emote.style.height = `${config.emote.height}px`;
-    emote.style.position = 'absolute';
-    return emote;
-}
+    const x = (1 - u - v) * (-width / 2) + u * (width / 2);
+    const y = (1 - u - v) * height + u * height;
 
-function getRandomPosition(container: HTMLElement, emote: HTMLImageElement): { x: number, y: number } {
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
-    const maxX = containerWidth - emote.naturalWidth;
-    const maxY = containerHeight - emote.naturalHeight;
-    const randomX = Math.random() * maxX;
-    const randomY = Math.random() * maxY;
-
-    console.log(`Image dimensions: ${emote.naturalWidth}x${emote.naturalHeight}`);
-    console.log(`Random positions: ${randomX}px, ${randomY}px`);
-    return {x: randomX, y: randomY};
-
+    return { x, y };
 }
 
 
-/*
-function placeEmote(url: string) {
-    const container = document.getElementById('emoteContainer') as HTMLElement;
-    const emote = document.createElement('img');
-    emote.src = url;
-    emote.className = 'emote';
-    emote.style.position = 'absolute'; // Ensure absolute positioning
+let count = 0;
 
-    emote.onload = () => {
-        const containerWidth = container.clientWidth;
-        const containerHeight = container.clientHeight;
-        const maxX = containerWidth - emote.naturalWidth;
-        const maxY = containerHeight - emote.naturalHeight;
-        const randomX = Math.random() * maxX;
-        const randomY = Math.random() * maxY;
-        console.log(`Image dimensions: ${emote.naturalWidth}x${emote.naturalHeight}`);
-        console.log(`Random positions: ${randomX}px, ${randomY}px`);
+// Function to create an emote image element
+function createEmoteImage(triangleContainer: HTMLElement, url: string) {
+    const emoteImage = document.createElement('img');
+    emoteImage.src = url;
+    emoteImage.classList.add('emote');
 
-        emote.style.left = `${randomX}px`;
-        emote.style.top = `${randomY}px`;
+    // Random size between 20px and 50px
+    const size = 50//Math.random() * (50 - 20) + 20;
+    emoteImage.style.width = `${size}px`;
+    emoteImage.style.height = `${size}px`;
 
-        container.appendChild(emote);
-    };
+    // Get random position within the triangle
+    const { x, y } = getRandomPosition(200, 600, size);
+    console.log(`Position: x = ${x}, y = ${y}`);
 
-    // Append the image to the container after setting the onload event
-    container.appendChild(emote);
+
+    // Apply the random position to the emote image
+    emoteImage.style.left = `${x}px`;
+    emoteImage.style.top = `${y}px`;
+
+    // if(count == 0){
+    //     emoteImage.style.left = `0`;
+    //     emoteImage.style.top = `0px`;
+    //     count++;
+    // }
+
+    emoteImage.style.transform = 'translate(-50%, -50%)';
+
+    // emoteImage.style.left = `0`;
+    // emoteImage.style.top = `0px`;
+    // Append the emote image to the triangle container
+    triangleContainer.appendChild(emoteImage);
 }
- */
+
+

@@ -23,6 +23,10 @@ const config = {
             {
                 directory: path.resolve(__dirname, '../config'),
                 publicPath: '/config',
+            },
+            {
+                directory: path.resolve(__dirname, '../../public/images'),
+                publicPath: '/images',
             }
         ],
         compress: true,
