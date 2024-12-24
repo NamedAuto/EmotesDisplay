@@ -26,7 +26,7 @@ body {
     overflow: visible;
 }
 
-#triangle-image {
+#triangleImage {
     position: absolute;
     width: 100%;
     height: 100%;

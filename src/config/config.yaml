@@ -9,7 +9,9 @@ youtube:
   # This number is in seconds
   messageDelay: 5
 
+# ------------------------------------------------------------------------------
 
+# Ports should NOT be the same one
 port:
   # Port used for the server
   backend: 8080
@@ -17,23 +19,35 @@ port:
   # Port used for the browser
   frontend: 3000
 
+# ------------------------------------------------------------------------------
 
+# Have not tested changing this
 aspectRatio:
   width: 1920
   height: 1080
 
   # Images larger than 1920x1080 are scaled down to 1920x1080 and then
   # scaled further down to prevent emotes from going out of view when at the edge
+  scaleCanvas: 0.9
 
-  scale: 0.9
+  # Images will not scale higher than 1920x1080
+  # Scaling includes the transparent parts as well
+  scaleImage: 1
 
   # Emote sizes
+  # Should be set the same for both width and height
+  # width = height
+
   emote:
     width: 50
     height: 50
 
+    # Increase or decrease emote size by up to the number below
+    randomSizeIncrease: 10
+    randomSizeDecrease: 10
+
     # The max amount of emotes displayed before the oldest one is removed
-    maxEmoteCount: 1000
+    maxEmoteCount: 500
 
     # Add rounded edges around the emote.
     # NOTE: the rounded parts of the emote will be cut off

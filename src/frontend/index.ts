@@ -56,18 +56,19 @@ function setupSocket(boundary: HTMLElement) {
 }
 
 const triangleContainer = document.getElementById('triangleContainer')!;
-const triangleImage = document.getElementById('triangle-image') as HTMLImageElement;
+const triangleImage = document.getElementById('triangleImage') as HTMLImageElement;
 const triangleCanvas = document.getElementById('triangleCanvas') as HTMLCanvasElement;
 const ctx = triangleCanvas.getContext('2d', {willReadFrequently: true})!;
 
 const emotes: HTMLImageElement[] = [];
 
 function setContainerAndCanvasSize() {
-    const scale = config.aspectRatio.scale;
-    const maxWidth = config.aspectRatio.width * scale;
-    const maxHeight = config.aspectRatio.height * scale;
-    const imageWidth = triangleImage.naturalWidth;
-    const imageHeight = triangleImage.naturalHeight;
+    const scaleCanvas = config.aspectRatio.scaleCanvas;
+    const scaleImage = config.aspectRatio.scaleImage;
+    const maxWidth = config.aspectRatio.width * scaleCanvas;
+    const maxHeight = config.aspectRatio.height * scaleCanvas;
+    const imageWidth = triangleImage.naturalWidth * scaleImage;
+    const imageHeight = triangleImage.naturalHeight * scaleImage;
     let newWidth = imageWidth;
     let newHeight = imageHeight;
 
@@ -107,11 +108,25 @@ function createEmote(emoteUrl: string): HTMLImageElement {
     const emote = document.createElement('img');
     emote.src = emoteUrl;
     emote.className = 'emote';
-    emote.style.width = config.aspectRatio.emote.width + 'px';
-    emote.style.height = config.aspectRatio.emote.height + 'px';
+    changeEmoteSizeRandom(emote)
     emote.style.borderRadius = config.aspectRatio.emote.roundness + '%';
     emote.style.backgroundColor = config.aspectRatio.emote.backgroundColor;
     return emote;
+}
+
+function changeEmoteSizeRandom(emote: HTMLImageElement) {
+    const randomBinary = Math.random() < 0.5 ? 0 : 1;
+    let sizeChange;
+    if(randomBinary) {
+        sizeChange = config.aspectRatio.emote.randomSizeIncrease;
+    } else {
+        sizeChange = -config.aspectRatio.emote.randomSizeDecrease;
+    }
+
+    const newWidth = config.aspectRatio.emote.width + sizeChange;
+    const newHeight = config.aspectRatio.emote.height + sizeChange;
+    emote.style.width = newWidth + 'px';
+    emote.style.height = newHeight + 'px';
 }
 
 // Function to set the position of an emote

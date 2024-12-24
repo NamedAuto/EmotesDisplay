@@ -4,6 +4,8 @@ interface EmoteConfig {
     roundness: number;
     backgroundColor: string;
     maxEmoteCount: number;
+    randomSizeIncrease: number;
+    randomSizeDecrease: number;
 }
 
 interface YoutubeConfig {
@@ -20,7 +22,8 @@ interface PortConfig {
 interface AspectRatioConfig {
     width: number;
     height: number;
-    scale: number;
+    scaleCanvas: number;
+    scaleImage: number;
     emote: EmoteConfig
 }
 
