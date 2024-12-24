@@ -32,11 +32,28 @@ aspectRatio:
     width: 50
     height: 50
 
+    # The max amount of emotes displayed before the oldest one is removed
+    maxEmoteCount: 1000
+
+    # Add rounded edges around the emote.
+    # NOTE: the rounded parts of the emote will be cut off
+    # 0 leaves the emote alone
+    # 50 turns the emote into a circle
+    # 50 is the highest so anything higher will be seen as 50
+    roundness: 0
+
+    # Add a background color to the transparent parts of an emote.
+    # Can use RGBA or Hex with alpha
+    # rgba(255, 255, 255, 0) and #FFFFFF00 are transparent
+    backgroundColor: "rgba(255, 255, 255, 0)"
+
+# ------------------------------------------------------------------------------
+
 testing:
   # show emotes to see an example of how this program works
   # true = yes to test
   # false = false to test
-  test: false
+  test: true
 
   # How long to wait before the next emote pops up on the screen during a test
   # A lower number means the emotes pop up faster

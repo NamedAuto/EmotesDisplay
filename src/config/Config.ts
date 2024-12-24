@@ -1,6 +1,9 @@
 interface EmoteConfig {
     width: number;
     height: number;
+    roundness: number;
+    backgroundColor: string;
+    maxEmoteCount: number;
 }
 
 interface YoutubeConfig {
@@ -21,14 +24,13 @@ interface AspectRatioConfig {
     emote: EmoteConfig
 }
 
-interface testingConfig {
+interface TestingConfig {
     test: boolean
 }
 
 export interface Config {
-    emote: EmoteConfig;
     port: PortConfig;
     youtube: YoutubeConfig;
     aspectRatio: AspectRatioConfig;
-    testing: testingConfig
+    testing: TestingConfig
 }

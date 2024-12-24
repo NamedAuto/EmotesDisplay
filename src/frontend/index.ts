@@ -60,6 +60,8 @@ const triangleImage = document.getElementById('triangle-image') as HTMLImageElem
 const triangleCanvas = document.getElementById('triangleCanvas') as HTMLCanvasElement;
 const ctx = triangleCanvas.getContext('2d', {willReadFrequently: true})!;
 
+const emotes: HTMLImageElement[] = [];
+
 function setContainerAndCanvasSize() {
     const scale = config.aspectRatio.scale;
     const maxWidth = config.aspectRatio.width * scale;
@@ -105,6 +107,10 @@ function createEmote(emoteUrl: string): HTMLImageElement {
     const emote = document.createElement('img');
     emote.src = emoteUrl;
     emote.className = 'emote';
+    emote.style.width = config.aspectRatio.emote.width + 'px';
+    emote.style.height = config.aspectRatio.emote.height + 'px';
+    emote.style.borderRadius = config.aspectRatio.emote.roundness + '%';
+    emote.style.backgroundColor = config.aspectRatio.emote.backgroundColor;
     return emote;
 }
 
@@ -128,6 +134,14 @@ function placeEmote(emoteUrl: string): void {
     setPosition(emote, x, y);
     emote.style.transform = 'translate(-50%, -50%)';
     triangleContainer.appendChild(emote);
+
+    emotes.push(emote)
+    if (emotes.length > config.aspectRatio.emote.maxEmoteCount) {
+        const oldestEmote = emotes.shift();
+        if (oldestEmote) {
+            triangleContainer.removeChild(oldestEmote);
+        }
+    }
 }
 
 
