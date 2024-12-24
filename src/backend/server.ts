@@ -10,7 +10,7 @@ import {google} from "googleapis";
 import {youtube_v3} from "@googleapis/youtube";
 import {configureEndpoints} from "./configureEndpoints";
 import {parseMessageForEmotes} from "./parseMessages";
-import {configureMiddleware, listen} from "./configureConnections";
+import {configureMiddleware, io, listen} from "./configureConnections";
 import http from "http";
 
 export const emoteMap: Record<string, string> = generateEmoteMap();
@@ -54,6 +54,8 @@ async function main() {
         // setupSimple()
         // getYoutubeMessages()
 
+        setInterval(emit, 1000);
+
         // listen()
         console.log('Emote Map:', emoteMap);
 
@@ -70,6 +72,19 @@ function setupYoutube() {
         auth: config.youtube.apiKey,
     });
 }
+
+const keys = Object.keys(emoteMap);
+function emit() {
+    const randomIndex = Math.floor(Math.random() * keys.length);
+
+    let x = keys[randomIndex];
+    let cleanedText = x.replace(/[:_]/g, '');
+    const emoteURL = 'http://localhost:8080/emotes/' + cleanedText;
+
+    console.log(`Emit ${emoteURL}`);
+    io.emit('new-emote', {url: emoteURL});
+}
+
 
 async function getYoutubeMessages() {
     let apiCallCounter = 0;
