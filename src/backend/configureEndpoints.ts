@@ -1,18 +1,27 @@
 import path from "path";
 import fs from "fs";
 import {app, config} from "./server";
+import {emotePath, backgroundPath, yamlPath} from "./getFilePath";
 
-const emotePath = '../../public/emotes';
-const yamlPath = '../../src/config/config.yaml';
+
+// const execPath = process.execPath;
+// const emotePath = path.join(process.cwd(), 'public', 'emotes');
+// const emotePath = path.join(path.dirname(execPath), 'emotes');
+//'../../public/emotes';
+// const yamlPath = path.join(process.cwd(), 'public', 'config');
+// const yamlPath = path.join(path.dirname(execPath), 'config');
+
+//'../../src/config/config.yaml';
+
+const extensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
 
 function configureEmotesEndpoint() {
     app.get('/emotes/:filename', (req, res) => {
         const filename = req.params.filename;
-        const extensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
 
         let filePath;
         for (const ext of extensions) {
-            filePath = path.join(__dirname, emotePath, filename + ext);
+            filePath = path.join(emotePath, filename + ext);
             if (fs.existsSync(filePath)) {
                 res.sendFile(filePath);
                 return;
@@ -23,9 +32,43 @@ function configureEmotesEndpoint() {
     });
 }
 
+function con() {
+    // Serve the list of available background in the 'cats' folder
+    app.get('/background', (req, res) => {
+        const folderPath = path.join(backgroundPath);
+
+
+        fs.readdir(folderPath, (err, files) => {
+            if (err) {
+                return res.status(500).send('Error reading the folder');
+            }
+
+            // Filter only image files (e.g., .jpg, .jpeg, .png)
+            const imageFiles = files.filter(file =>
+                extensions.includes(path.extname(file).toLowerCase())
+            );
+
+            if (imageFiles.length === 0) {
+                return res.status(404).send('No background found');
+            }
+
+            // Return the list of image files
+            // res.json(imageFiles);
+
+            // Choose the first image in the list (you could also randomize this)
+            const imageName = imageFiles[0];
+            const imagePath = path.join(folderPath, imageName);
+
+            // Serve the image
+            res.sendFile(imagePath);
+        });
+    });
+}
+
 function configureConfigEndpoint() {
     app.get('/config/config.yaml', (req, res) => {
-        const configPath = path.join(__dirname, yamlPath);
+        const configPath = path.join(yamlPath + '/config.yaml');
+        console.log(configPath)
         fs.readFile(configPath, 'utf8', (err, data) => {
             if (err) {
                 return res.status(500).send("Error reading config file");
@@ -36,6 +79,24 @@ function configureConfigEndpoint() {
 
     app.get('/config/ports', (req, res) => {
         res.json({backendPort: config.port.backend, frontendPort: config.port.frontend});
+    });
+}
+
+// Unfinished
+function configureBackgroundImageEndpoint() {
+    app.get('/background/:filename', (req, res) => {
+        const filename = req.params.filename;
+
+        let filePath;
+        for (const ext of extensions) {
+            filePath = path.join(backgroundPath, filename + ext);
+            if (fs.existsSync(filePath)) {
+                res.sendFile(filePath);
+                return;
+            }
+        }
+
+        res.status(404).send('File not found');
     });
 }
 
@@ -50,4 +111,6 @@ export function configureEndpoints() {
     console.log("HELLO")
     configureEmotesEndpoint();
     configureConfigEndpoint();
+    // configureBackgroundImageEndpoint()
+    con();
 }

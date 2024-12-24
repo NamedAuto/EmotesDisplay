@@ -12,6 +12,8 @@ import {configureEndpoints} from "./configureEndpoints";
 import {parseMessageForEmotes} from "./parseMessages";
 import {configureMiddleware, io, listen} from "./configureConnections";
 import http from "http";
+import {yamlPath} from "./getFilePath";
+process.title = "Emote Display";
 
 export const emoteMap: Record<string, string> = generateEmoteMap();
 
@@ -19,13 +21,10 @@ export let youtube: youtube_v3.Youtube;
 export let config: Config;
 export const app = express();
 export const server = http.createServer(app);
-// export let io: Server;
-const yamlPath = '../../src/config/config.yaml';
-
 
 async function loadConfig(): Promise<Config> {
     return new Promise((resolve, reject) => {
-        const configPath = path.join(__dirname, yamlPath);
+        const configPath = path.join(yamlPath, 'config.yaml')
         fs.readFile(configPath, 'utf8', (err, data) => {
             if (err) {
                 return reject(err);

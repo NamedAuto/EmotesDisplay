@@ -111,7 +111,7 @@
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
   },
   "include": [
-    "src/**/*.ts",
+    "src/**/*",
     "src/config/webpack.config.ts"  // Explicitly include the Webpack config file
   ],          // Include all TypeScript files under 'src'
   "exclude": [

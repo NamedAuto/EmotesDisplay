@@ -1,5 +1,6 @@
 import path from "path";
 import HtmlWebpackPlugin from "html-webpack-plugin";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
 
 const config = {
     entry: path.resolve(__dirname, '../../src/frontend/index.ts'),
@@ -25,8 +26,8 @@ const config = {
                 publicPath: '/config',
             },
             {
-                directory: path.resolve(__dirname, '../../public/images'),
-                publicPath: '/images',
+                directory: path.resolve(__dirname, '../../public/background'),
+                publicPath: '/background',
             }
         ],
         compress: true,
@@ -68,6 +69,12 @@ const config = {
                 target: 'http://localhost:8080',
                 changeOrigin: true,
                 secure: false
+            },
+            {
+                context: ['/background'],
+                target: 'http://localhost:8080',
+                changeOrigin: true,
+                secure: false
             }
         ],
     },
@@ -76,7 +83,7 @@ const config = {
         rules: [
             {
                 test: /\.css$/,
-                use: ['style-loader', 'css-loader'],
+                use: [MiniCssExtractPlugin.loader, 'style-loader', 'css-loader'],
             },
             {
                 test: /\.ts$/,
@@ -96,6 +103,7 @@ const config = {
             filename: 'index.html',
             inject: 'body',
         }),
+        new MiniCssExtractPlugin({ filename: 'styles.css', }),
     ],
 };
 

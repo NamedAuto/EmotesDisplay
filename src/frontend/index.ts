@@ -1,14 +1,17 @@
 import {io, Socket} from 'socket.io-client';
 import {config, loadConfig} from "./configureConfig";
 import './styles.css';
+import path from "path";
 
 console.log("YAY")
 
 let socket: Socket;
+let background;
 
 async function initialize() {
     try {
         await loadConfig();
+
 
         document.addEventListener('DOMContentLoaded', main);
 
@@ -88,6 +91,17 @@ function setContainerAndCanvasSize() {
 
 // Function to load the triangle image onto the canvas
 function loadImageOntoCanvas(): void {
+    // let image;
+    // // const imagePath = `file://${process.cwd()}/public/background/circle.png`;
+    // if(process.env.NODE_ENV === 'production') {
+    //     const execPath = process.execPath;
+    //     image =  path.join(path.dirname(execPath), 'background');
+    // } else {
+    //     image = path.join(process.cwd(), 'public', 'background');
+    // }
+
+    // image+='/circle.png'
+
     triangleImage.onload = () => {
         setContainerAndCanvasSize();
         ctx.clearRect(0, 0, triangleCanvas.width, triangleCanvas.height);

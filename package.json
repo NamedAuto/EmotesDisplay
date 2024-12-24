@@ -1,6 +1,8 @@
 {
-  "name": "test-chat",
+  "name": "emote-display",
   "version": "1.0.0",
+  "main": "dist/backend/server.js",
+  "bin": "dist/backend/server.js",
   "description": "",
   "scripts": {
     "prestart": "tsc --project tsconfig.json",
@@ -13,6 +15,7 @@
   "private": true,
   "dependencies": {
     "@googleapis/youtube": "^20.0.0",
+    "@yao-pkg/pkg": "^6.1.1",
     "axios": "^1.7.9",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
@@ -21,7 +24,7 @@
     "googleapis": "^144.0.0",
     "helmet": "^8.0.0",
     "js-yaml": "^4.1.0",
-    "pkg": "^5.8.1",
+    "mini-css-extract-plugin": "^2.9.2",
     "pnpm": "^9.15.0",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
@@ -46,5 +49,16 @@
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.2.0",
     "yaml-loader": "^0.8.1"
+  },
+  "pkg": {
+    "scripts": "dist/backend/index.js",
+    "assets": [
+      "!public/**/*",
+      "!src/config/config.yaml"
+    ],
+    "targets": [
+      "node20-win-x64"
+    ],
+    "outputPath": "./dist"
   }
 }
