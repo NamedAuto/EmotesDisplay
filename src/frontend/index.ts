@@ -58,23 +58,47 @@ const triangleImage = document.getElementById('triangle-image') as HTMLImageElem
 const triangleCanvas = document.getElementById('triangleCanvas') as HTMLCanvasElement;
 const ctx = triangleCanvas.getContext('2d', {willReadFrequently: true})!;
 
+function setContainerAndCanvasSize() {
+    const maxWidth = 1920 - 50;
+    const maxHeight = 1080- 50;
+    const imageWidth = triangleImage.naturalWidth;
+    const imageHeight = triangleImage.naturalHeight;
+    let newWidth = imageWidth;
+    let newHeight = imageHeight;
+
+    if (imageWidth > maxWidth || imageHeight > maxHeight) {
+        const widthRatio = maxWidth / imageWidth;
+        const heightRatio = maxHeight / imageHeight;
+        const scalingFactor = Math.min(widthRatio, heightRatio);
+        newWidth = imageWidth * scalingFactor;
+        newHeight = imageHeight * scalingFactor;
+    }
+
+    triangleContainer.style.width = `${newWidth}px`;
+    triangleContainer.style.height = `${newHeight}px`;
+    triangleCanvas.width = newWidth;
+    triangleCanvas.height = newHeight;
+}
+
 // Function to load the triangle image onto the canvas
 function loadImageOntoCanvas(): void {
     triangleImage.onload = () => {
-        const imageAspectRatio = triangleImage.width / triangleImage.height
-
-
-        if (imageAspectRatio >= 1) {
-            triangleContainer.style.width = '1000px';
-            triangleContainer.style.height = `${1000 / imageAspectRatio}px`;
-            triangleCanvas.width = 1000;
-            triangleCanvas.height = 1000 / imageAspectRatio;
-        } else {
-            triangleContainer.style.width = `${1000 * imageAspectRatio}px`;
-            triangleContainer.style.height = '1000px';
-            triangleCanvas.width = 1000 * imageAspectRatio;
-            triangleCanvas.height = 1000
-        }
+        setContainerAndCanvasSize();
+        ctx.clearRect(0, 0, triangleCanvas.width, triangleCanvas.height);
+        // const imageAspectRatio = triangleImage.width / triangleImage.height
+        //
+        //
+        // if (imageAspectRatio >= 1) {
+        //     triangleContainer.style.width = '1000px';
+        //     triangleContainer.style.height = `${1000 / imageAspectRatio}px`;
+        //     triangleCanvas.width = 1000;
+        //     triangleCanvas.height = 1000 / imageAspectRatio;
+        // } else {
+        //     triangleContainer.style.width = `${1000 * imageAspectRatio}px`;
+        //     triangleContainer.style.height = '1000px';
+        //     triangleCanvas.width = 1000 * imageAspectRatio;
+        //     triangleCanvas.height = 1000
+        // }
         //
         // triangleCanvas.width = triangleImage.width;
         // triangleCanvas.height = triangleImage.height;
