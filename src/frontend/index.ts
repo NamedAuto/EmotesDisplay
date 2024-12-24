@@ -44,8 +44,8 @@ function setupSocket(boundary: HTMLElement) {
         console.log('Received new emote:    ', data.url);
         // displayEmote(data.url)
         // addEmote(boundary, data.url);
-        createEmoteImage(boundary, data.url);
-        // placeEmote(data.url)
+        // createEmoteImage(boundary, data.url);
+        placeEmote(data.url)
     });
 
     socket.on('disconnect', () => {
@@ -53,67 +53,75 @@ function setupSocket(boundary: HTMLElement) {
     });
 }
 
-// Function to generate random position inside the triangle
-function getRandomPosition(width: number, height: number, size: number) {
-    // const x1 = -200, y1 = 600;
-    // const x2 = 200, y2 = 600;
-    // const x3 = 0, y3 = 0;
+const triangleContainer = document.getElementById('triangleContainer')!;
+const triangleImage = document.getElementById('triangle-image') as HTMLImageElement;
+const triangleCanvas = document.getElementById('triangleCanvas') as HTMLCanvasElement;
+const ctx = triangleCanvas.getContext('2d', {willReadFrequently: true})!;
 
-    // const width = 400;
-    // const height = 600;
+// Function to load the triangle image onto the canvas
+function loadImageOntoCanvas(): void {
+    triangleImage.onload = () => {
+        const imageAspectRatio = triangleImage.width / triangleImage.height
 
-    let u = Math.random();
-    let v = Math.random();
 
-    if (u + v > 1) {
-        u = 1 - u;
-        v = 1 - v;
-    }
-
-    // const x = (1 - u - v) * x1 + u * x2 + v * x3;
-    // const y = (1 - u - v) * y1 + u * y2 + v * y3;
-
-    const x = (1 - u - v) * (-width / 2) + u * (width / 2);
-    const y = (1 - u - v) * height + u * height;
-
-    return { x, y };
+        if (imageAspectRatio >= 1) {
+            triangleContainer.style.width = '1000px';
+            triangleContainer.style.height = `${1000 / imageAspectRatio}px`;
+            triangleCanvas.width = 1000;
+            triangleCanvas.height = 1000 / imageAspectRatio;
+        } else {
+            triangleContainer.style.width = `${1000 * imageAspectRatio}px`;
+            triangleContainer.style.height = '1000px';
+            triangleCanvas.width = 1000 * imageAspectRatio;
+            triangleCanvas.height = 1000
+        }
+        //
+        // triangleCanvas.width = triangleImage.width;
+        // triangleCanvas.height = triangleImage.height;
+        ctx.drawImage(triangleImage, 0, 0, triangleCanvas.width, triangleCanvas.height);
+    };
+    triangleImage.src = triangleImage.src; // Trigger the onload event
 }
 
-
-let count = 0;
-
-// Function to create an emote image element
-function createEmoteImage(triangleContainer: HTMLElement, url: string) {
-    const emoteImage = document.createElement('img');
-    emoteImage.src = url;
-    emoteImage.classList.add('emote');
-
-    // Random size between 20px and 50px
-    const size = 50//Math.random() * (50 - 20) + 20;
-    emoteImage.style.width = `${size}px`;
-    emoteImage.style.height = `${size}px`;
-
-    // Get random position within the triangle
-    const { x, y } = getRandomPosition(200, 600, size);
-    console.log(`Position: x = ${x}, y = ${y}`);
-
-
-    // Apply the random position to the emote image
-    emoteImage.style.left = `${x}px`;
-    emoteImage.style.top = `${y}px`;
-
-    // if(count == 0){
-    //     emoteImage.style.left = `0`;
-    //     emoteImage.style.top = `0px`;
-    //     count++;
-    // }
-
-    emoteImage.style.transform = 'translate(-50%, -50%)';
-
-    // emoteImage.style.left = `0`;
-    // emoteImage.style.top = `0px`;
-    // Append the emote image to the triangle container
-    triangleContainer.appendChild(emoteImage);
+// Function to check if a point is within the triangle area using pixel data
+function isWithinTriangle(x: number, y: number): boolean {
+    const pixelData = ctx.getImageData(x, y, 1, 1).data;
+    // Check if the alpha value is not transparent
+    return pixelData[3] > 0;
 }
+
+// Function to create a new emote element
+function createEmote(emoteUrl: string): HTMLImageElement {
+    const emote = document.createElement('img');
+    emote.src = emoteUrl;
+    emote.className = 'emote';
+    return emote;
+}
+
+// Function to set the position of an emote
+function setPosition(emote: HTMLImageElement, x: number, y: number): void {
+    emote.style.left = `${x}px`;
+    emote.style.top = `${y}px`;
+}
+
+// Function to place an emote within the triangle
+function placeEmote(emoteUrl: string): void {
+    const emote = createEmote(emoteUrl);
+    let x: number;
+    let y: number;
+
+    do {
+        x = Math.random() * triangleCanvas.width;
+        y = Math.random() * triangleCanvas.height;
+    } while (!isWithinTriangle(x, y));
+
+    setPosition(emote, x, y);
+    emote.style.transform = 'translate(-50%, -50%)';
+    triangleContainer.appendChild(emote);
+}
+
+// Load the image onto the canvas
+loadImageOntoCanvas();
+
 
 
