@@ -7,10 +7,10 @@ This was made to just put emotes on a tree
 
 
 But it worked better than expected
-## Example of a train?
+## Example of a train? 🚂
 ![Demo](https://github.com/NamedAuto/EmotesDisplay/raw/main/notATrain.gif)
 
 
 HUH
-## Example of a ghost train conductor
+## Example of a ghost train conductor 🚂☠️
 ![Demo](https://github.com/NamedAuto/EmotesDisplay/raw/main/notATrain2.gif)
