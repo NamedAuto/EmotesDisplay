@@ -10,9 +10,10 @@ import {google} from "googleapis";
 import {youtube_v3} from "@googleapis/youtube";
 import {configureEndpoints} from "./configureEndpoints";
 import {parseMessageForEmotes} from "./parseMessages";
-import {configureMiddleware, io, } from "./configureConnections";
+import {configureMiddleware, io,} from "./configureConnections";
 import http from "http";
 import {yamlPath} from "./getFilePath";
+
 process.title = "Emote Display";
 
 export const emoteMap: Record<string, string> = generateEmoteMap();
@@ -62,7 +63,7 @@ async function main() {
         // ()
         console.log('Emote Map:', emoteMap);
 
-        console.log("I am starting now: " + Date.now());
+        console.log("I am starting now: " + formatTime());
 
     } catch (err) {
         console.error('Error initializing server:', err);
@@ -83,7 +84,7 @@ function emit() {
 
     let x = keys[randomIndex];
     let cleanedText = x.replace(/[:_]/g, '');
-    const emoteURL = 'http://localhost:8080/emotes/' + cleanedText;
+    const emoteURL = `http://localhost:${config.port.backend}/emotes/` + cleanedText;
 
     console.log(`Emit ${emoteURL}`);
     io.emit('new-emote', {url: emoteURL});
@@ -112,7 +113,7 @@ async function getYoutubeMessages() {
 
                 if (messages.length > 0) {
                     messages.forEach(msg => {
-                        console.log(`${msg.authorDetails?.displayName || 'Unknown'}: ${msg.snippet?.displayMessage || 'NoMsg'}`);
+                        // console.log(`${msg.authorDetails?.displayName || 'Unknown'}: ${msg.snippet?.displayMessage || 'NoMsg'}`);
                         // console.log(`${msg.snippet?.type || 'NoType'}`);
                         // console.log(`${msg.snippet?.textMessageDetails?.messageText || 'NoText'}`)
                     });
@@ -128,7 +129,7 @@ async function getYoutubeMessages() {
                 nextPageToken = newPageToken;
 
                 await new Promise(resolve => setTimeout(resolve, pollingIntervalMillis));
-                console.log(`API Call ${apiCallCounter} at :` + Date.now())
+                console.log(`API Call ${apiCallCounter} at: ` + formatTime())
             }
 
             console.log('Live chat stream is no longer available.');
@@ -142,6 +143,7 @@ async function getYoutubeMessages() {
         }
     } catch (error) {
         console.error('Error fetching messages:', error);
+        shutdownGracefully();
     }
 }
 
@@ -151,13 +153,13 @@ main()
 function shutdownGracefully() {
     console.log('Attempting graceful shutdown...');
     server.close(() => {
-        console.log('Graceful shutdown completed.');
+        console.log('Graceful shutdown completed: ' + formatTime());
         process.exit(0);
     });
 
     // Force shutdown after timeout (e.g., 5 seconds)
     setTimeout(() => {
-        console.error('Graceful shutdown timeout, forcing shutdown...');
+        console.error('Graceful shutdown timeout, forcing shutdown... ' + formatTime());
         process.exit(1);
     }, 5000);
 }
@@ -172,4 +174,21 @@ function triggerEventShutdown() {
     // For example, shutdown after receiving a certain message
     console.log('Event triggered, shutting down...');
     shutdownGracefully();
+}
+
+function formatTime(): string {
+    const now = new Date();
+    let hours = now.getHours();
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+    const ampm = hours >= 12 ? 'pm' : 'am';
+
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+
+    const formattedTime = `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${ampm}`;
+
+    // console.log('Current time in am/pm format:', formattedTime);
+
+    return formattedTime;
 }

@@ -16,7 +16,6 @@ interface YoutubeConfig {
 
 interface PortConfig {
     backend: number;
-    frontend: number;
 }
 
 interface AspectRatioConfig {

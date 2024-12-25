@@ -10,7 +10,7 @@ export let io: Server
 function configureIo() {
     io = new Server(server, {
         cors: {
-            origin: localURL + config.port.frontend,
+            origin: localURL + config.port.backend,
             methods: ['GET', 'POST'],
             allowedHeaders: ['Content-Type', 'Access-Control-Allow-Origin'],
             credentials: true
@@ -20,7 +20,7 @@ function configureIo() {
     io.on('connection', (socket) => {
         // console.log('Handshake headers:', socket.handshake.headers);
         const origin = socket.handshake.headers.origin;
-        if (origin !== `http://localhost:${config.port.frontend}`) {
+        if (origin !== `http://localhost:${config.port.backend}`) {
             console.log('Invalid origin:', origin);
             socket.disconnect();
         } else {
@@ -39,7 +39,7 @@ function configureIo() {
 
 function configureCORS() {
     app.use(cors({
-        origin: localURL + config.port.frontend,
+        origin: localURL + config.port.backend,
         methods: ['GET', 'POST'],
         allowedHeaders: ['Content-Type', 'Access-Control-Allow-Origin', 'Origin', 'Sec-WebSocket-Protocol'],
     }));

@@ -14,13 +14,9 @@ youtube:
 
 # ------------------------------------------------------------------------------
 
-# Ports should NOT be the same one
+# Port to be used by the app
 port:
-  # Port used for the server
   backend: 8080
-
-  # Port used for the browser
-  frontend: 8080
 
 # ------------------------------------------------------------------------------
 

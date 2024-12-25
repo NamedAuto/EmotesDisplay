@@ -14,7 +14,7 @@ import express from "express";
 
 //'../../src/config/config.yaml';
 
-const extensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
+    const extensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
 
 function configureEmotesEndpoint() {
     app.get('/emotes/:filename', (req, res) => {
@@ -80,7 +80,7 @@ function configureConfigEndpoint() {
     });
 
     app.get('/config/ports', (req, res) => {
-        res.json({backendPort: config.port.backend, frontendPort: config.port.frontend});
+        res.json({backendPort: config.port.backend, frontendPort: config.port.backend});
     });
 }
 

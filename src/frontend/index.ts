@@ -1,7 +1,6 @@
 import {io, Socket} from 'socket.io-client';
 import {config, loadConfig} from "./configureConfig";
 import './styles.css';
-import path from "path";
 
 console.log("Starting")
 
@@ -12,11 +11,12 @@ async function initialize() {
     try {
         await loadConfig();
 
+        if(document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', main);
+        } else {
+            main()
+        }
 
-        // document.addEventListener('DOMContentLoaded', main);
-
-        // setupSocket();
-        main();
     } catch (error) {
         console.error('Error loading config:', error);
     }
