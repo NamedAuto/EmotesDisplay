@@ -2,7 +2,10 @@ youtube:
   # Your google API key here
   apiKey:
 
-  # Your video id goes here
+    # Your video id goes here
+  # https://www.youtube.com/watch?v=K-SGpb7pO3w
+  # The id is everything after v= so  K-SGpb7pO3w
+  # Only works when a stream is live
   videoId:
 
   # Delay before new message is received from YouTube
@@ -17,7 +20,7 @@ port:
   backend: 8080
 
   # Port used for the browser
-  frontend: 3000
+  frontend: 8080
 
 # ------------------------------------------------------------------------------
 
@@ -47,7 +50,7 @@ aspectRatio:
     randomSizeDecrease: 10
 
     # The max amount of emotes displayed before the oldest one is removed
-    maxEmoteCount: 500
+    maxEmoteCount: 200
 
     # Add rounded edges around the emote.
     # NOTE: the rounded parts of the emote will be cut off

@@ -18,7 +18,7 @@ function configureIo() {
     });
 
     io.on('connection', (socket) => {
-        console.log('Handshake headers:', socket.handshake.headers);
+        // console.log('Handshake headers:', socket.handshake.headers);
         const origin = socket.handshake.headers.origin;
         if (origin !== `http://localhost:${config.port.frontend}`) {
             console.log('Invalid origin:', origin);
@@ -32,8 +32,8 @@ function configureIo() {
         });
 
         const url = localURL + config.port.backend + emotesURL;
-        socket.emit('new-emote', {url: url + 'islapanik'})
-        socket.emit('new-emote', {url: url + 'TomoeLaugh'})
+        // socket.emit('new-emote', {url: url + 'islapanik'})
+        // socket.emit('new-emote', {url: url + 'TomoeLaugh'})
     });
 }
 
@@ -54,7 +54,7 @@ function configureHelmet() {
                 imgSrc: ["'self'", localURL + config.port.backend, 'blob:'],
                 connectSrc: ["'self'", `ws://localhost:${config.port.backend}`, localURL + config.port.backend],
                 scriptSrc: ["'self'"],
-                styleSrc: ["'self'"],
+                styleSrc: ["'self'", "'unsafe-inline'"],
             },
             reportOnly: false,
         })

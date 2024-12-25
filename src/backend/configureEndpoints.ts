@@ -2,6 +2,7 @@ import path from "path";
 import fs from "fs";
 import {app, config} from "./server";
 import {emotePath, backgroundPath, yamlPath} from "./getFilePath";
+import express from "express";
 
 
 // const execPath = process.execPath;
@@ -67,6 +68,7 @@ function con() {
 
 function configureConfigEndpoint() {
     app.get('/config/config.yaml', (req, res) => {
+        // const configPath = path.join(yamlPath + '/config.yaml');//
         const configPath = path.join(yamlPath + '/config.yaml');
         console.log(configPath)
         fs.readFile(configPath, 'utf8', (err, data) => {
@@ -107,8 +109,29 @@ function configureSimpleEndpoint() {
     });
 }
 
+
+function configureFrontend() {
+    // Serve the frontend (static files) from the `frontend` folder
+    // app.use(express.static(path.join(__dirname, 'frontend')));  // Serve static files
+    const s = path.join(__dirname, '..', 'frontend');
+    // console.log("1: " + s)
+    app.use('/', express.static(path.join(__dirname, '..', 'frontend')));
+
+// Serve the index.html for the root route
+    app.get('/', (req, res) => {
+        const s = path.join(__dirname, '..', 'frontend', 'index.html');
+        // console.log("2: " + s)
+        res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
+    });
+
+// Example API route
+    app.get('/api/hello', (req, res) => {
+        res.json({message: 'Hello from the backend!'});
+    });
+}
+
 export function configureEndpoints() {
-    console.log("HELLO")
+    configureFrontend();
     configureEmotesEndpoint();
     configureConfigEndpoint();
     // configureBackgroundImageEndpoint()

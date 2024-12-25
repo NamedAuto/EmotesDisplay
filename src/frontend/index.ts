@@ -3,7 +3,7 @@ import {config, loadConfig} from "./configureConfig";
 import './styles.css';
 import path from "path";
 
-console.log("YAY")
+console.log("Starting")
 
 let socket: Socket;
 let background;
@@ -13,7 +13,7 @@ async function initialize() {
         await loadConfig();
 
 
-        document.addEventListener('DOMContentLoaded', main);
+        // document.addEventListener('DOMContentLoaded', main);
 
         // setupSocket();
         main();

@@ -7,7 +7,7 @@ const config = {
     output: {
         filename: 'bundle.js',
         path: path.resolve(__dirname, '../../dist/frontend'),
-        // publicPath: '/',
+        publicPath: '/',
     },
     // context: path.resolve(__dirname, '../../src'),
     resolve: {
@@ -15,7 +15,7 @@ const config = {
     },
 
     mode: 'development',
-    devtool: 'eval-source-map',  // To get source maps for better debugging
+    devtool: 'inline-source-map',  // To get source maps for better debugging
     devServer: {
         static: [
             {

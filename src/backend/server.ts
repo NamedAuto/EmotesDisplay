@@ -10,7 +10,7 @@ import {google} from "googleapis";
 import {youtube_v3} from "@googleapis/youtube";
 import {configureEndpoints} from "./configureEndpoints";
 import {parseMessageForEmotes} from "./parseMessages";
-import {configureMiddleware, io, listen} from "./configureConnections";
+import {configureMiddleware, io, } from "./configureConnections";
 import http from "http";
 import {yamlPath} from "./getFilePath";
 process.title = "Emote Display";
@@ -59,7 +59,7 @@ async function main() {
         }
 
 
-        // listen()
+        // ()
         console.log('Emote Map:', emoteMap);
 
         console.log("I am starting now: " + Date.now());
@@ -132,10 +132,12 @@ async function getYoutubeMessages() {
             }
 
             console.log('Live chat stream is no longer available.');
+            shutdownGracefully();
             // TODO: Shut down front and backend
 
         } else {
             console.log('Live chat ID not found for the specified video.');
+            shutdownGracefully();
             // TODO: Maybe shut down front and backend
         }
     } catch (error) {
@@ -144,3 +146,30 @@ async function getYoutubeMessages() {
 }
 
 main()
+
+// Mixed shutdown: graceful first, forced if too long
+function shutdownGracefully() {
+    console.log('Attempting graceful shutdown...');
+    server.close(() => {
+        console.log('Graceful shutdown completed.');
+        process.exit(0);
+    });
+
+    // Force shutdown after timeout (e.g., 5 seconds)
+    setTimeout(() => {
+        console.error('Graceful shutdown timeout, forcing shutdown...');
+        process.exit(1);
+    }, 5000);
+}
+
+//  for termination signals
+process.on('SIGINT', shutdownGracefully);
+process.on('SIGTERM', shutdownGracefully);
+
+// Event-driven forced shutdown
+function triggerEventShutdown() {
+    // Your specific event logic here
+    // For example, shutdown after receiving a certain message
+    console.log('Event triggered, shutting down...');
+    shutdownGracefully();
+}

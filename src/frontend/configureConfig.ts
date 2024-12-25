@@ -5,13 +5,13 @@ export let config: Config;
 
 export async function loadConfig() {
     try {
-        const response = await fetch('http://localhost:3000/config/config.yaml');
+        const response = await fetch('http://localhost:8080/config/config.yaml');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const yamlText = await response.text();
         config = yaml.load(yamlText) as Config;
-        console.log('Configuration loaded:', config);
+        // console.log('Configuration loaded:', config);
 
         // Now you can use the config object as needed in your application
     } catch (error) {
@@ -21,13 +21,13 @@ export async function loadConfig() {
 
 export async function loadImage() {
     try {
-        const response = await fetch('http://localhost:3000/images');
+        const response = await fetch('http://localhost:8080/images');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const yamlText = await response.text();
         config = yaml.load(yamlText) as Config;
-        console.log('Configuration loaded:', config);
+        // console.log('Configuration loaded:', config);
 
         // Now you can use the config object as needed in your application
     } catch (error) {
