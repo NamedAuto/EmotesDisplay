@@ -1,6 +1,5 @@
 import path from "path";
 import HtmlWebpackPlugin from "html-webpack-plugin";
-import MiniCssExtractPlugin from "mini-css-extract-plugin";
 
 const config = {
     entry: path.resolve(__dirname, '../../src/frontend/index.ts'),
@@ -31,7 +30,7 @@ const config = {
             }
         ],
         compress: true,
-        port: 3000,
+        port: 8080,
         hot: true,
         // historyApiFallback: {
         //     index: '/index.html', // Serve as the default file
@@ -83,7 +82,7 @@ const config = {
         rules: [
             {
                 test: /\.css$/,
-                use: [MiniCssExtractPlugin.loader, 'style-loader', 'css-loader'],
+                use: ['style-loader', 'css-loader'],
             },
             {
                 test: /\.ts$/,
@@ -102,8 +101,7 @@ const config = {
             template: path.resolve(__dirname, '../../src/frontend/index.html'),
             filename: 'index.html',
             inject: 'body',
-        }),
-        new MiniCssExtractPlugin({ filename: 'styles.css', }),
+        })
     ],
 };
 

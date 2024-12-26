@@ -1,24 +1,28 @@
 import yaml from "js-yaml";
 import {Config} from "../config/Config";
 
-export let config: Config;
+let config: Config;
 
-
-export async function loadConfig() {
+export async function loadConfigFront() {
     try {
-        const response = await fetch('/config/config.yaml');
+        const response = await fetch('/config');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const yamlText = await response.text();
-        config = yaml.load(yamlText) as Config;
-        // console.log('Configuration loaded:', config);
+        config = await response.json();
 
-        // Now you can use the config object as needed in your application
     } catch (error) {
         console.error('Error fetching config:', error);
     }
 }
+
+export const getConfig = (): Config => {
+    if (!config) {
+        throw new Error('Config is not loaded. Call loadConfig first');
+    }
+    return config;
+}
+
 
 export async function loadImage() {
     try {

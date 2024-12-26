@@ -15,7 +15,7 @@ interface YoutubeConfig {
 }
 
 interface PortConfig {
-    backend: number;
+    port: number;
 }
 
 interface AspectRatioConfig {
@@ -28,6 +28,7 @@ interface AspectRatioConfig {
 
 interface TestingConfig {
     test: boolean
+    speedOfEmotes: number
 }
 
 export interface Config {

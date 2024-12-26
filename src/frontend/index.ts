@@ -1,15 +1,15 @@
 import {io, Socket} from 'socket.io-client';
-import {config, loadConfig} from "./configureConfig";
+import {getConfig, loadConfigFront} from "./configureConfigFront";
 import './styles.css';
 
-console.log("Starting")
+console.log("Starting HTML")
 
 let socket: Socket;
 let background;
 
 async function initialize() {
     try {
-        await loadConfig();
+        await loadConfigFront();
 
         if(document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', main);
@@ -35,7 +35,7 @@ function main() {
 initialize()
 
 function setupSocket(boundary: HTMLElement) {
-    socket = io(`http://localhost:${config.port.backend}`, {
+    socket = io(`http://localhost:${getConfig().port.port}`, {
         transports: ['websocket'],
     });
 
@@ -66,10 +66,10 @@ const ctx = triangleCanvas.getContext('2d', {willReadFrequently: true})!;
 const emotes: HTMLImageElement[] = [];
 
 function setContainerAndCanvasSize() {
-    const scaleCanvas = config.aspectRatio.scaleCanvas;
-    const scaleImage = config.aspectRatio.scaleImage;
-    const maxWidth = config.aspectRatio.width * scaleCanvas;
-    const maxHeight = config.aspectRatio.height * scaleCanvas;
+    const scaleCanvas = getConfig().aspectRatio.scaleCanvas;
+    const scaleImage = getConfig().aspectRatio.scaleImage;
+    const maxWidth = getConfig().aspectRatio.width * scaleCanvas;
+    const maxHeight = getConfig().aspectRatio.height * scaleCanvas;
     const imageWidth = triangleImage.naturalWidth * scaleImage;
     const imageHeight = triangleImage.naturalHeight * scaleImage;
     let newWidth = imageWidth;
@@ -123,8 +123,8 @@ function createEmote(emoteUrl: string): HTMLImageElement {
     emote.src = emoteUrl;
     emote.className = 'emote';
     changeEmoteSizeRandom(emote)
-    emote.style.borderRadius = config.aspectRatio.emote.roundness + '%';
-    emote.style.backgroundColor = config.aspectRatio.emote.backgroundColor;
+    emote.style.borderRadius = getConfig().aspectRatio.emote.roundness + '%';
+    emote.style.backgroundColor = getConfig().aspectRatio.emote.backgroundColor;
     return emote;
 }
 
@@ -132,13 +132,13 @@ function changeEmoteSizeRandom(emote: HTMLImageElement) {
     const randomBinary = Math.random() < 0.5 ? 0 : 1;
     let sizeChange;
     if(randomBinary) {
-        sizeChange = config.aspectRatio.emote.randomSizeIncrease;
+        sizeChange = getConfig().aspectRatio.emote.randomSizeIncrease;
     } else {
-        sizeChange = -config.aspectRatio.emote.randomSizeDecrease;
+        sizeChange = -getConfig().aspectRatio.emote.randomSizeDecrease;
     }
 
-    const newWidth = config.aspectRatio.emote.width + sizeChange;
-    const newHeight = config.aspectRatio.emote.height + sizeChange;
+    const newWidth = getConfig().aspectRatio.emote.width + sizeChange;
+    const newHeight = getConfig().aspectRatio.emote.height + sizeChange;
     emote.style.width = newWidth + 'px';
     emote.style.height = newHeight + 'px';
 }
@@ -165,7 +165,7 @@ function placeEmote(emoteUrl: string): void {
     triangleContainer.appendChild(emote);
 
     emotes.push(emote)
-    if (emotes.length > config.aspectRatio.emote.maxEmoteCount) {
+    if (emotes.length > getConfig().aspectRatio.emote.maxEmoteCount) {
         const oldestEmote = emotes.shift();
         if (oldestEmote) {
             triangleContainer.removeChild(oldestEmote);

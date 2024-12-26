@@ -1,12 +1,12 @@
-import {config, emoteMap} from "./server";
-import {io} from "./configureConnections";
+import {io} from "./server";
 
-const localURL = 'http://localhost:';
 const emotesURL = '/emotes/';
 
-export function parseMessageForEmotes(message: string): string[] {
-    const emoteURLs: string[] = [];
-    const url = localURL + config.port.backend + emotesURL;
+export function parseMessageForEmotes(message: string,
+                                      emoteUrl: string,
+                                      emoteMap: Record<string, string>
+): string[] {
+    const emoteUrls: string[] = [];
 
     const regex = /:_.*?:/g;
     const matches = message.match(regex);
@@ -15,22 +15,22 @@ export function parseMessageForEmotes(message: string): string[] {
         matches.forEach((emoteText) => {
             if (emoteMap[emoteText]) {
                 let cleanedText = emoteText.replace(/[:_]/g, '');
-                const emoteURL = url + cleanedText;
+                const newEmoteUrl = emoteUrl + cleanedText;
 
-                console.log(`Emit ${emoteURL}`);
-                io.emit('new-emote', {url: emoteURL});
+                console.log(`Emit ${newEmoteUrl}`);
+                io.emit('new-emote', {url: newEmoteUrl});
 
-                emoteURLs.push(emoteMap[emoteText]);
+                emoteUrls.push(emoteMap[emoteText]);
             }
         });
     }
 
-    return emoteURLs;
+    return emoteUrls;
 }
 
-function emitEmotes(emoteURLS: string[]) {
-    for (let i = 0; i < emoteURLS.length; i++) {
-        console.log(`Emit: ${emoteURLS[i]}`);
-        io.emit('new-emote', {url: emoteURLS[i]});
+function emitEmotes(emoteUrls: string[]) {
+    for (let i = 0; i < emoteUrls.length; i++) {
+        console.log(`Emit: ${emoteUrls[i]}`);
+        io.emit('new-emote', {url: emoteUrls[i]});
     }
 }
