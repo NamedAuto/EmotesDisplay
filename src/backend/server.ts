@@ -1,106 +1,100 @@
-import express from "express";
 import path from "path";
-import fs from "fs";
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
+const dotenvPath = path.resolve(__dirname, '..', '..', '.env');
+dotenv.config({
+    path: dotenvPath
+})
+
+
+import express from "express";
 import {generateEmoteMap} from "./emoteMapping";
 import {getLiveChatId, getLiveChatMessages} from "./youtubeApi";
-
-import yaml from "js-yaml";
-import {Config} from "../config/Config";
-import {google} from "googleapis";
-import {youtube_v3} from "@googleapis/youtube";
 import {configureEndpoints} from "./configureEndpoints";
 import {parseMessageForEmotes} from "./parseMessages";
-import {configureMiddleware, io,} from "./configureConnections";
+import {configureMiddleware,} from "./configureConnections";
 import http from "http";
-import {yamlPath} from "./getFilePath";
+import {getConfig, loadConfigBack} from "./configureConfigBack";
+import {Server} from "socket.io";
+import {configureYoutube} from "./configureYoutube";
+import {backgroundPath, emotePath, frontendPath, setupFilePaths, yamlPath} from "./getFilePath";
+import {formatTime, shutdownGracefully} from "./shutdown";
 
 process.title = "Emote Display";
+process.on('SIGINT', shutdownGracefully);
+process.on('SIGTERM', shutdownGracefully);
 
-export const emoteMap: Record<string, string> = generateEmoteMap();
-
-export let youtube: youtube_v3.Youtube;
-export let config: Config;
 export const app = express();
 export const server = http.createServer(app);
+export const io = new Server(server);
 
-async function loadConfig(): Promise<Config> {
-    return new Promise((resolve, reject) => {
-        const configPath = path.join(yamlPath, 'config.yaml')
-        fs.readFile(configPath, 'utf8', (err, data) => {
-            if (err) {
-                return reject(err);
-            }
-            try {
-                config = yaml.load(data) as Config;
-                resolve(config);
-            } catch (e) {
-                reject(e);
-            }
-        });
-    });
-}
+export let emoteMap: Record<string, string>;
+
+const base = 'http://localhost:';
+let baseUrl: string;
+let emoteUrl: string;
 
 async function main() {
     try {
-        config = await loadConfig()
-        console.log('Configuration loaded:', config);
-        // app = express()
-        // server = http.createServer(app);
-        configureMiddleware();
+        setupFilePaths();
+        emoteMap = generateEmoteMap(emotePath);
+        await loadConfigBack('config.yaml', yamlPath)
+        console.log('Configuration loaded:', getConfig());
 
-        setupYoutube();
-        configureEndpoints();
+        const port = getConfig().port.port;
+        baseUrl = base + port;
+        emoteUrl = baseUrl + '/emotes/'
+        configureMiddleware(baseUrl, getConfig().port.port);
+        configureYoutube(getConfig().youtube.apiKey);
+
+        configureEndpoints(app, frontendPath, emotePath, yamlPath, backgroundPath);
 
         // setupSimple()
 
-        if (config.testing.test) {
-            setInterval(emit, 500);
+        if (getConfig().testing.test) {
+            // Number is in seconds in config file
+            setInterval(emit, getConfig().testing.speedOfEmotes * 1000);
         } else {
-            getYoutubeMessages()
+            getYoutubeMessages(getConfig().youtube.videoId || '',
+                getConfig().youtube.messageDelay)
         }
 
 
         // ()
         console.log('Emote Map:', emoteMap);
 
-        console.log("I am starting now: " + formatTime());
+        console.log("The app is starting now: " + formatTime());
 
     } catch (err) {
         console.error('Error initializing server:', err);
     }
 }
 
-function setupYoutube() {
-    youtube = google.youtube({
-        version: 'v3',
-        auth: config.youtube.apiKey,
-    });
-}
-
-const keys = Object.keys(emoteMap);
-
 function emit() {
+    const keys = Object.keys(emoteMap);
     const randomIndex = Math.floor(Math.random() * keys.length);
 
     let x = keys[randomIndex];
     let cleanedText = x.replace(/[:_]/g, '');
-    const emoteURL = `http://localhost:${config.port.backend}/emotes/` + cleanedText;
+    const emoteURL = emoteUrl + cleanedText;
 
     console.log(`Emit ${emoteURL}`);
     io.emit('new-emote', {url: emoteURL});
 }
 
 
-async function getYoutubeMessages() {
+async function getYoutubeMessages(videoId: string, messageDelay: number) {
     let apiCallCounter = 0;
-    const videoId = config.youtube.videoId || '';
+    // const videoId = getConfig().youtube.videoId || '';
     try {
         const liveChatId = await getLiveChatId(videoId);
         apiCallCounter++;
-        console.log(liveChatId);
+        console.log("Live chat id: " + liveChatId);
         if (liveChatId) {
             let nextPageToken: string | null | undefined;
-            let pollingIntervalMillis = Number(config.youtube.messageDelay * 1000) | 3000;
+            let pollingIntervalMillis = Number(messageDelay * 1000) | 3000;
 
             // liveChatId becomes undefined soon after a stream ends
             while (liveChatId) {
@@ -120,7 +114,9 @@ async function getYoutubeMessages() {
                 }
 
                 messages.forEach((message) => {
-                    const emoteURLs = parseMessageForEmotes(message.snippet?.displayMessage || '');
+                    const emoteURLs = parseMessageForEmotes(message.snippet?.displayMessage || '',
+                        emoteUrl,
+                        emoteMap);
                     if (emoteURLs.length > 0) {
                         // emitEmotes(emoteURLs)
                     }
@@ -134,12 +130,10 @@ async function getYoutubeMessages() {
 
             console.log('Live chat stream is no longer available.');
             shutdownGracefully();
-            // TODO: Shut down front and backend
 
         } else {
             console.log('Live chat ID not found for the specified video.');
             shutdownGracefully();
-            // TODO: Maybe shut down front and backend
         }
     } catch (error) {
         console.error('Error fetching messages:', error);
@@ -148,47 +142,3 @@ async function getYoutubeMessages() {
 }
 
 main()
-
-// Mixed shutdown: graceful first, forced if too long
-function shutdownGracefully() {
-    console.log('Attempting graceful shutdown...');
-    server.close(() => {
-        console.log('Graceful shutdown completed: ' + formatTime());
-        process.exit(0);
-    });
-
-    // Force shutdown after timeout (e.g., 5 seconds)
-    setTimeout(() => {
-        console.error('Graceful shutdown timeout, forcing shutdown... ' + formatTime());
-        process.exit(1);
-    }, 5000);
-}
-
-//  for termination signals
-process.on('SIGINT', shutdownGracefully);
-process.on('SIGTERM', shutdownGracefully);
-
-// Event-driven forced shutdown
-function triggerEventShutdown() {
-    // Your specific event logic here
-    // For example, shutdown after receiving a certain message
-    console.log('Event triggered, shutting down...');
-    shutdownGracefully();
-}
-
-function formatTime(): string {
-    const now = new Date();
-    let hours = now.getHours();
-    const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
-    const ampm = hours >= 12 ? 'pm' : 'am';
-
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-
-    const formattedTime = `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${ampm}`;
-
-    // console.log('Current time in am/pm format:', formattedTime);
-
-    return formattedTime;
-}

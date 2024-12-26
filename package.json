@@ -17,14 +17,12 @@
     "@googleapis/youtube": "^20.0.0",
     "@yao-pkg/pkg": "^6.1.1",
     "axios": "^1.7.9",
-    "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "google-auth-library": "^9.15.0",
     "googleapis": "^144.0.0",
     "helmet": "^8.0.0",
     "js-yaml": "^4.1.0",
-    "mini-css-extract-plugin": "^2.9.2",
     "pnpm": "^9.15.0",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
@@ -55,8 +53,7 @@
     "assets": [
       "dist/**/*",
       "../frontend/index.html",
-      "!public/**/*",
-      "!src/config/config.yaml"
+      ".env"
     ],
     "targets": [
       "node20-win-x64"

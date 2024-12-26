@@ -1,22 +1,11 @@
 import path from "path";
 import fs from "fs";
-import {app, config} from "./server";
-import {emotePath, backgroundPath, yamlPath} from "./getFilePath";
-import express from "express";
+import express, {Express} from "express";
+import yaml from "js-yaml";
 
+const extensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
 
-// const execPath = process.execPath;
-// const emotePath = path.join(process.cwd(), 'public', 'emotes');
-// const emotePath = path.join(path.dirname(execPath), 'emotes');
-//'../../public/emotes';
-// const yamlPath = path.join(process.cwd(), 'public', 'config');
-// const yamlPath = path.join(path.dirname(execPath), 'config');
-
-//'../../src/config/config.yaml';
-
-    const extensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
-
-function configureEmotesEndpoint() {
+function configureEmotesEndpoint(app: Express, emotePath: string) {
     app.get('/emotes/:filename', (req, res) => {
         const filename = req.params.filename;
 
@@ -33,18 +22,14 @@ function configureEmotesEndpoint() {
     });
 }
 
-function con() {
-    // Serve the list of available background in the 'cats' folder
+function configureBackgroundImageEndpoint(app: Express, backgroundPath: string) {
     app.get('/background', (req, res) => {
         const folderPath = path.join(backgroundPath);
-
-
         fs.readdir(folderPath, (err, files) => {
             if (err) {
                 return res.status(500).send('Error reading the folder');
             }
 
-            // Filter only image files (e.g., .jpg, .jpeg, .png)
             const imageFiles = files.filter(file =>
                 extensions.includes(path.extname(file).toLowerCase())
             );
@@ -53,87 +38,55 @@ function con() {
                 return res.status(404).send('No background found');
             }
 
-            // Return the list of image files
-            // res.json(imageFiles);
-
-            // Choose the first image in the list (you could also randomize this)
+            /*
+             TODO: Add possibility to randomize from image in folder
+                Currently gets the first image
+             */
             const imageName = imageFiles[0];
             const imagePath = path.join(folderPath, imageName);
 
-            // Serve the image
             res.sendFile(imagePath);
         });
     });
 }
 
-function configureConfigEndpoint() {
-    app.get('/config/config.yaml', (req, res) => {
-        // const configPath = path.join(yamlPath + '/config.yaml');//
+function configureConfigEndpoint(app: Express, yamlPath: string) {
+    app.get('/config', (req, res) => {
         const configPath = path.join(yamlPath + '/config.yaml');
-        console.log(configPath)
-        fs.readFile(configPath, 'utf8', (err, data) => {
-            if (err) {
-                return res.status(500).send("Error reading config file");
+        try {
+            if (fs.existsSync(configPath)) {
+                const file = fs.readFileSync(configPath, 'utf8');
+                const config = yaml.load(file);
+                res.json(config);
+            } else {
+                res.status(404).send('Config file not found');
             }
-            res.type('yaml').send(data);
-        })
-    });
-
-    app.get('/config/ports', (req, res) => {
-        res.json({backendPort: config.port.backend, frontendPort: config.port.backend});
-    });
-}
-
-// Unfinished
-function configureBackgroundImageEndpoint() {
-    app.get('/background/:filename', (req, res) => {
-        const filename = req.params.filename;
-
-        let filePath;
-        for (const ext of extensions) {
-            filePath = path.join(backgroundPath, filename + ext);
-            if (fs.existsSync(filePath)) {
-                res.sendFile(filePath);
-                return;
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                console.error(`Error reading config file: ${err.message}`);
+                res.status(500).send(`Error reading config file: ${err.message}`);
+            } else {
+                console.error('Unknown error reading config file');
+                res.status(500).send('Unknown error reading config file');
             }
         }
-
-        res.status(404).send('File not found');
     });
 }
 
-function configureSimpleEndpoint() {
-    // Simple route to check if the server is running
-    app.get('/', (req, res) => {
-        res.send('Hello from the backend!');
-    });
-}
-
-
-function configureFrontend() {
-    // Serve the frontend (static files) from the `frontend` folder
-    // app.use(express.static(path.join(__dirname, 'frontend')));  // Serve static files
-    const s = path.join(__dirname, '..', 'frontend');
-    // console.log("1: " + s)
-    app.use('/', express.static(path.join(__dirname, '..', 'frontend')));
-
-// Serve the index.html for the root route
-    app.get('/', (req, res) => {
-        const s = path.join(__dirname, '..', 'frontend', 'index.html');
-        // console.log("2: " + s)
+function configureDefaultEndpoint(app: Express) {
+    app.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
     });
-
-// Example API route
-    app.get('/api/hello', (req, res) => {
-        res.json({message: 'Hello from the backend!'});
-    });
 }
 
-export function configureEndpoints() {
-    configureFrontend();
-    configureEmotesEndpoint();
-    configureConfigEndpoint();
-    // configureBackgroundImageEndpoint()
-    con();
+export function configureEndpoints(app: Express,
+                                   frontendPath: string,
+                                   emotePath: string,
+                                   yamlPath: string,
+                                   backgroundPath: string) {
+    app.use(express.static(frontendPath));
+    configureEmotesEndpoint(app, emotePath);
+    configureConfigEndpoint(app, yamlPath);
+    configureBackgroundImageEndpoint(app, backgroundPath);
+    configureDefaultEndpoint(app);
 }

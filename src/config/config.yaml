@@ -2,7 +2,7 @@ youtube:
   # Your google API key here
   apiKey:
 
-    # Your video id goes here
+  # Your video id goes here
   # https://www.youtube.com/watch?v=K-SGpb7pO3w
   # The id is everything after v= so  K-SGpb7pO3w
   # Only works when a stream is live
@@ -16,7 +16,7 @@ youtube:
 
 # Port to be used by the app
 port:
-  backend: 8080
+  port: 8080
 
 # ------------------------------------------------------------------------------
 

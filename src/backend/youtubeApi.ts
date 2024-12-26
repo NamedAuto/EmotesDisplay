@@ -1,9 +1,8 @@
-import {youtube} from "./server";
-
+import {getYoutube} from "./configureYoutube";
 
 // https://developers.google.com/youtube/v3/docs/videos#liveStreamingDetails.activeLiveChatId
 export async function getLiveChatId(videoId: string) {
-    const response = await youtube.videos.list({
+    const response = await getYoutube().videos.list({
         part: ['liveStreamingDetails'],
         id: [videoId],
     });
@@ -14,7 +13,7 @@ export async function getLiveChatId(videoId: string) {
 
 // https://developers.google.com/youtube/v3/live/docs/liveChatMessages
 export async function getLiveChatMessages(liveChatId: string, pageToken?: string) {
-    const response = await youtube.liveChatMessages.list({
+    const response = await getYoutube().liveChatMessages.list({
         liveChatId,
         part: ['snippet', 'authorDetails'],
         pageToken,
@@ -29,7 +28,7 @@ export async function getLiveChatMessages(liveChatId: string, pageToken?: string
 
 // https://developers.google.com/youtube/v3/live/docs/liveChatMessages
 export async function getLiveChatMessagesNoPageToken(liveChatId: string) {
-    const response = await youtube.liveChatMessages.list({
+    const response = await getYoutube().liveChatMessages.list({
         liveChatId,
         part: ['snippet', 'authorDetails'],
     });
