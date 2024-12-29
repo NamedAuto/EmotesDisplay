@@ -1,0 +1,75 @@
+youtube:
+  # Your google API key here
+  apiKey: AIzaSyAxOjESchGSZKbX4bgXOI9RWLno8YnFERA
+
+  # Your video id goes here
+  # https://www.youtube.com/watch?v=K-SGpb7pO3w
+  # The id is everything after v= so  K-SGpb7pO3w
+  # Only works when a stream is live
+  videoId: wv_vQ8x_4MM
+
+  # Delay before new message is received from YouTube
+  # This number is in seconds
+  messageDelay: 5
+
+# ------------------------------------------------------------------------------
+
+# Port to be used by the app
+port: 
+  app: 8080
+  browser: 8080
+
+# ------------------------------------------------------------------------------
+
+# Have not tested changing this
+aspectRatio:
+  width: 1920
+  height: 1080
+
+  # Images larger than 1920x1080 are scaled down to 1920x1080 and then
+  # scaled further down to prevent emotes from going out of view when at the edge
+  scaleCanvas: 0.9
+
+  # Images will not scale higher than 1920x1080
+  # Scaling includes the transparent parts as well
+  scaleImage: 1
+
+  # Emote sizes
+  # Should be set the same for both width and height
+  # width = height
+
+emote:
+  width: 50
+  height: 50
+
+  # Increase or decrease emote size by up to the number below
+  randomSizeIncrease: 10
+  randomSizeDecrease: 10
+
+  # The max amount of emotes displayed before the oldest one is removed
+  maxEmoteCount: 200
+
+  # Add rounded edges around the emote.
+  # NOTE: the rounded parts of the emote will be cut off
+  # 0 leaves the emote alone
+  # 50 turns the emote into a circle
+  # 50 is the highest so anything higher will be seen as 50
+  roundness: 0
+
+  # Add a background color to the transparent parts of an emote.
+  # Can use RGBA or Hex with alpha
+  # rgba(255, 255, 255, 0) and #FFFFFF00 are transparent
+  backgroundColor: "rgba(255, 255, 255, 0)"
+
+# ------------------------------------------------------------------------------
+
+testing:
+  # show emotes to see an example of how this program works
+  # true = yes to test
+  # false = false to test
+  test: true
+
+  # How long to wait before the next emote pops up on the screen during a test
+  # A lower number means the emotes pop up faster
+  # This number is in seconds
+  speedOfEmotes: 1000
