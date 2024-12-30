@@ -4,3 +4,4 @@ frontend/dist
 frontend/pnpm-lock.yaml
 frontend/package.json.md5
 frontend/wailsjs
+public

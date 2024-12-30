@@ -38,6 +38,7 @@ initialize();
 
 function setupSocket() {
   console.log(getConfig().Port.App);
+  console.log(`${window.location.hostname}:${window.location.port}`)
   socket = new WebSocket(`http://localhost:${getConfig().Port.App}/ws`);
 
   socket.onopen = () => {

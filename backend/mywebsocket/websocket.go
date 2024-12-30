@@ -42,7 +42,7 @@ func (handler *WebSocketHandler) EmitToAll(emoteMap map[string]string) {
 	// message := getRandomEmoteValue(emoteMap)
 	emote := getRandomEmoteKey(emoteMap)
 	message := parseEmoteToURL(emote, "http://localhost:8080/emotes/")
-	fmt.Printf("Emit: %s\n", message)
+	// fmt.Printf("Emit: %s\n", message)
 
 	msg := map[string]string{
 		"type": "new-emote",
@@ -72,7 +72,8 @@ func ConfigureUpgrader(allowedOrigin string) websocket.Upgrader {
 			fmt.Println("Received connection attempt from origin:", r.Header.Get("Origin"))
 			fmt.Println(r)
 			origin := r.Header.Get("Origin")
-			if origin == allowedOrigin {
+			if origin == "http://wails.localhost:34115" || origin == "http://localhost:5173" {
+				// if origin == "http://wails.localhost:8080" || origin == "http://localhost:8080" {
 				return true
 			}
 			log.Printf("Invalid origin: %s", origin)

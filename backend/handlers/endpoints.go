@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"embed"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -13,6 +14,8 @@ import (
 
 	"gopkg.in/yaml.v2"
 )
+
+var assets embed.FS
 
 var extensions = []string{".png", ".jpg", ".jpeg", ".webp", ".gif"} // Add more extensions as needed
 
@@ -109,6 +112,7 @@ func configureConfigEndpoint(mux *http.ServeMux, yamlPath string) {
 func configureDefaultEndpoint(mux *http.ServeMux, frontendPath string) {
 	// fs := http.FileServer(http.Dir("../frontend/dist"))
 	// http.Handle("/", fs)
+
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		cwd, err := os.Getwd()
 		if err != nil {
@@ -116,7 +120,7 @@ func configureDefaultEndpoint(mux *http.ServeMux, frontendPath string) {
 		}
 
 		if r.URL.Path == "/" || r.URL.Path == "/index.html" {
-			http.ServeFile(w, r, filepath.Join(cwd, "frontend/index.html"))
+			http.ServeFile(w, r, filepath.Join(cwd, "index.html"))
 		} else {
 			http.NotFound(w, r)
 		}
@@ -130,6 +134,36 @@ func configureDefaultEndpoint(mux *http.ServeMux, frontendPath string) {
 
 		// http.ServeFile(w, r, filepath.Join(cwd, "backend/index.html"))
 	})
+
+	/*
+			frontendFS, err := fs.Sub(assets, "frontend/dist")
+		if err != nil {
+			log.Fatalf("Failed to get embedded filesystem: %v", err)
+		}
+		fileServer := http.FileServer(http.FS(frontendFS))
+
+		mux.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.URL.Path == "/" {
+				file, err := frontendFS.Open("index.html")
+				if err != nil {
+					log.Printf("Failed to open index.html: %v", err)
+					http.NotFound(w, r)
+					return
+				}
+
+				fileInfo, err := fs.ReadFile(frontendFS, "index.html")
+				if err != nil {
+					log.Printf("Failed to open index.html: %v", err)
+					http.NotFound(w, r)
+					return
+				}
+				print(file)
+				http.ServeContent(w, r, "index.html", time.Now(), bytes.NewReader(fileInfo))
+			} else {
+				fileServer.ServeHTTP(w, r)
+			}
+		}))
+	*/
 }
 
 func ConfigureEndpoints(mux *http.ServeMux, frontendPath string, emotePath string, yamlPath string, backgroundPath string) {
