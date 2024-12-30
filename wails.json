@@ -11,7 +11,6 @@
     "email": ""
   },
   "frontend": {
-    "useWebpack": true,
     "useTypescript": true,
     "dir": "./src",
     "output": "./dist"

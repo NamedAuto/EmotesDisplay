@@ -38,6 +38,7 @@ func configureEmotesEndpoint(mux *http.ServeMux, emotePath string) {
 // ConfigureBackgroundImageEndpoint sets up the /background endpoint.
 func configureBackgroundImageEndpoint(mux *http.ServeMux, backgroundPath string) {
 	mux.HandleFunc("/background", func(w http.ResponseWriter, r *http.Request) {
+		log.Println("In background")
 		folderPath := backgroundPath
 		files, err := os.ReadDir(folderPath)
 		if err != nil {
@@ -57,6 +58,7 @@ func configureBackgroundImageEndpoint(mux *http.ServeMux, backgroundPath string)
 			return
 		}
 
+		log.Println("Background serving?")
 		imageName := imageFiles[0]
 		imagePath := filepath.Join(folderPath, imageName)
 		http.ServeFile(w, r, imagePath)
@@ -119,11 +121,16 @@ func configureDefaultEndpoint(mux *http.ServeMux, frontendPath string) {
 			log.Fatalf("Error getting current working directory: %v", err)
 		}
 
-		if r.URL.Path == "/" || r.URL.Path == "/index.html" {
-			http.ServeFile(w, r, filepath.Join(cwd, "index.html"))
-		} else {
-			http.NotFound(w, r)
-		}
+		log.Println("I AM IN / -> " + cwd)
+		log.Println("FrontEndPath -> " + frontendPath)
+
+		// if r.URL.Path == "/" || r.URL.Path == "/index.html" {
+		// 	log.Println("I AM IN / -> Serving")
+		http.ServeFile(w, r, filepath.Join(frontendPath, "index.html"))
+		// } else {
+		// 	log.Println("I AM IN / -> Not Found")
+		// 	http.NotFound(w, r)
+		// }
 
 		// if r.URL.Path != "/" {
 		// 	println("!= /")
@@ -133,6 +140,17 @@ func configureDefaultEndpoint(mux *http.ServeMux, frontendPath string) {
 		// }
 
 		// http.ServeFile(w, r, filepath.Join(cwd, "backend/index.html"))
+	})
+
+	// Custom handler for JavaScript files to set the correct MIME type
+	mux.HandleFunc("/assets/", func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasSuffix(r.URL.Path, ".js") {
+			w.Header().Set("Content-Type", "application/javascript")
+		} else if strings.HasSuffix(r.URL.Path, ".css") {
+			w.Header().Set("Content-Type", "text/css")
+		}
+		log.Println(filepath.Join(frontendPath, "assets", r.URL.Path))
+		http.ServeFile(w, r, filepath.Join(frontendPath, r.URL.Path))
 	})
 
 	/*

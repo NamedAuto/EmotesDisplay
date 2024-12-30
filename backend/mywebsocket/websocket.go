@@ -72,7 +72,7 @@ func ConfigureUpgrader(allowedOrigin string) websocket.Upgrader {
 			fmt.Println("Received connection attempt from origin:", r.Header.Get("Origin"))
 			fmt.Println(r)
 			origin := r.Header.Get("Origin")
-			if origin == "http://wails.localhost:34115" || origin == "http://localhost:5173" {
+			if origin == "http://wails.localhost:34115" || origin == "http://localhost:5173" || origin == "http://localhost:8080" || origin == "http://wails.localhost:8080" {
 				// if origin == "http://wails.localhost:8080" || origin == "http://localhost:8080" {
 				return true
 			}

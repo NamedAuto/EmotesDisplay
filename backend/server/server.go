@@ -22,7 +22,7 @@ func StartServer(ctx context.Context) {
 	}
 	defer logFile.Close()
 	log.SetOutput(logFile)
-	log.Println("Starting application...")
+	log.Println("Starting application... In Server")
 
 	filepaths.SetupFilePaths()
 	myConfig, err := config.LoadConfig(filepaths.YamlPath)
