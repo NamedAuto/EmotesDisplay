@@ -14,6 +14,10 @@ import (
 	"time"
 )
 
+type PortConfig struct {
+	Port string
+}
+
 func StartServer(ctx context.Context) {
 	logFile, err := os.OpenFile("server.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
@@ -27,6 +31,7 @@ func StartServer(ctx context.Context) {
 	filepaths.SetupFilePaths()
 	myConfig, err := config.LoadConfig(filepaths.YamlPath)
 	config.YamlConfig = *myConfig // TODO FIX
+
 	emoteMap := config.GenerateEmoteMap(filepaths.EmotePath)
 	// fmt.Println("Formatted Emote Map:")
 	// for key, value := range emoteMap {

@@ -2,15 +2,28 @@
 // import './app.css';
 
 // import {io, Socket} from 'socket.io-client';
-import { getConfig, loadConfigFront } from "./config/configureConfigFront";
+import { getConfig, loadConfigFront, PORT } from "./config/configureConfigFront";
 // import './styles.css';
+
+let isWailsApp = typeof window.runtime !== "undefined";
+
+if (isWailsApp) {
+  window.runtime.EventsEmit("frontend-ready", "true");
+
+  // Listen for the "backend-port" event
+  window.runtime.EventsOn("backend-port", (data: string) => {
+    console.log("At Start Received backend port:", data);
+    // You can use the data here, for example:
+    const backendUrl = data;
+    console.log("Backend URL is:", backendUrl);
+  });
+}
 
 console.log("Starting HTML");
 
 let socket: WebSocket;
 // let background;
 
-export const PORT = 3124;
 
 async function initialize() {
   try {
