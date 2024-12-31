@@ -15,7 +15,6 @@ func maasdin() {
 
 	mux := http.NewServeMux()
 	handlers.ConfigureEndpoints(mux,
-		filepaths.FrontendPath,
 		filepaths.EmotePath,
 		filepaths.YamlPath,
 		filepaths.BackgroundPath)

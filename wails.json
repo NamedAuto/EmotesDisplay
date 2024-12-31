@@ -1,13 +1,13 @@
 {
   "$schema": "https://wails.io/schemas/config.v2.json",
-  "name": "Emotes_Display",
-  "outputfilename": "Emotes_Display",
+  "name": "Emotes Display",
+  "outputfilename": "Emotes Display",
   "frontend:install": "pnpm install",
   "frontend:build": "pnpm run build",
   "frontend:dev:watcher": "pnpm run dev",
   "frontend:dev:serverUrl": "auto",
   "author": {
-    "name": "",
+    "name": "NamedAuto",
     "email": ""
   },
   "frontend": {

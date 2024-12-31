@@ -44,7 +44,6 @@ func StartServer(ctx context.Context) {
 	url := fmt.Sprintf("http://localhost:%d", config.YamlConfig.Port.App)
 	mux.HandleFunc("/ws", mywebsocket.HandleConnections(url, handler))
 	handlers.ConfigureEndpoints(mux,
-		filepaths.FrontendPath,
 		filepaths.EmotePath,
 		filepaths.YamlPath,
 		filepaths.BackgroundPath)
