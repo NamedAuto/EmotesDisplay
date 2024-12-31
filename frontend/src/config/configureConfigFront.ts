@@ -4,19 +4,53 @@ import { PORT } from "../main";
 
 let config: Config;
 
-export async function loadConfigFront() {
-    try {
-        const response = await fetch(`http://localhost:${PORT}/config`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        config = await response.json();
-        console.log(config)
-        console.log(config.Port.App)
+let isWailsApp = typeof window.runtime !== "undefined";
 
-    } catch (error) {
-        console.error('Error fetching config:', error);
+export async function loadConfigFront() {
+
+    if(isWailsApp) {
+        console.log("I AM RUNNING IN WAILS")
+        try {
+            const response = await fetch(`http://localhost:${PORT}/config`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            config = await response.json();
+            console.log(config)
+            console.log(config.Port.App)
+    
+        } catch (error) {
+            console.error('Error fetching config:', error);
+        }
+        
+    } else {
+        console.log("I AM RUNNING IN A BROWSER")
+        try {
+            const response = await fetch(`/config`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            config = await response.json();
+            console.log(config)
+            console.log(config.Port.App)
+    
+        } catch (error) {
+            console.error('Error fetching config:', error);
+        }
     }
+
+    // try {
+    //     const response = await fetch(`http://localhost:${PORT}/config`);
+    //     if (!response.ok) {
+    //         throw new Error(`HTTP error! status: ${response.status}`);
+    //     }
+    //     config = await response.json();
+    //     console.log(config)
+    //     console.log(config.Port.App)
+
+    // } catch (error) {
+    //     console.error('Error fetching config:', error);
+    // }
 }
 
 export const getConfig = (): Config => {

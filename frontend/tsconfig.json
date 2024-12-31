@@ -22,8 +22,8 @@
     "skipLibCheck": true
   },
   "include": [
-    "src"
-    // "./src/**/*"
+    "./src/**/*",
+    "./src/window.d.ts"
   ],
   "exclude": [
     "node_modules",
