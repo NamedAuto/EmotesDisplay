@@ -15,7 +15,7 @@ import (
 )
 
 func StartServer(ctx context.Context) {
-	logFile, err := os.OpenFile("output.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	logFile, err := os.OpenFile("server.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		fmt.Println("Failed to open log file:", err)
 		return
@@ -26,8 +26,8 @@ func StartServer(ctx context.Context) {
 
 	filepaths.SetupFilePaths()
 	myConfig, err := config.LoadConfig(filepaths.YamlPath)
+	config.YamlConfig = *myConfig // TODO FIX
 	emoteMap := config.GenerateEmoteMap(filepaths.EmotePath)
-
 	// fmt.Println("Formatted Emote Map:")
 	// for key, value := range emoteMap {
 	// 	fmt.Printf("%s: %s\n", key, value)
@@ -40,14 +40,16 @@ func StartServer(ctx context.Context) {
 
 	handler := &mywebsocket.WebSocketHandler{}
 	mux := http.NewServeMux()
-	mux.HandleFunc("/ws", mywebsocket.HandleConnections("http://localhost:8080", handler))
+	// middleware.ConfigureCORS(mux, config.AppConfig{})
+	url := fmt.Sprintf("http://localhost:%d", config.YamlConfig.Port.App)
+	mux.HandleFunc("/ws", mywebsocket.HandleConnections(url, handler))
 	handlers.ConfigureEndpoints(mux,
 		filepaths.FrontendPath,
 		filepaths.EmotePath,
 		filepaths.YamlPath,
 		filepaths.BackgroundPath)
 
-	middleware.ConfigureCORS(mux, config.AppConfig{})
+	// middleware.CorsMiddleware(mux)
 	// myyoutube.ConfigureYoutube(ctx, config.YamlConfig.Youtube.ApiKey)
 
 	if myConfig.Testing.Test {
@@ -63,12 +65,12 @@ func StartServer(ctx context.Context) {
 		println("Would read messages")
 	}
 
-	log.Println("Server is starting on port 8080...")
-	err = http.ListenAndServe(":8080", mux)
+	log.Printf("Server is starting on port %d...", config.YamlConfig.Port.App)
+	err = http.ListenAndServe(fmt.Sprintf(":%d", config.YamlConfig.Port.App),
+		middleware.ConfigureCORS(mux, config.AppConfig{}))
 	if err != nil {
 		log.Fatalf("Server failed to start: %v", err)
 	}
-
 }
 
 // func main() {

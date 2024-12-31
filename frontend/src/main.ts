@@ -10,6 +10,8 @@ console.log("Starting HTML");
 let socket: WebSocket;
 // let background;
 
+export const PORT = 3124;
+
 async function initialize() {
   try {
     await loadConfigFront();
@@ -41,8 +43,9 @@ initialize();
 
 function setupSocket() {
   console.log(getConfig().Port.App);
-  console.log(`${window.location.hostname}:${window.location.port}`)
-  socket = new WebSocket(`http://localhost:${getConfig().Port.App}/ws`);
+  console.log(`${window.location.hostname}:${window.location.port}`);
+  // socket = new WebSocket(`http://localhost:${getConfig().Port.App}/ws`);
+  socket = new WebSocket(`http://localhost:${PORT}/ws`);
 
   socket.onopen = () => {
     console.log("Connected to Socket.io server");
@@ -118,6 +121,7 @@ function loadImageOntoCanvas(): void {
 
   // image+='/circle.png'
 
+  triangleImage.crossOrigin = "anonymous";
   triangleImage.onload = () => {
     setContainerAndCanvasSize();
     ctx.clearRect(0, 0, triangleCanvas.width, triangleCanvas.height);
@@ -142,8 +146,9 @@ function isWithinTriangle(x: number, y: number): boolean {
 // Function to create a new emote element
 function createEmote(emoteUrl: string): HTMLImageElement {
   const emote = document.createElement("img");
-  emote.src = emoteUrl;
+  emote.crossOrigin = "anonymous";
   emote.className = "emote";
+  emote.src = emoteUrl;
   changeEmoteSizeRandom(emote);
   emote.style.borderRadius = getConfig().Emote.Roundness + "%";
   emote.style.backgroundColor = getConfig().Emote.BackgroundColor;

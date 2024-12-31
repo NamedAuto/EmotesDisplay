@@ -12,7 +12,8 @@
   },
   "frontend": {
     "useTypescript": true,
-    "dir": "./src",
-    "output": "./dist"
+    "dir": "./frontend/dist",
+    "output": "./frontend/dist",
+    "entry": "./frontend/dist/index.html"
   }
 }

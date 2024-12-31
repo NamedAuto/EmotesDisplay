@@ -1,11 +1,12 @@
 import yaml from "js-yaml";
 import { Config } from "./Config";
+import { PORT } from "../main";
 
 let config: Config;
 
 export async function loadConfigFront() {
     try {
-        const response = await fetch('/config');
+        const response = await fetch(`http://localhost:${PORT}/config`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -28,7 +29,7 @@ export const getConfig = (): Config => {
 
 export async function loadImage() {
     try {
-        const response = await fetch('/images');
+        const response = await fetch(`http://localhost:${PORT}/images`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }

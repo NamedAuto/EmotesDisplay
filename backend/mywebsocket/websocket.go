@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"myproject/backend/config"
 	"net/http"
 	"regexp"
 	"sync"
@@ -41,8 +42,9 @@ func (handler *WebSocketHandler) EmitToAll(emoteMap map[string]string) {
 
 	// message := getRandomEmoteValue(emoteMap)
 	emote := getRandomEmoteKey(emoteMap)
-	message := parseEmoteToURL(emote, "http://localhost:8080/emotes/")
-	// fmt.Printf("Emit: %s\n", message)
+	url := fmt.Sprintf("http://localhost:%d/emotes/", config.YamlConfig.Port.App)
+	message := parseEmoteToURL(emote, url)
+	fmt.Printf("Emit: %s\n", message)
 
 	msg := map[string]string{
 		"type": "new-emote",
@@ -72,7 +74,10 @@ func ConfigureUpgrader(allowedOrigin string) websocket.Upgrader {
 			fmt.Println("Received connection attempt from origin:", r.Header.Get("Origin"))
 			fmt.Println(r)
 			origin := r.Header.Get("Origin")
-			if origin == "http://wails.localhost:34115" || origin == "http://localhost:5173" || origin == "http://localhost:8080" || origin == "http://wails.localhost:8080" {
+			fmt.Printf("The Origin: %s\n", origin)
+			url := fmt.Sprintf("http://localhost:%d", config.YamlConfig.Port.App)
+			if origin == "http://wails.localhost:34115" || origin == "http://localhost:5173" || origin == url || origin == "http://wails.localhost" {
+				fmt.Println("Is True Origin")
 				// if origin == "http://wails.localhost:8080" || origin == "http://localhost:8080" {
 				return true
 			}
@@ -89,13 +94,14 @@ func HandleConnections(allowedOrigin string, handler *WebSocketHandler) http.Han
 		upgrader := ConfigureUpgrader(allowedOrigin)
 		fmt.Println("Attempting to upgrade to WebSocket...")
 		ws, err := upgrader.Upgrade(w, r, nil)
+		fmt.Println("AFter Upgrade?")
 		if err != nil {
-			log.Printf("Upgrade error: %v", err)
+			fmt.Printf("Upgrade error: %v", err)
 			return
 		}
 		defer ws.Close() // Ensure the WebSocket is closed when done
 
-		log.Printf("Client connected: %s", ws.RemoteAddr().String())
+		fmt.Printf("Client connected: %s", ws.RemoteAddr().String())
 		handler.AddConnection(ws)
 		// handler.ws = ws
 
