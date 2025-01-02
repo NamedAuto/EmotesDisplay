@@ -4,20 +4,19 @@ import (
 	"fmt"
 	"log"
 	"myproject/backend/config"
-	"myproject/backend/filepaths"
 	"myproject/backend/handlers"
 	"myproject/backend/middleware"
 	"net/http"
 )
 
 func maasdin() {
-	filepaths.SetupFilePaths()
+	config.SetupFilePaths()
 
 	mux := http.NewServeMux()
 	handlers.ConfigureEndpoints(mux,
-		filepaths.EmotePath,
-		filepaths.YamlPath,
-		filepaths.BackgroundPath)
+		config.EmotePath,
+		config.YamlPath,
+		config.BackgroundPath)
 
 	middleware.ConfigureCORS(mux, config.AppConfig{})
 

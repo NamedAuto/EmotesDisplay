@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"myproject/backend/config"
 	"net/http"
+	"os"
 	"regexp"
 	"sync"
 	"time"
@@ -36,13 +36,12 @@ func (handler *WebSocketHandler) RemoveConnection(ws *websocket.Conn) {
 	}
 }
 
-func (handler *WebSocketHandler) EmitToAll(emoteMap map[string]string) {
+func (handler *WebSocketHandler) EmitToAll(port int, emoteMap map[string]string) {
 	handler.mu.Lock()
 	defer handler.mu.Unlock()
 
-	// message := getRandomEmoteValue(emoteMap)
 	emote := getRandomEmoteKey(emoteMap)
-	url := fmt.Sprintf("http://localhost:%d/emotes/", config.YamlConfig.Port.App)
+	url := generateEmotesUrl(port)
 	message := parseEmoteToURL(emote, url)
 	fmt.Printf("Emit: %s\n", message)
 
@@ -67,48 +66,49 @@ func (handler *WebSocketHandler) EmitToAll(emoteMap map[string]string) {
 	}
 }
 
-// ConfigureUpgrader creates a new WebSocket upgrader with custom settings.
-func ConfigureUpgrader(allowedOrigin string) websocket.Upgrader {
+func ConfigureUpgrader(port int, allowedOrigin string) websocket.Upgrader {
 	return websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
-			fmt.Println("Received connection attempt from origin:", r.Header.Get("Origin"))
-			fmt.Println(r)
+			log.Println("Received connection attempt from origin:", r.Header.Get("Origin"))
 			origin := r.Header.Get("Origin")
-			fmt.Printf("The Origin: %s\n", origin)
-			url := fmt.Sprintf("http://localhost:%d", config.YamlConfig.Port.App)
-			if origin == "http://wails.localhost:34115" || origin == "http://localhost:5173" || origin == url || origin == "http://wails.localhost" {
-				fmt.Println("Is True Origin")
-				// if origin == "http://wails.localhost:8080" || origin == "http://localhost:8080" {
-				return true
+			url := generateBaseUrl(port)
+
+			env := os.Getenv("ENV")
+			if env == "development" {
+				log.Println("In development in ws upgrader")
+				if origin == "http://wails.localhost:34115" ||
+					origin == "http://localhost:5173" ||
+					origin == url {
+					return true
+				}
+			} else {
+				// Allow wails window to connect to ws
+				if origin == url || origin == "http://wails.localhost" {
+					return true
+				}
 			}
+
 			log.Printf("Invalid origin: %s", origin)
 			return false
 		},
 	}
 }
 
-// HandleConnections handles incoming WebSocket connections.
-func HandleConnections(allowedOrigin string, handler *WebSocketHandler) http.HandlerFunc {
+func HandleConnections(port int, allowedOrigin string, handler *WebSocketHandler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("HTTP handler invoked")
-		upgrader := ConfigureUpgrader(allowedOrigin)
-		fmt.Println("Attempting to upgrade to WebSocket...")
+		upgrader := ConfigureUpgrader(port, allowedOrigin)
+		log.Println("Attempting to upgrade to WebSocket...")
 		ws, err := upgrader.Upgrade(w, r, nil)
-		fmt.Println("AFter Upgrade?")
 		if err != nil {
-			fmt.Printf("Upgrade error: %v", err)
+			log.Printf("Upgrade error: %v", err)
 			return
 		}
-		defer ws.Close() // Ensure the WebSocket is closed when done
+		defer ws.Close()
 
-		fmt.Printf("Client connected: %s", ws.RemoteAddr().String())
+		log.Printf("Client connected: %s", ws.RemoteAddr().String())
 		handler.AddConnection(ws)
-		// handler.ws = ws
 
-		// Channel to signal the end of the connection
 		done := make(chan struct{})
-
-		// Goroutine to read messages
 		go func() {
 			defer close(done)
 			for {
@@ -121,26 +121,22 @@ func HandleConnections(allowedOrigin string, handler *WebSocketHandler) http.Han
 			}
 		}()
 
-		// Wait for the read goroutine to finish
 		<-done
 
 		handler.RemoveConnection(ws)
 		log.Printf("Client disconnected: %s", ws.RemoteAddr().String())
-		// handler.ws = nil
 	}
 }
 
-// func (handler *WebSocketHandler) EmitFunction(emoteMap map[string]string) {
-// 	message := getRandomEmote(emoteMap)
-// 	err := handler.ws.WriteMessage(websocket.TextMessage, []byte(message))
-// 	if err != nil {
-// 		log.Printf("Write error: %v", err)
-// 	}
+func generateBaseUrl(port int) string {
+	return fmt.Sprintf("http://localhost:%d", port)
+}
 
-// }
+func generateEmotesUrl(port int) string {
+	return fmt.Sprintf("http://localhost:%d/emotes/", port)
+}
 
 func getRandomEmoteValue(emoteMap map[string]string) string {
-	// Extract the keys of the map into a slice
 	keys := make([]string, 0, len(emoteMap))
 	for _, key := range emoteMap {
 		keys = append(keys, key)
@@ -154,7 +150,6 @@ func getRandomEmoteValue(emoteMap map[string]string) string {
 }
 
 func getRandomEmoteKey(emoteMap map[string]string) string {
-	// Extract the keys of the map into a slice
 	keys := make([]string, 0, len(emoteMap))
 	for key := range emoteMap {
 		keys = append(keys, key)
@@ -165,7 +160,6 @@ func getRandomEmoteKey(emoteMap map[string]string) string {
 }
 
 func parseEmoteToURL(emote string, url string) string {
-
 	re := regexp.MustCompile(`[:_]`)
 	cleanedText := re.ReplaceAllString(emote, "")
 	emoteURL := url + cleanedText
@@ -173,32 +167,7 @@ func parseEmoteToURL(emote string, url string) string {
 	return emoteURL
 }
 
-// func (handler *WebSocketHandler) EmitFunction(generateMessage func() interface{}) {
-// 	// Call the provided function to get the message
-// 	message := generateMessage()
-
-// 	// Use type assertion to handle different data types
-// 	switch v := message.(type) {
-// 	case string:
-// 		// Send string message through the WebSocket connection
-// 		err := handler.ws.WriteMessage(websocket.TextMessage, []byte(v))
-// 		if err != nil {
-// 			log.Printf("Write error: %v", err)
-// 		}
-// 	case int32:
-// 		// Convert int32 to string and send through the WebSocket connection
-// 		msg := fmt.Sprintf("%d", v)
-// 		err := handler.ws.WriteMessage(websocket.TextMessage, []byte(msg))
-// 		if err != nil {
-// 			log.Printf("Write error: %v", err)
-// 		}
-// 	default:
-// 		log.Printf("Unsupported message type: %T", v)
-// 	}
-// }
-
 func (handler *WebSocketHandler) RunAtFlag(interval time.Duration, fn func(), stopChan chan bool) {
-	// Create a ticker that triggers at the specified interval
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 
@@ -207,7 +176,7 @@ func (handler *WebSocketHandler) RunAtFlag(interval time.Duration, fn func(), st
 		case <-ticker.C:
 			fn()
 		case <-stopChan:
-			fmt.Println("Ending function")
+			log.Println("Ending function")
 			return
 		}
 	}

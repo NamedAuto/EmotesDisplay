@@ -6,6 +6,7 @@ toolchain go1.23.4
 
 require (
 	github.com/gorilla/websocket v1.5.3
+	github.com/joho/godotenv v1.5.1
 	github.com/rs/cors v1.11.1
 	github.com/wailsapp/wails/v2 v2.9.2
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1

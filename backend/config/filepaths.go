@@ -1,4 +1,4 @@
-package filepaths
+package config
 
 import (
 	"log"
@@ -14,8 +14,6 @@ var (
 
 func SetupFilePaths() {
 	env := os.Getenv("ENV")
-
-	log.Println("ENV: " + env)
 
 	if env == "development" {
 		log.Println("In development")
@@ -42,9 +40,7 @@ func SetupFilePaths() {
 		BackgroundPath = filepath.Join(exeDir, "public", "background")
 	}
 
-	log.Printf("EMOTEPATH: %s", EmotePath)
-	log.Printf("YAMLPATH: %s", YamlPath)
-	log.Printf("BACKGROUNDPATH: %s", BackgroundPath)
-
-	// }
+	// log.Printf("EMOTEPATH: %s", EmotePath)
+	// log.Printf("YAMLPATH: %s", YamlPath)
+	// log.Printf("BACKGROUNDPATH: %s", BackgroundPath)
 }

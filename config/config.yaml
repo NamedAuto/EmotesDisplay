@@ -3,10 +3,7 @@ youtube:
   apiKey: AIzaSyAxOjESchGSZKbX4bgXOI9RWLno8YnFERA
 
   # Your video id goes here
-  # https://www.youtube.com/watch?v=K-SGpb7pO3w
-  # The id is everything after v= so  K-SGpb7pO3w
-  # Only works when a stream is live
-  videoId: wv_vQ8x_4MM
+  videoId: 
 
   # Delay before new message is received from YouTube
   # This number is in seconds
@@ -14,10 +11,9 @@ youtube:
 
 # ------------------------------------------------------------------------------
 
-# Port to be used by the app
-port: 
-  app: 3124
-  browser: 3124
+# Port to be used by the app Default = 3124
+# Changing this will still work with the browser but the Windows window will be empty
+port: 3124
 
 # ------------------------------------------------------------------------------
 
@@ -38,6 +34,8 @@ aspectRatio:
   # Should be set the same for both width and height
   # width = height
 
+# ------------------------------------------------------------------------------
+
 emote:
   width: 50
   height: 50
@@ -49,11 +47,10 @@ emote:
   # The max amount of emotes displayed before the oldest one is removed
   maxEmoteCount: 200
 
-  # Add rounded edges around the emote.
-  # NOTE: the rounded parts of the emote will be cut off
+  # Add rounded edges around the emote. Emotes will be cut off at the edges
   # 0 leaves the emote alone
   # 50 turns the emote into a circle
-  # 50 is the highest so anything higher will be seen as 50
+  # Anythign higher than 50 defaults to 50
   roundness: 0
 
   # Add a background color to the transparent parts of an emote.
@@ -71,5 +68,5 @@ testing:
 
   # How long to wait before the next emote pops up on the screen during a test
   # A lower number means the emotes pop up faster
-  # This number is in seconds
+  # This number is in milliseconds
   speedOfEmotes: 1000

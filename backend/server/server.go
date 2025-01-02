@@ -1,89 +1,98 @@
 package server
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"myproject/backend/config"
-	"myproject/backend/filepaths"
 	"myproject/backend/handlers"
 	"myproject/backend/middleware"
 	"myproject/backend/mywebsocket"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
-func StartServer(ctx context.Context) {
+var emoteMap map[string]string
+
+var handler *mywebsocket.WebSocketHandler
+var mux *http.ServeMux
+
+func loadEmotes() {
+	emoteMap = config.GenerateEmoteMap(config.EmotePath)
+}
+
+func ConfigureConnection(myConfig *config.AppConfig) {
+	handler = &mywebsocket.WebSocketHandler{}
+
+	mux = http.NewServeMux()
+
+	url := fmt.Sprintf("http://localhost:%d", myConfig.Port)
+
+	mux.HandleFunc("/ws", mywebsocket.HandleConnections(myConfig.Port, url, handler))
+	handlers.ConfigureEndpoints(
+		mux,
+		config.EmotePath,
+		config.YamlPath,
+		config.BackgroundPath)
+}
+
+func startEmits(myConfig *config.AppConfig) {
+	if myConfig.Testing.Test {
+		duration := time.Duration(myConfig.Testing.SpeedOfEmotes) * time.Millisecond
+		go func() {
+			stopChan := make(chan bool)
+			handler.RunAtFlag(duration, func() { handler.EmitToAll(myConfig.Port, emoteMap) }, stopChan)
+			stopChan <- true
+		}()
+
+	} else {
+		println("Would read messages")
+	}
+}
+
+func listenAndServe(myConfig *config.AppConfig) {
+	go func() {
+		log.Printf("Server is starting on port %d...", myConfig.Port)
+		err := http.ListenAndServe(fmt.Sprintf(":%d", myConfig.Port),
+			middleware.ConfigureCORS(mux, config.AppConfig{}))
+		if err != nil {
+			log.Fatalf("Server failed to start: %v", err)
+		}
+	}()
+}
+
+func setLogOutput() {
 	logFile, err := os.OpenFile("server.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		fmt.Println("Failed to open log file:", err)
-		return
+		// return
 	}
+
 	defer logFile.Close()
 	log.SetOutput(logFile)
+}
+
+func StartServer() {
+	setLogOutput()
 	log.Println("Starting application... In Server")
 
-	filepaths.SetupFilePaths()
-	myConfig, err := config.LoadConfig(filepaths.YamlPath)
-	config.YamlConfig = *myConfig // TODO FIX
-	emoteMap := config.GenerateEmoteMap(filepaths.EmotePath)
+	godotenv.Load()
+
+	config.SetupFilePaths()
+	myConfig, err := config.LoadConfig(config.YamlPath)
+	println(err)
+
+	loadEmotes()
 	// fmt.Println("Formatted Emote Map:")
 	// for key, value := range emoteMap {
 	// 	fmt.Printf("%s: %s\n", key, value)
 	// }
 
-	if err != nil {
-		log.Fatalf("Error loading config: %v", err)
-	}
-	// port := myConfig.Port.App
+	ConfigureConnection(myConfig)
 
-	handler := &mywebsocket.WebSocketHandler{}
-	mux := http.NewServeMux()
-	// middleware.ConfigureCORS(mux, config.AppConfig{})
-	url := fmt.Sprintf("http://localhost:%d", config.YamlConfig.Port.App)
-	mux.HandleFunc("/ws", mywebsocket.HandleConnections(url, handler))
-	handlers.ConfigureEndpoints(mux,
-		filepaths.EmotePath,
-		filepaths.YamlPath,
-		filepaths.BackgroundPath)
+	startEmits(myConfig)
 
-	// middleware.CorsMiddleware(mux)
-	// myyoutube.ConfigureYoutube(ctx, config.YamlConfig.Youtube.ApiKey)
-
-	if myConfig.Testing.Test {
-		duration := time.Duration(myConfig.Testing.SpeedOfEmotes) * time.Millisecond
-		go func() {
-			stopChan := make(chan bool)
-			handler.RunAtFlag(duration, func() { handler.EmitToAll(emoteMap) }, stopChan)
-			stopChan <- true
-		}()
-
-		// go handler.RunAtFlag(duration, emoteMap, stopChan)
-	} else {
-		println("Would read messages")
-	}
-
-	log.Printf("Server is starting on port %d...", config.YamlConfig.Port.App)
-	err = http.ListenAndServe(fmt.Sprintf(":%d", config.YamlConfig.Port.App),
-		middleware.ConfigureCORS(mux, config.AppConfig{}))
-	if err != nil {
-		log.Fatalf("Server failed to start: %v", err)
-	}
+	listenAndServe(myConfig)
 }
-
-// func main() {
-//     env := os.Getenv("ENV")
-//     log.Printf("Current environment: %s", env)
-
-//     var dbConnection string
-//     if env == "development" {
-//         dbConnection = os.Getenv("DEV_DB_CONNECTION")
-//     } else if env == "production" {
-//         dbConnection = os.Getenv("PROD_DB_CONNECTION")
-//     }
-
-//     log.Printf("Database Connection: %s", dbConnection)
-
-//     // Start your application logic here
-// }

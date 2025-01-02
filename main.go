@@ -15,20 +15,10 @@ import (
 var assets embed.FS
 
 func main() {
-	log.Println("Starting application...")
-
-	// List embedded files to verify inclusion
-	files, err2 := assets.ReadDir("frontend/dist")
-	if err2 != nil {
-		log.Fatalf("Failed to read embedded files: %v", err2)
-	}
-	for _, file := range files {
-		log.Printf("Embedded file: %s", file.Name())
-	}
+	logEmbed()
 
 	// Create an instance of the app structure
 	app := NewApp()
-
 	/*
 		This is used due to wails needing the /frontend/dist/* embed in this file since
 		wails can serve the frontend automatically.
@@ -54,5 +44,16 @@ func main() {
 
 	if err != nil {
 		println("Error:", err.Error())
+	}
+}
+
+// List embedded files to verify inclusion
+func logEmbed() {
+	files, err2 := assets.ReadDir("frontend/dist")
+	if err2 != nil {
+		log.Fatalf("Failed to read embedded files: %v", err2)
+	}
+	for _, file := range files {
+		log.Printf("Embedded file: %s", file.Name())
 	}
 }

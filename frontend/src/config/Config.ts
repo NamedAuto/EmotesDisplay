@@ -33,9 +33,9 @@ interface TestingConfig {
 }
 
 export interface Config {
-    Port: PortConfig;
     Emote: EmoteConfig;
     Youtube: YoutubeConfig;
     AspectRatio: AspectRatioConfig;
     Testing: TestingConfig
+    Port: number
 }

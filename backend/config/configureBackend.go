@@ -44,17 +44,13 @@ type TestingConfig struct {
 // AppConfig struct definition
 type AppConfig struct {
 	Youtube     YoutubeConfig     `yaml:"youtube"`
-	Port        PortConfig        `yaml:"port"`
 	AspectRatio AspectRatioConfig `yaml:"aspectRatio"`
 	Emote       EmoteConfig       `yaml:"emote"`
 	Testing     TestingConfig     `yaml:"testing"`
+	Port        int               `yaml:"port"`
 }
 
-var YamlConfig AppConfig
-
 func LoadConfig(configPath string) (*AppConfig, error) {
-	tempPath := filepath.Join(configPath, "config.yaml")
-	println(tempPath)
 	file, err := os.Open(filepath.Join(configPath, "config.yaml"))
 	if err != nil {
 		log.Printf("Error opening file: %v", err)
@@ -66,9 +62,11 @@ func LoadConfig(configPath string) (*AppConfig, error) {
 	decoder := yaml.NewDecoder(file)
 	err = decoder.Decode(&config)
 	decoder.Decode(&config)
+
 	if err != nil {
 		log.Printf("Error decoding YAML: %v", err)
 		return nil, err
 	}
+
 	return &config, err
 }

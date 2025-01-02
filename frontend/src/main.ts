@@ -2,15 +2,17 @@
 // import './app.css';
 
 // import {io, Socket} from 'socket.io-client';
-import { getConfig, loadConfigFront } from "./config/configureConfigFront";
+import {
+  getConfig,
+  loadBackground,
+  loadConfigFront,
+} from "./config/configureConfigFront";
 // import './styles.css';
 
 console.log("Starting HTML");
 
 let socket: WebSocket;
 // let background;
-
-export const PORT = 3124;
 
 async function initialize() {
   try {
@@ -42,10 +44,10 @@ function main() {
 initialize();
 
 function setupSocket() {
-  console.log(getConfig().Port.App);
+  console.log(getConfig().Port);
   console.log(`${window.location.hostname}:${window.location.port}`);
   // socket = new WebSocket(`http://localhost:${getConfig().Port.App}/ws`);
-  socket = new WebSocket(`http://localhost:${PORT}/ws`);
+  socket = new WebSocket(`http://localhost:${getConfig().Port}/ws`);
 
   socket.onopen = () => {
     console.log("Connected to Socket.io server");
@@ -120,6 +122,15 @@ function loadImageOntoCanvas(): void {
   // }
 
   // image+='/circle.png'
+  loadBackground()
+    .then((url) => {
+      if (url) {
+        triangleImage.src = url + "?" + + new Date().getTime();
+      }
+    })
+    .catch((error) => {
+      console.error("Failed to load image:", error);
+    });
 
   triangleImage.crossOrigin = "anonymous";
   triangleImage.onload = () => {
@@ -133,7 +144,8 @@ function loadImageOntoCanvas(): void {
       triangleCanvas.height
     );
   };
-  triangleImage.src = triangleImage.src; // Trigger the onload event
+
+  // triangleImage.src = loadBackground() || ''; // Trigger the onload event
 }
 
 // Function to check if a point is within the triangle area using pixel data
@@ -148,7 +160,7 @@ function createEmote(emoteUrl: string): HTMLImageElement {
   const emote = document.createElement("img");
   emote.crossOrigin = "anonymous";
   emote.className = "emote";
-  emote.src = emoteUrl;
+  emote.src = emoteUrl + "?" + + new Date().getTime();
   changeEmoteSizeRandom(emote);
   emote.style.borderRadius = getConfig().Emote.Roundness + "%";
   emote.style.backgroundColor = getConfig().Emote.BackgroundColor;
