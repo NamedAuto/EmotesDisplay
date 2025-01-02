@@ -53,7 +53,7 @@ type AppConfig struct {
 func LoadConfig(configPath string) (*AppConfig, error) {
 	file, err := os.Open(filepath.Join(configPath, "config.yaml"))
 	if err != nil {
-		log.Printf("Error opening file: %v", err)
+		log.Fatalf("Error opening file: %v", err)
 		return nil, err
 	}
 	defer file.Close()
@@ -64,7 +64,7 @@ func LoadConfig(configPath string) (*AppConfig, error) {
 	decoder.Decode(&config)
 
 	if err != nil {
-		log.Printf("Error decoding YAML: %v", err)
+		log.Fatalf("Error decoding YAML: %v", err)
 		return nil, err
 	}
 

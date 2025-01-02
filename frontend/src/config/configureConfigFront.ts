@@ -1,14 +1,24 @@
 import yaml from "js-yaml";
 import { Config } from "./Config";
+import { GetPort } from "../../wailsjs/go/main/App";
 
 let config: Config;
-
-const WAILS_PORT = 3124;
 
 let isWailsApp = typeof window.runtime !== "undefined";
 
 export async function loadConfigFront() {
   if (isWailsApp) {
+
+    /*
+     The Wails window runs on wails.localhost, so it is unable to use "/config" as it 
+     will go to wails.localhost/config
+     The backend is listening localhost:<port>/config
+     Must wait for the backend to tell the frontend through a binding what port it is on
+     since the port can be changed
+    */
+    let WAILS_PORT = 3124
+    WAILS_PORT = await GetPort();
+
     console.log("I AM RUNNING IN WAILS");
     try {
       const response = await fetch(`http://localhost:${WAILS_PORT}/config`);
@@ -16,8 +26,7 @@ export async function loadConfigFront() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       config = await response.json();
-      console.log(config);
-      console.log(config.Port);
+
     } catch (error) {
       console.error("Error fetching config:", error);
     }
@@ -29,25 +38,11 @@ export async function loadConfigFront() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       config = await response.json();
-      console.log(config);
-      console.log(config.Port);
+
     } catch (error) {
       console.error("Error fetching config:", error);
     }
   }
-
-  // try {
-  //     const response = await fetch(`http://localhost:${PORT}/config`);
-  //     if (!response.ok) {
-  //         throw new Error(`HTTP error! status: ${response.status}`);
-  //     }
-  //     config = await response.json();
-  //     console.log(config)
-  //     console.log(config.Port.App)
-
-  // } catch (error) {
-  //     console.error('Error fetching config:', error);
-  // }
 }
 
 export const getConfig = (): Config => {

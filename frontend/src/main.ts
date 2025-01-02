@@ -18,11 +18,9 @@ async function initialize() {
   try {
     await loadConfigFront();
 
-    console.log("PAST CONFIG");
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", main);
     } else {
-      console.log("GOING TO MAIN");
       main();
     }
   } catch (error) {
@@ -32,9 +30,8 @@ async function initialize() {
 
 function main() {
   {
-    const boundary = document.getElementById("triangleContainer");
+    const boundary = document.getElementById("backgroundContainer");
     if (boundary) {
-      console.log(getConfig());
       setupSocket();
       loadImageOntoCanvas();
     }
@@ -44,30 +41,26 @@ function main() {
 initialize();
 
 function setupSocket() {
-  console.log(getConfig().Port);
-  console.log(`${window.location.hostname}:${window.location.port}`);
-  // socket = new WebSocket(`http://localhost:${getConfig().Port.App}/ws`);
-  socket = new WebSocket(`http://localhost:${getConfig().Port}/ws`);
+  const webSocketUrl = `http://localhost:${getConfig().Port}/ws`
+  socket = new WebSocket(webSocketUrl);
 
   socket.onopen = () => {
-    console.log("Connected to Socket.io server");
+    console.log(`Connected to websocker server: ${webSocketUrl}`);
     socket.send(
       JSON.stringify({ type: "message", data: "Hello from the frontend" })
     );
   };
 
-  // socket.emit('message', "Hello from the frontend");
-
   socket.onmessage = (event) => {
     const message = JSON.parse(event.data);
     if (message.type === "new-emote") {
       console.log("Received new emote: ", message.data);
-      placeEmote(message.data);
+      placeEmoteInBackground(message.data);
     }
   };
 
   socket.onclose = () => {
-    console.log("Disconnected from Socket.io server");
+    console.log("Disconnected from websocket server");
   };
 
   socket.onerror = (error) => {
@@ -75,14 +68,14 @@ function setupSocket() {
   };
 }
 
-const triangleContainer = document.getElementById("triangleContainer")!;
-const triangleImage = document.getElementById(
-  "triangleImage"
+const backgroundContainer = document.getElementById("backgroundContainer")!;
+const backgroundImage = document.getElementById(
+  "backgroundImage"
 ) as HTMLImageElement;
-const triangleCanvas = document.getElementById(
-  "triangleCanvas"
+const backgroundCanvas = document.getElementById(
+  "backgroundCanvas"
 ) as HTMLCanvasElement;
-const ctx = triangleCanvas.getContext("2d", { willReadFrequently: true })!;
+const ctx = backgroundCanvas.getContext("2d", { willReadFrequently: true })!;
 
 const emotes: HTMLImageElement[] = [];
 
@@ -91,8 +84,8 @@ function setContainerAndCanvasSize() {
   const scaleImage = getConfig().AspectRatio.ScaleImage;
   const maxWidth = getConfig().AspectRatio.Width * scaleCanvas;
   const maxHeight = getConfig().AspectRatio.Height * scaleCanvas;
-  const imageWidth = triangleImage.naturalWidth * scaleImage;
-  const imageHeight = triangleImage.naturalHeight * scaleImage;
+  const imageWidth = backgroundImage.naturalWidth * scaleImage;
+  const imageHeight = backgroundImage.naturalHeight * scaleImage;
   let newWidth = imageWidth;
   let newHeight = imageHeight;
 
@@ -104,63 +97,48 @@ function setContainerAndCanvasSize() {
     newHeight = imageHeight * scalingFactor;
   }
 
-  triangleContainer.style.width = `${newWidth}px`;
-  triangleContainer.style.height = `${newHeight}px`;
-  triangleCanvas.width = newWidth;
-  triangleCanvas.height = newHeight;
+  backgroundContainer.style.width = `${newWidth}px`;
+  backgroundContainer.style.height = `${newHeight}px`;
+  backgroundCanvas.width = newWidth;
+  backgroundCanvas.height = newHeight;
 }
 
-// Function to load the triangle image onto the canvas
 function loadImageOntoCanvas(): void {
-  // let image;
-  // // const imagePath = `file://${process.cwd()}/public/background/circle.png`;
-  // if(process.env.NODE_ENV === 'production') {
-  //     const execPath = process.execPath;
-  //     image =  path.join(path.dirname(execPath), 'background');
-  // } else {
-  //     image = path.join(process.cwd(), 'public', 'background');
-  // }
-
-  // image+='/circle.png'
   loadBackground()
     .then((url) => {
       if (url) {
-        triangleImage.src = url + "?" + + new Date().getTime();
+        backgroundImage.src = url + "?" + new Date().getTime();
       }
     })
     .catch((error) => {
       console.error("Failed to load image:", error);
     });
 
-  triangleImage.crossOrigin = "anonymous";
-  triangleImage.onload = () => {
+  backgroundImage.crossOrigin = "anonymous";
+  backgroundImage.onload = () => {
     setContainerAndCanvasSize();
-    ctx.clearRect(0, 0, triangleCanvas.width, triangleCanvas.height);
+    ctx.clearRect(0, 0, backgroundCanvas.width, backgroundCanvas.height);
     ctx.drawImage(
-      triangleImage,
+      backgroundImage,
       0,
       0,
-      triangleCanvas.width,
-      triangleCanvas.height
+      backgroundCanvas.width,
+      backgroundCanvas.height
     );
   };
-
-  // triangleImage.src = loadBackground() || ''; // Trigger the onload event
 }
 
-// Function to check if a point is within the triangle area using pixel data
-function isWithinTriangle(x: number, y: number): boolean {
+function isWithinBackground(x: number, y: number): boolean {
   const pixelData = ctx.getImageData(x, y, 1, 1).data;
   // Check if the alpha value is not transparent
   return pixelData[3] > 0;
 }
 
-// Function to create a new emote element
 function createEmote(emoteUrl: string): HTMLImageElement {
   const emote = document.createElement("img");
   emote.crossOrigin = "anonymous";
   emote.className = "emote";
-  emote.src = emoteUrl + "?" + + new Date().getTime();
+  emote.src = emoteUrl + "?" + new Date().getTime();
   changeEmoteSizeRandom(emote);
   emote.style.borderRadius = getConfig().Emote.Roundness + "%";
   emote.style.backgroundColor = getConfig().Emote.BackgroundColor;
@@ -182,32 +160,30 @@ function changeEmoteSizeRandom(emote: HTMLImageElement) {
   emote.style.height = newHeight + "px";
 }
 
-// Function to set the position of an emote
 function setPosition(emote: HTMLImageElement, x: number, y: number): void {
   emote.style.left = `${x}px`;
   emote.style.top = `${y}px`;
 }
 
-// Function to place an emote within the triangle
-function placeEmote(emoteUrl: string): void {
+function placeEmoteInBackground(emoteUrl: string): void {
   const emote = createEmote(emoteUrl);
   let x: number;
   let y: number;
 
   do {
-    x = Math.random() * triangleCanvas.width;
-    y = Math.random() * triangleCanvas.height;
-  } while (!isWithinTriangle(x, y));
+    x = Math.random() * backgroundCanvas.width;
+    y = Math.random() * backgroundCanvas.height;
+  } while (!isWithinBackground(x, y));
 
   setPosition(emote, x, y);
   emote.style.transform = "translate(-50%, -50%)";
-  triangleContainer.appendChild(emote);
+  backgroundContainer.appendChild(emote);
 
   emotes.push(emote);
   if (emotes.length > getConfig().Emote.MaxEmoteCount) {
     const oldestEmote = emotes.shift();
     if (oldestEmote) {
-      triangleContainer.removeChild(oldestEmote);
+      backgroundContainer.removeChild(oldestEmote);
     }
   }
 }

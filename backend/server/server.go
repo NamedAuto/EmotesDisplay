@@ -14,6 +14,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
+var MyConfig *config.AppConfig
 var emoteMap map[string]string
 
 var handler *mywebsocket.WebSocketHandler
@@ -81,7 +82,10 @@ func StartServer() {
 	godotenv.Load()
 
 	config.SetupFilePaths()
-	myConfig, err := config.LoadConfig(config.YamlPath)
+
+	var err error
+	MyConfig, err = config.LoadConfig(config.YamlPath)
+
 	println(err)
 
 	loadEmotes()
@@ -90,9 +94,9 @@ func StartServer() {
 	// 	fmt.Printf("%s: %s\n", key, value)
 	// }
 
-	ConfigureConnection(myConfig)
+	ConfigureConnection(MyConfig)
 
-	startEmits(myConfig)
+	startEmits(MyConfig)
 
-	listenAndServe(myConfig)
+	listenAndServe(MyConfig)
 }
