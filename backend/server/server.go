@@ -1,17 +1,20 @@
 package server
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"myproject/backend/config"
 	"myproject/backend/handlers"
 	"myproject/backend/middleware"
 	"myproject/backend/mywebsocket"
+	"myproject/backend/myyoutube"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/joho/godotenv"
+	"google.golang.org/api/youtube/v3"
 )
 
 var MyConfig *config.AppConfig
@@ -75,7 +78,7 @@ func setLogOutput() {
 	log.SetOutput(logFile)
 }
 
-func StartServer() {
+func StartServer(ctx context.Context) {
 	setLogOutput()
 	log.Println("Starting application... In Server")
 
@@ -95,8 +98,56 @@ func StartServer() {
 	// }
 
 	ConfigureConnection(MyConfig)
+	myyoutube.ConfigureYoutube(ctx, MyConfig.Youtube.ApiKey)
 
-	startEmits(MyConfig)
+	if MyConfig.Testing.Test {
+		// Emit random emotes
+		startEmits(MyConfig)
+	} else {
+		log.Println("WANT TO READ YOUTUBE MESSAGES")
+		// Get youtube messages and get emotes
+		go getYoutubeMessages(myyoutube.YoutubeService, MyConfig.Youtube.VideoId, MyConfig.Youtube.MessageDelay)
+
+	}
 
 	listenAndServe(MyConfig)
+}
+
+func getYoutubeMessages(youtubeService *youtube.Service, videoId string, messageDelay int) {
+	apiCallCounter := 1
+	liveChatId, err := myyoutube.GetLiveChatID(youtubeService, videoId)
+	if err != nil {
+		log.Printf("Error getting live chat ID: %v\n", err)
+		return
+	}
+
+	var nextPageToken = ""
+
+	for {
+		// go func() {
+		messages,
+			newNextPageToken,
+			err := myyoutube.GetLiveChatMessages(youtubeService, liveChatId, nextPageToken)
+
+		apiCallCounter++
+		log.Printf("API Call counter: %d", apiCallCounter)
+
+		if err != nil {
+			log.Println("Error in YouTube messages:", err)
+			break
+			// return
+		}
+
+		if len(messages) > 0 {
+			for _, message := range messages {
+				displayName := message.AuthorDetails.DisplayName
+				msg := message.Snippet.DisplayMessage
+				log.Printf("%s: %s", displayName, msg)
+			}
+		}
+
+		time.Sleep(time.Duration(messageDelay) * time.Second)
+
+		nextPageToken = newNextPageToken
+	}
 }
