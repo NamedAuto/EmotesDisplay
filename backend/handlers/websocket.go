@@ -66,13 +66,15 @@ func (handler *WebSocketHandler) EmitToAllRandom(port int, emoteMap map[string]s
 	}
 }
 
-func (handler *WebSocketHandler) EmitToAll(emoteUrl string) {
+func (handler *WebSocketHandler) EmitToAll(emoteUrls []string) {
+	handler.mu.Lock()
+	defer handler.mu.Unlock()
 
-	msg := map[string]string{
+	msg := map[string]interface{}{
 		"type": "new-emote",
-		"data": emoteUrl,
+		"data": emoteUrls,
 	}
-	fmt.Printf("Emit: %s\n", emoteUrl)
+	fmt.Printf("Emit: %s\n", emoteUrls)
 
 	jsonData, err := json.Marshal(msg)
 	if err != nil {
@@ -88,8 +90,33 @@ func (handler *WebSocketHandler) EmitToAll(emoteUrl string) {
 			}
 		}
 	}
-
 }
+
+// func (handler *WebSocketHandler) EmitToAll(emoteUrl string) {
+// 	handler.mu.Lock()
+// 	defer handler.mu.Unlock()
+
+// 	msg := map[string]string{
+// 		"type": "new-emote",
+// 		"data": emoteUrl,
+// 	}
+// 	fmt.Printf("Emit: %s\n", emoteUrl)
+
+// 	jsonData, err := json.Marshal(msg)
+// 	if err != nil {
+// 		log.Printf("Error marshalling message to JSON: %v", err)
+// 		return
+// 	}
+
+// 	for _, ws := range handler.connections {
+// 		if ws != nil {
+// 			err := ws.WriteMessage(websocket.TextMessage, jsonData)
+// 			if err != nil {
+// 				log.Printf("Write error: %v", err)
+// 			}
+// 		}
+// 	}
+// }
 
 func ConfigureUpgrader(port int, allowedOrigin string) websocket.Upgrader {
 	return websocket.Upgrader{
@@ -206,3 +233,38 @@ func (handler *WebSocketHandler) RunAtFlag(interval time.Duration, fn func(), st
 		}
 	}
 }
+
+/*
+func (handler *WebSocketHandler) EmitToAllDebounce(emoteUrl string) {
+	handler.mu.Lock()
+	defer handler.mu.Unlock()
+
+	msg := map[string]string{
+		"type": "new-emote",
+		"data": emoteUrl,
+	}
+	fmt.Printf("Emit: %s\n", emoteUrl)
+
+	jsonData, err := json.Marshal(msg)
+	if err != nil {
+		log.Printf("Error marshalling message to JSON: %v", err)
+		return
+	}
+
+	if handler.debounce != nil {
+		handler.debounce.Stop()
+	}
+
+	handler.debounce = time.AfterFunc(200*time.Millisecond, func() {
+		for _, ws := range handler.connections {
+			if ws != nil {
+				err := ws.WriteMessage(websocket.TextMessage, jsonData)
+				if err != nil {
+					log.Printf("Write error: %v", err)
+				}
+			}
+		}
+	})
+
+}
+*/

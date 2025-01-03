@@ -2,20 +2,28 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"log"
 	"myproject/backend/handlers"
+	"os"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
-	// "github.com/wailsapp/wails/v2/pkg/options/assetserver"
 )
 
 //go:embed all:frontend/dist
 var assets embed.FS
 
 func main() {
-	logEmbed()
+
+	logFile, logErr := os.OpenFile("server.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if logErr != nil {
+		fmt.Println("Failed to open log file:", logErr)
+	}
+
+	log.SetOutput(logFile)
+	defer logFile.Close()
 
 	// Create an instance of the app structure
 	app := NewApp()

@@ -41,7 +41,7 @@ function main() {
 initialize();
 
 function setupSocket() {
-  const webSocketUrl = `http://localhost:${getConfig().Port}/ws`
+  const webSocketUrl = `http://localhost:${getConfig().Port}/ws`;
   socket = new WebSocket(webSocketUrl);
 
   socket.onopen = () => {
@@ -51,13 +51,31 @@ function setupSocket() {
     );
   };
 
-  socket.onmessage = (event) => {
-    const message = JSON.parse(event.data);
+  interface Message {
+    type: string;
+    data: string | string[];
+}
+
+socket.onmessage = (event: MessageEvent) => {
+    const message: Message = JSON.parse(event.data);
     if (message.type === "new-emote") {
-      console.log("Received new emote: ", message.data);
-      placeEmoteInBackground(message.data);
+
+        if (Array.isArray(message.data)) {
+            console.log("Received new emotes array: ", message.data);
+            message.data.forEach((emoteUrl: string) => {
+                placeEmoteInBackground(emoteUrl);
+            });
+
+        } else if (typeof message.data === 'string') {
+            console.log("Received new emote string: ", message.data);
+            placeEmoteInBackground(message.data);
+
+        } else {
+            console.warn("Expected message.data to be an array or string, but got:", message.data);
+        }
     }
-  };
+};
+
 
   socket.onclose = () => {
     console.log("Disconnected from websocket server");

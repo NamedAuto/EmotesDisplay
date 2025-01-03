@@ -10,7 +10,6 @@ import (
 	"myproject/backend/myyoutube"
 	"myproject/backend/parse"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -42,7 +41,7 @@ func ConfigureConnection(myConfig *config.AppConfig) {
 		config.BackgroundPath)
 }
 
-func startEmits(myConfig *config.AppConfig) {
+func startEmits(ctx context.Context, myConfig *config.AppConfig) {
 	if myConfig.Testing.Test {
 		duration := time.Duration(myConfig.Testing.SpeedOfEmotes) * time.Millisecond
 		go func() {
@@ -52,13 +51,23 @@ func startEmits(myConfig *config.AppConfig) {
 		}()
 
 	} else {
-		println("Would read messages")
+		log.Println("Connecting to youtube")
+		myyoutube.ConfigureYoutube(ctx, MyConfig.Youtube.ApiKey)
+		go getYoutubeMessages(myyoutube.YoutubeService, MyConfig.Youtube.VideoId, MyConfig.Youtube.MessageDelay)
+
+		// done := make(chan string)
+		// go startYoutube(ctx, myConfig)
 	}
+}
+
+func startYoutube(ctx context.Context, myConfig *config.AppConfig) {
+	myyoutube.ConfigureYoutube(ctx, myConfig.Youtube.ApiKey)
+	getYoutubeMessages(myyoutube.YoutubeService, myConfig.Youtube.VideoId, myConfig.Youtube.MessageDelay)
 }
 
 func listenAndServe(myConfig *config.AppConfig) {
 	go func() {
-		log.Printf("Server is starting on port %d...", myConfig.Port)
+		log.Printf("Server is listening on port %d...", myConfig.Port)
 		err := http.ListenAndServe(fmt.Sprintf(":%d", myConfig.Port),
 			middleware.ConfigureCORS(mux, config.AppConfig{}))
 		if err != nil {
@@ -67,20 +76,8 @@ func listenAndServe(myConfig *config.AppConfig) {
 	}()
 }
 
-func setLogOutput() {
-	logFile, err := os.OpenFile("server.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-	if err != nil {
-		fmt.Println("Failed to open log file:", err)
-		// return
-	}
-
-	defer logFile.Close()
-	log.SetOutput(logFile)
-}
-
 func StartServer(ctx context.Context) {
-	// setLogOutput()
-	log.Println("Starting application... In Server")
+	log.Println("Server starting")
 
 	godotenv.Load()
 
@@ -98,19 +95,10 @@ func StartServer(ctx context.Context) {
 	// }
 
 	ConfigureConnection(MyConfig)
-	myyoutube.ConfigureYoutube(ctx, MyConfig.Youtube.ApiKey)
-
-	if MyConfig.Testing.Test {
-		// Emit random emotes
-		startEmits(MyConfig)
-	} else {
-		log.Println("WANT TO READ YOUTUBE MESSAGES")
-		// Get youtube messages and get emotes
-		go getYoutubeMessages(myyoutube.YoutubeService, MyConfig.Youtube.VideoId, MyConfig.Youtube.MessageDelay)
-
-	}
 
 	listenAndServe(MyConfig)
+
+	startEmits(ctx, MyConfig)
 }
 
 func getYoutubeMessages(youtubeService *youtube.Service, videoId string, messageDelay int) {
@@ -147,9 +135,9 @@ func getYoutubeMessages(youtubeService *youtube.Service, videoId string, message
 				baseUrl := fmt.Sprintf("http://localhost:%d/emotes/", MyConfig.Port)
 				emoteUrls := parse.ParseMessageForEmotes(msg, baseUrl, emoteMap)
 
-				for _, url := range emoteUrls {
-					fmt.Printf("Emote Found: %s\n", url)
-					handler.EmitToAll(url)
+				if len(emoteUrls) > 0 {
+					time.Sleep(100 * time.Millisecond)
+					handler.EmitToAll(emoteUrls)
 				}
 			}
 		}
