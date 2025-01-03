@@ -7,8 +7,8 @@ import (
 	"myproject/backend/config"
 	"myproject/backend/handlers"
 	"myproject/backend/middleware"
-	"myproject/backend/mywebsocket"
 	"myproject/backend/myyoutube"
+	"myproject/backend/parse"
 	"net/http"
 	"os"
 	"time"
@@ -20,7 +20,7 @@ import (
 var MyConfig *config.AppConfig
 var emoteMap map[string]string
 
-var handler *mywebsocket.WebSocketHandler
+var handler *handlers.WebSocketHandler
 var mux *http.ServeMux
 
 func loadEmotes() {
@@ -28,13 +28,13 @@ func loadEmotes() {
 }
 
 func ConfigureConnection(myConfig *config.AppConfig) {
-	handler = &mywebsocket.WebSocketHandler{}
+	handler = &handlers.WebSocketHandler{}
 
 	mux = http.NewServeMux()
 
 	url := fmt.Sprintf("http://localhost:%d", myConfig.Port)
 
-	mux.HandleFunc("/ws", mywebsocket.HandleConnections(myConfig.Port, url, handler))
+	mux.HandleFunc("/ws", handlers.HandleConnections(myConfig.Port, url, handler))
 	handlers.ConfigureEndpoints(
 		mux,
 		config.EmotePath,
@@ -47,7 +47,7 @@ func startEmits(myConfig *config.AppConfig) {
 		duration := time.Duration(myConfig.Testing.SpeedOfEmotes) * time.Millisecond
 		go func() {
 			stopChan := make(chan bool)
-			handler.RunAtFlag(duration, func() { handler.EmitToAll(myConfig.Port, emoteMap) }, stopChan)
+			handler.RunAtFlag(duration, func() { handler.EmitToAllRandom(myConfig.Port, emoteMap) }, stopChan)
 			stopChan <- true
 		}()
 
@@ -79,7 +79,7 @@ func setLogOutput() {
 }
 
 func StartServer(ctx context.Context) {
-	setLogOutput()
+	// setLogOutput()
 	log.Println("Starting application... In Server")
 
 	godotenv.Load()
@@ -140,9 +140,17 @@ func getYoutubeMessages(youtubeService *youtube.Service, videoId string, message
 
 		if len(messages) > 0 {
 			for _, message := range messages {
-				displayName := message.AuthorDetails.DisplayName
+				// displayName := message.AuthorDetails.DisplayName
 				msg := message.Snippet.DisplayMessage
-				log.Printf("%s: %s", displayName, msg)
+				// log.Printf("%s: %s", displayName, msg)
+
+				baseUrl := fmt.Sprintf("http://localhost:%d/emotes/", MyConfig.Port)
+				emoteUrls := parse.ParseMessageForEmotes(msg, baseUrl, emoteMap)
+
+				for _, url := range emoteUrls {
+					fmt.Printf("Emote Found: %s\n", url)
+					handler.EmitToAll(url)
+				}
 			}
 		}
 

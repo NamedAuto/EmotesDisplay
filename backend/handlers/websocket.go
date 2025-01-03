@@ -1,4 +1,4 @@
-package mywebsocket
+package handlers
 
 import (
 	"encoding/json"
@@ -36,7 +36,7 @@ func (handler *WebSocketHandler) RemoveConnection(ws *websocket.Conn) {
 	}
 }
 
-func (handler *WebSocketHandler) EmitToAll(port int, emoteMap map[string]string) {
+func (handler *WebSocketHandler) EmitToAllRandom(port int, emoteMap map[string]string) {
 	handler.mu.Lock()
 	defer handler.mu.Unlock()
 
@@ -64,6 +64,31 @@ func (handler *WebSocketHandler) EmitToAll(port int, emoteMap map[string]string)
 			}
 		}
 	}
+}
+
+func (handler *WebSocketHandler) EmitToAll(emoteUrl string) {
+
+	msg := map[string]string{
+		"type": "new-emote",
+		"data": emoteUrl,
+	}
+	fmt.Printf("Emit: %s\n", emoteUrl)
+
+	jsonData, err := json.Marshal(msg)
+	if err != nil {
+		log.Printf("Error marshalling message to JSON: %v", err)
+		return
+	}
+
+	for _, ws := range handler.connections {
+		if ws != nil {
+			err := ws.WriteMessage(websocket.TextMessage, jsonData)
+			if err != nil {
+				log.Printf("Write error: %v", err)
+			}
+		}
+	}
+
 }
 
 func ConfigureUpgrader(port int, allowedOrigin string) websocket.Upgrader {

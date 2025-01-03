@@ -1,4 +1,4 @@
-package main
+package parse
 
 import (
 	"fmt"
@@ -6,24 +6,31 @@ import (
 	"strings"
 )
 
+// func parse(message string){
+// 	regex := regexp.MustCompile(`:_.*?:`)
+// 	matches := regex.FindAllString(message, -1)
+
+// 	fpr _, temp := range matcmatches{
+// 		cleanedText := strings.ReplaceAll(emoteText, ":", "")
+// 		cleanedText = strings.ReplaceAll(cleanedText, "_", "")
+// 	}
+// }
+
 func ParseMessageForEmotes(message string, emoteUrl string, emoteMap map[string]string) []string {
 	emoteUrls := []string{}
 	regex := regexp.MustCompile(`:_.*?:`)
 	matches := regex.FindAllString(message, -1)
 
 	for _, emoteText := range matches {
-		if url, exists := emoteMap[emoteText]; exists {
+		if _, exists := emoteMap[emoteText]; exists {
 			cleanedText := strings.ReplaceAll(emoteText, ":", "")
 			cleanedText = strings.ReplaceAll(cleanedText, "_", "")
 			newEmoteUrl := emoteUrl + cleanedText
 
-			fmt.Printf("Emit %s\n", newEmoteUrl)
-			// Note: In Go, you might use a WebSocket library to emit the new emote URL.
-			// This placeholder assumes you have a mechanism to handle real-time communication.
-			// For example:
-			// websocketConn.Emit("new-emote", map[string]string{"url": newEmoteUrl})
+			emoteUrls = append(emoteUrls, newEmoteUrl)
 
-			emoteUrls = append(emoteUrls, url)
+		} else {
+			fmt.Printf("Emote Not Found: %s\n", emoteText)
 		}
 	}
 
