@@ -1,22 +1,51 @@
-import React, { useEffect, useRef, useState } from "react";
-// import "./style.css";
-// import "./app.css";
+import React, {
+  useEffect,
+  useRef,
+  useCallback,
+  useState,
+  useMemo,
+} from "react";
 import {
   getConfig,
   loadBackground,
   loadConfigFront,
 } from "../config/configureConfigFront";
+import { useWebSocket } from "./mywebsocket";
+import useEmotes from "./useEmotes";
 
 const CanvasComponent: React.FC = () => {
-  const backgroundContainerRef = useRef<HTMLDivElement>(null);
   const backgroundImageRef = useRef<HTMLImageElement>(null);
   const backgroundCanvasRef = useRef<HTMLCanvasElement>(null);
-  const [emotes, setEmotes] = useState<HTMLImageElement[]>([]);
+  const { emotes, placeEmoteInBackground, backgroundContainerRef } =
+    useEmotes(backgroundCanvasRef);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  const handleNewEmote = useCallback((emoteUrl: string) => {
+    console.log("Received new emote:", emoteUrl);
+    placeEmoteInBackground(emoteUrl);
+  }, []);
+
+  //   const [users, setUsers] = useState<string[]>([]);
+  //   const handleUserJoined = useCallback((userName: string) => {
+  //     console.log("New user joined:", userName);
+  //     setUsers((prevUsers) => [...prevUsers, userName]);
+  //   }, []);
+
+  const messageHandlers = useMemo(
+    () => ({
+      "new-emote": handleNewEmote,
+      //   "user-joined": handleUserJoined,
+    }),
+    [handleNewEmote] //, handleUserJoined]
+  );
+
+  const { socket } = useWebSocket(isInitialized, messageHandlers);
 
   useEffect(() => {
     const initialize = async () => {
       try {
         await loadConfigFront();
+        setIsInitialized(true);
         if (document.readyState === "loading") {
           document.addEventListener("DOMContentLoaded", main);
         } else {
@@ -29,55 +58,21 @@ const CanvasComponent: React.FC = () => {
 
     const main = () => {
       if (backgroundContainerRef.current) {
-        setupSocket();
         loadImageOntoCanvas();
       }
     };
 
     initialize();
-  }, []);
+  }, [backgroundContainerRef]);
 
-  const setupSocket = () => {
-    const webSocketUrl = `http://localhost:${getConfig().Port}/ws`;
-    const socket = new WebSocket(webSocketUrl);
-
-    socket.onopen = () => {
-      console.log(`Connected to websocket server: ${webSocketUrl}`);
-      socket.send(
-        JSON.stringify({ type: "message", data: "Hello from the frontend" })
-      );
-    };
-
-    socket.onmessage = (event: MessageEvent) => {
-      const message: { type: string; data: string | string[] } = JSON.parse(
-        event.data
-      );
-      if (message.type === "new-emote") {
-        if (Array.isArray(message.data)) {
-          console.log("Received new emotes array: ", message.data);
-          message.data.forEach((emoteUrl: string) => {
-            placeEmoteInBackground(emoteUrl);
-          });
-        } else if (typeof message.data === "string") {
-          console.log("Received new emote string: ", message.data);
-          placeEmoteInBackground(message.data);
-        } else {
-          console.warn(
-            "Expected message.data to be an array or string, but got:",
-            message.data
-          );
-        }
-      }
-    };
-
-    socket.onclose = () => {
-      console.log("Disconnected from websocket server");
-    };
-
-    socket.onerror = (error) => {
-      console.error("Websocket error: ", error);
-    };
-  };
+  //   useEffect(() => {
+  //     if (isInitialized) {
+  //       useWebSocket({
+  //         "new-emote": handleNewEmote,
+  //         "user-joined": handleUserJoined,
+  //       });
+  //     }
+  //   }, [isInitialized, handleNewEmote, handleUserJoined]);
 
   const loadImageOntoCanvas = async () => {
     try {
@@ -140,76 +135,6 @@ const CanvasComponent: React.FC = () => {
       backgroundCanvasRef.current.width = newWidth;
       backgroundCanvasRef.current.height = newHeight;
     }
-  };
-
-  const isWithinBackground = (x: number, y: number): boolean => {
-    if (backgroundCanvasRef.current) {
-      const ctx = backgroundCanvasRef.current.getContext("2d", {
-        willReadFrequently: true,
-      })!;
-      const pixelData = ctx.getImageData(x, y, 1, 1).data;
-      return pixelData[3] > 0;
-    }
-    return false;
-  };
-
-  const createEmote = (emoteUrl: string): HTMLImageElement => {
-    const emote = document.createElement("img");
-    emote.crossOrigin = "anonymous";
-    emote.className = "emote";
-    emote.src = `${emoteUrl}?${new Date().getTime()}`;
-    changeEmoteSizeRandom(emote);
-    emote.style.borderRadius = `${getConfig().Emote.Roundness}%`;
-    emote.style.backgroundColor = getConfig().Emote.BackgroundColor;
-    return emote;
-  };
-
-  const changeEmoteSizeRandom = (emote: HTMLImageElement) => {
-    const randomBinary = Math.random() < 0.5 ? 0 : 1;
-    let sizeChange;
-    if (randomBinary) {
-      sizeChange = getConfig().Emote.RandomSizeIncrease;
-    } else {
-      sizeChange = -getConfig().Emote.RandomSizeDecrease;
-    }
-
-    const newWidth = getConfig().Emote.Width + sizeChange;
-    const newHeight = getConfig().Emote.Height + sizeChange;
-    emote.style.width = `${newWidth}px`;
-    emote.style.height = `${newHeight}px`;
-  };
-
-  const setPosition = (emote: HTMLImageElement, x: number, y: number) => {
-    emote.style.left = `${x}px`;
-    emote.style.top = `${y}px`;
-  };
-
-  const placeEmoteInBackground = (emoteUrl: string) => {
-    const emote = createEmote(emoteUrl);
-    let x: number;
-    let y: number;
-
-    do {
-      x = Math.random() * (backgroundCanvasRef.current?.width || 0);
-      y = Math.random() * (backgroundCanvasRef.current?.height || 0);
-    } while (!isWithinBackground(x, y));
-
-    setPosition(emote, x, y);
-    emote.style.transform = "translate(-50%, -50%)";
-    if (backgroundContainerRef.current) {
-      backgroundContainerRef.current.appendChild(emote);
-    }
-
-    setEmotes((prevEmotes) => {
-      const newEmotes = [...prevEmotes, emote];
-      if (newEmotes.length > getConfig().Emote.MaxEmoteCount) {
-        const oldestEmote = newEmotes.shift();
-        if (oldestEmote && backgroundContainerRef.current) {
-          backgroundContainerRef.current.removeChild(oldestEmote);
-        }
-      }
-      return newEmotes;
-    });
   };
 
   return (
