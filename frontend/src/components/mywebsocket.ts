@@ -10,6 +10,7 @@ export const useWebSocket = (
   messageHandlers: MessageHandlers
 ) => {
   const socket = useRef<WebSocket | null>(null);
+  const handlersRef = useRef<MessageHandlers>(messageHandlers);
 
   useEffect(() => {
     if (shouldConnect) {
@@ -43,6 +44,8 @@ export const useWebSocket = (
       return () => {
         socket.current?.close();
       };
+    } else {
+      return () => {};
     }
   }, [shouldConnect]);
 

@@ -16,8 +16,10 @@ import useEmotes from "./useEmotes";
 const CanvasComponent: React.FC = () => {
   const backgroundImageRef = useRef<HTMLImageElement>(null);
   const backgroundCanvasRef = useRef<HTMLCanvasElement>(null);
-  const { emotes, placeEmoteInBackground, backgroundContainerRef } =
-    useEmotes(backgroundCanvasRef);
+  const emotesLayerRef = useRef<HTMLDivElement>(null);
+  const backgroundContainerRef = useRef<HTMLDivElement>(null);
+
+  const { emotes, placeEmoteInBackground } = useEmotes(backgroundCanvasRef);
   const [isInitialized, setIsInitialized] = useState(false);
 
   const handleNewEmote = useCallback((emoteUrl: string) => {
@@ -25,18 +27,11 @@ const CanvasComponent: React.FC = () => {
     placeEmoteInBackground(emoteUrl);
   }, []);
 
-  //   const [users, setUsers] = useState<string[]>([]);
-  //   const handleUserJoined = useCallback((userName: string) => {
-  //     console.log("New user joined:", userName);
-  //     setUsers((prevUsers) => [...prevUsers, userName]);
-  //   }, []);
-
   const messageHandlers = useMemo(
     () => ({
       "new-emote": handleNewEmote,
-      //   "user-joined": handleUserJoined,
     }),
-    [handleNewEmote] //, handleUserJoined]
+    [handleNewEmote]
   );
 
   const { socket } = useWebSocket(isInitialized, messageHandlers);
@@ -64,15 +59,6 @@ const CanvasComponent: React.FC = () => {
 
     initialize();
   }, [backgroundContainerRef]);
-
-  //   useEffect(() => {
-  //     if (isInitialized) {
-  //       useWebSocket({
-  //         "new-emote": handleNewEmote,
-  //         "user-joined": handleUserJoined,
-  //       });
-  //     }
-  //   }, [isInitialized, handleNewEmote, handleUserJoined]);
 
   const loadImageOntoCanvas = async () => {
     try {
@@ -141,6 +127,32 @@ const CanvasComponent: React.FC = () => {
     <div id="backgroundContainer" ref={backgroundContainerRef}>
       <img id="backgroundImage" ref={backgroundImageRef} alt="Background" />
       <canvas id="backgroundCanvas" ref={backgroundCanvasRef}></canvas>
+      <div
+        className="emotesLayer"
+        ref={emotesLayerRef}
+        style={{ position: "absolute", top: 0, left: 0 }}
+      >
+        {emotes.map((emote, idx) => (
+          <img
+            key={idx}
+            src={emote.src}
+            className="emote"
+            crossOrigin="anonymous"
+            style={{
+              position: "absolute",
+              left: emote.x,
+              top: emote.y,
+              width: emote.size,
+              height: emote.size,
+              borderRadius: `${getConfig().Emote.Roundness}%`,
+              backgroundColor: getConfig().Emote.BackgroundColor,
+              transform: "translate(-50%, -50%)",
+              zIndex: 3,
+            }}
+            alt={`emote-${idx}`}
+          />
+        ))}
+      </div>
     </div>
   );
 };

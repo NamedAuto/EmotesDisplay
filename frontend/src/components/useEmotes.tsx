@@ -1,79 +1,95 @@
-import { useState, useRef } from 'react';
-import { getConfig } from '../config/configureConfigFront';
+import { useState, useRef } from "react";
+import { getConfig } from "../config/configureConfigFront";
 
-const useEmotes = (backgroundCanvasRef: React.RefObject<HTMLCanvasElement>) => {
-  const [emotes, setEmotes] = useState<HTMLImageElement[]>([]);
-  const backgroundContainerRef = useRef<HTMLDivElement>(null);
+const useEmotes = (
+  backgroundCanvasRef: React.RefObject<HTMLCanvasElement>,
+//   emotesLayerRef: React.RefObject<HTMLDivElement>
+) => {
+  const [emotes, setEmotes] = useState<
+    { src: string; x: number; y: number; size: number }[]
+  >([]);
 
-  const isWithinBackground = (x: number, y: number): boolean => {
+  const isWithinBackground = (
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number
+  ): boolean => {
     if (backgroundCanvasRef.current) {
-      const ctx = backgroundCanvasRef.current.getContext('2d', { willReadFrequently: true })!;
       const pixelData = ctx.getImageData(x, y, 1, 1).data;
       return pixelData[3] > 0;
     }
     return false;
   };
 
-  const createEmote = (emoteUrl: string): HTMLImageElement => {
-    const emote = document.createElement('img');
-    emote.crossOrigin = 'anonymous';
-    emote.className = 'emote';
-    emote.src = `${emoteUrl}?${new Date().getTime()}`;
-    changeEmoteSizeRandom(emote);
-    emote.style.borderRadius = `${getConfig().Emote.Roundness}%`;
-    emote.style.backgroundColor = getConfig().Emote.BackgroundColor;
-    return emote;
-  };
+  const createEmote = (
+    emoteUrl: string
+  ): { src: string; x: number; y: number; size: number } => {
+    let x = 0;
+    let y = 0;
 
-  const changeEmoteSizeRandom = (emote: HTMLImageElement) => {
-    const randomBinary = Math.random() < 0.5 ? 0 : 1;
-    let sizeChange;
-    if (randomBinary) {
-      sizeChange = getConfig().Emote.RandomSizeIncrease;
-    } else {
-      sizeChange = -getConfig().Emote.RandomSizeDecrease;
+    if (backgroundCanvasRef.current) {
+      const ctx = backgroundCanvasRef.current.getContext("2d", {
+        willReadFrequently: true,
+      })!;
+
+      do {
+        x = Math.random() * (backgroundCanvasRef.current.width);
+        y = Math.random() * (backgroundCanvasRef.current.height);
+      } while (!isWithinBackground(ctx, x, y));
+
+      const randomSize = getRandomEmoteSizeChange();
+      const srcAndDate = `${emoteUrl}?${new Date().getTime()}`;
+
+      return {
+        src: srcAndDate,
+        x,
+        y,
+        size: randomSize,
+      };
     }
 
-    const newWidth = getConfig().Emote.Width + sizeChange;
-    const newHeight = getConfig().Emote.Height + sizeChange;
-    emote.style.width = `${newWidth}px`;
-    emote.style.height = `${newHeight}px`;
+    console.log("Background Canvas not available to add emote");
+    return {
+      src: "",
+      x,
+      y,
+      size: 0,
+    };
   };
 
-  const setPosition = (emote: HTMLImageElement, x: number, y: number) => {
-    emote.style.left = `${x}px`;
-    emote.style.top = `${y}px`;
+  const getRandomEmoteSizeChange = (): number => {
+    return Math.random() < 0.5
+      ? getConfig().Emote.Width + getConfig().Emote.RandomSizeIncrease
+      : getConfig().Emote.Height - getConfig().Emote.RandomSizeDecrease;
   };
 
   const placeEmoteInBackground = (emoteUrl: string) => {
-    const emote = createEmote(emoteUrl);
-    let x: number;
-    let y: number;
-
-    do {
-      x = Math.random() * (backgroundCanvasRef.current?.width || 0);
-      y = Math.random() * (backgroundCanvasRef.current?.height || 0);
-    } while (!isWithinBackground(x, y));
-
-    setPosition(emote, x, y);
-    emote.style.transform = 'translate(-50%, -50%)';
-    if (backgroundContainerRef.current) {
-      backgroundContainerRef.current.appendChild(emote);
-    }
+    const newEmote = createEmote(emoteUrl);
 
     setEmotes((prevEmotes) => {
-      const newEmotes = [...prevEmotes, emote];
-      if (newEmotes.length > getConfig().Emote.MaxEmoteCount) {
-        const oldestEmote = newEmotes.shift();
-        if (oldestEmote && backgroundContainerRef.current) {
-          backgroundContainerRef.current.removeChild(oldestEmote);
-        }
+      const updatedEmotes = [...prevEmotes, newEmote];
+
+      if (updatedEmotes.length > getConfig().Emote.MaxEmoteCount) {
+        updatedEmotes.shift();
       }
-      return newEmotes;
+
+
+    //   if (emotesLayerRef.current) {
+    //     const emoteElement = document.createElement("img");
+    //     emoteElement.src = newEmote.src;
+    //     emoteElement.style.position = "absolute";
+    //     emoteElement.style.left = `${newEmote.x}px`;
+    //     emoteElement.style.top = `${newEmote.y}px`;
+    //     emoteElement.style.width = `${newEmote.size}px`;
+    //     emoteElement.style.height = `${newEmote.size}px`;
+    //     emotesLayerRef.current.appendChild(emoteElement);
+    //   }
+
+      return updatedEmotes;
     });
   };
 
-  return { emotes, placeEmoteInBackground, backgroundContainerRef };
+  return { emotes, placeEmoteInBackground };
 };
 
 export default useEmotes;
