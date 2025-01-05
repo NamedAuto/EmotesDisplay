@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import "./style.css";
 import App from "./App";
 import { ConfigProvider } from "./components/Config/Config";
-import { WebSocketProvider } from "./components/WebSocket/WebSocketProvider";
+import { WebSocketProvider } from "./components/WebSocket/WebsocketProvider";
 
 const container = document.getElementById("root");
 

@@ -17,7 +17,6 @@ interface WebSocketContextType {
   updateHandlers: (handlers: MessageHandlers) => void;
 }
 
-// Update the provider type to accept children
 interface WebSocketProviderProps {
   children: React.ReactNode;
 }
@@ -29,16 +28,14 @@ const WebSocketContext = createContext<WebSocketContextType | undefined>(
 export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
   children,
 }) => {
-  const config = useConfig(); // Get config (e.g., port)
+  const config = useConfig();
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
-  // Store message handlers in a ref to avoid re-rendering
   const handlersRef = useRef<MessageHandlers>({});
 
   useEffect(() => {
-    if (!config?.Port) return; // Early return if config is not available
-    console.log("CURRENT PORT: " + config.Port);
+    if (!config?.Port) return;
 
     const ws = new WebSocket(`ws://localhost:${config.Port}/ws`);
     setSocket(ws);
@@ -69,12 +66,11 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
     };
 
     return () => {
-      ws.close(); // Clean up the socket when the component unmounts
+      ws.close();
       setSocket(null);
     };
-  }, [config?.Port]); // Reconnect if port changes
+  }, [config?.Port]);
 
-  // Update the message handlers dynamically
   const updateHandlers = (handlers: MessageHandlers) => {
     handlersRef.current = handlers;
   };

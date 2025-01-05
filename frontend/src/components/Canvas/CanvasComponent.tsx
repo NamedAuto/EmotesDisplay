@@ -1,73 +1,68 @@
-import React, {
-  useEffect,
-  useRef,
-  useCallback,
-  useState,
-  useMemo,
-} from "react";
-import {
-  getConfig,
-  loadBackground,
-  loadConfigFront,
-} from "../../config/configureConfigFront";
-import { useWebSocket } from "../../websocket/mywebsocket";
+import React, { useEffect, useRef } from "react";
+import { Config } from "../Config/ConfigInterface";
+import { loadBackground } from "../Config/FetchBackground";
+import { useConfig } from "../Config/Config";
 import useEmotes from "./useEmotes";
+import { useWebSocketContext } from "../WebSocket/WebSocketProvider";
 
-const CanvasComponent: React.FC = () => {
+const CanvasTest: React.FC = () => {
   const backgroundImageRef = useRef<HTMLImageElement>(null);
   const backgroundCanvasRef = useRef<HTMLCanvasElement>(null);
   const emotesLayerRef = useRef<HTMLDivElement>(null);
   const backgroundContainerRef = useRef<HTMLDivElement>(null);
 
-  const { emotes, placeEmoteInBackground } = useEmotes(backgroundCanvasRef);
-  const [isInitialized, setIsInitialized] = useState(false);
-
-  const handleNewEmote = useCallback((emoteUrl: string) => {
-    console.log("Received new emote:", emoteUrl);
-    placeEmoteInBackground(emoteUrl);
-  }, []);
-
-  const messageHandlers = useMemo(
-    () => ({
-      "new-emote": handleNewEmote,
-    }),
-    [handleNewEmote]
+  const config = useConfig(); // Use the config context here
+  const { emotes, placeEmoteInBackground } = useEmotes(
+    config,
+    backgroundCanvasRef
   );
 
-  const { socket } = useWebSocket(isInitialized, messageHandlers);
+  const { socket, isConnected, updateHandlers } = useWebSocketContext();
 
   useEffect(() => {
+    const handleNewEmote = (emoteUrl: string) => {
+      console.log("Received new emote:", emoteUrl);
+      placeEmoteInBackground(emoteUrl);
+    };
+
+    updateHandlers({
+      "new-emote": handleNewEmote,
+    });
+  }, [updateHandlers]);
+
+  useEffect(() => {
+    if (!config) return;
+
     const initialize = async () => {
       try {
-        await loadConfigFront();
-        setIsInitialized(true);
         if (document.readyState === "loading") {
           document.addEventListener("DOMContentLoaded", main);
         } else {
           main();
         }
       } catch (error) {
-        console.error("Error loading config:", error);
+        console.error("Error loading DOM:", error);
       }
     };
 
     const main = () => {
       if (backgroundContainerRef.current) {
-        loadImageOntoCanvas();
+        loadImageOntoCanvas(config);
       }
     };
 
+    // Initialize only if config is available
     initialize();
-  }, [backgroundContainerRef]);
+  }, []);
 
-  const loadImageOntoCanvas = async () => {
+  const loadImageOntoCanvas = async (config: Config) => {
     try {
-      const url = await loadBackground();
+      const url = await loadBackground(config);
       if (url && backgroundImageRef.current) {
         backgroundImageRef.current.src = `${url}?${new Date().getTime()}`;
         backgroundImageRef.current.crossOrigin = "anonymous";
         backgroundImageRef.current.onload = () => {
-          setContainerAndCanvasSize();
+          setContainerAndCanvasSize(config);
           if (backgroundCanvasRef.current && backgroundImageRef.current) {
             const ctx = backgroundCanvasRef.current.getContext("2d", {
               willReadFrequently: true,
@@ -93,23 +88,18 @@ const CanvasComponent: React.FC = () => {
     }
   };
 
-  const setContainerAndCanvasSize = () => {
+  const setContainerAndCanvasSize = (config: Config) => {
     if (
       backgroundContainerRef.current &&
       backgroundImageRef.current &&
       backgroundCanvasRef.current
     ) {
-      // const scaleImage = getConfig().AspectRatio.ScaleImage;
-      // const imageWidth = backgroundImageRef.current.naturalWidth * scaleImage;
-      // const imageHeight = backgroundImageRef.current.naturalHeight * scaleImage;
       const imageWidth = backgroundImageRef.current.naturalWidth;
       const imageHeight = backgroundImageRef.current.naturalHeight;
-      if (getConfig().AspectRatio.ForceWidthHeight) {
-        // const scaleCanvas = getConfig().AspectRatio.ScaleCanvas;
-        // const maxWidth = getConfig().AspectRatio.Width * scaleCanvas;
-        // const maxHeight = getConfig().AspectRatio.Height * scaleCanvas;
-        const maxWidth = getConfig().AspectRatio.Width;
-        const maxHeight = getConfig().AspectRatio.Height;
+
+      if (config.AspectRatio.ForceWidthHeight) {
+        const maxWidth = config.AspectRatio.Width;
+        const maxHeight = config.AspectRatio.Height;
         let newWidth = imageWidth;
         let newHeight = imageHeight;
 
@@ -134,44 +124,6 @@ const CanvasComponent: React.FC = () => {
     }
   };
 
-  /*
-  const setContainerAndCanvasSize = () => {
-    if (
-      backgroundContainerRef.current &&
-      backgroundImageRef.current &&
-      backgroundCanvasRef.current
-    ) {
-      const scaleImage = getConfig().AspectRatio.ScaleImage;
-      const imageWidth = backgroundImageRef.current.naturalWidth * scaleImage;
-      const imageHeight = backgroundImageRef.current.naturalHeight * scaleImage;
-      if (getConfig().AspectRatio.ForceWidthHeight) {
-        const scaleCanvas = getConfig().AspectRatio.ScaleCanvas;
-        const maxWidth = getConfig().AspectRatio.Width * scaleCanvas;
-        const maxHeight = getConfig().AspectRatio.Height * scaleCanvas;
-
-
-        const widthRatio = maxWidth / imageWidth;
-        const heightRatio = maxHeight / imageHeight;
-        const scale = Math.min(widthRatio, heightRatio);
-        const newWidth = imageWidth * scale;
-        const newHeight = imageHeight * scale;
-
-        backgroundContainerRef.current.style.width = `${maxWidth}px`;
-        backgroundContainerRef.current.style.height = `${maxHeight}px`;
-        backgroundCanvasRef.current.width = newWidth;
-        backgroundCanvasRef.current.height = newHeight;
-        backgroundImageRef.current.style.width = `${newWidth}px`;;
-        backgroundImageRef.current.style.height = `${newHeight}px`;;
-      } else {
-        backgroundContainerRef.current.style.width = `${imageWidth}px`;
-        backgroundContainerRef.current.style.height = `${imageHeight}px`;
-        backgroundCanvasRef.current.width = imageWidth;
-        backgroundCanvasRef.current.height = imageHeight;
-      }
-    }
-  };
-*/
-
   return (
     <div id="backgroundContainer" ref={backgroundContainerRef}>
       <img id="backgroundImage" ref={backgroundImageRef} alt="Background" />
@@ -193,8 +145,8 @@ const CanvasComponent: React.FC = () => {
               top: emote.y,
               width: emote.size,
               height: emote.size,
-              borderRadius: `${getConfig().Emote.Roundness}%`,
-              backgroundColor: getConfig().Emote.BackgroundColor,
+              borderRadius: `${config.Emote.Roundness}%`,
+              backgroundColor: config.Emote.BackgroundColor,
               transform: "translate(-50%, -50%)",
               zIndex: 3,
             }}
@@ -206,4 +158,4 @@ const CanvasComponent: React.FC = () => {
   );
 };
 
-export default CanvasComponent;
+export default CanvasTest;

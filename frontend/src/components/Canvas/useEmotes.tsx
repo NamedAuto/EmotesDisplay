@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { getConfig } from "../../config/configureConfigFront";
+import { Config } from "../Config/ConfigInterface";
 
 const useEmotes = (
+  config: Config,
   backgroundCanvasRef: React.RefObject<HTMLCanvasElement>
 ) => {
   const [emotes, setEmotes] = useState<
@@ -64,8 +65,8 @@ const useEmotes = (
 
   const getRandomEmoteSizeChange = (): number => {
     return Math.random() < 0.5
-      ? getConfig().Emote.Width + getConfig().Emote.RandomSizeIncrease
-      : getConfig().Emote.Height - getConfig().Emote.RandomSizeDecrease;
+      ? config.Emote.Width + config.Emote.RandomSizeIncrease
+      : config.Emote.Height - config.Emote.RandomSizeDecrease;
   };
 
   const placeEmoteInBackground = (emoteUrl: string) => {
@@ -74,7 +75,7 @@ const useEmotes = (
     setEmotes((prevEmotes) => {
       const updatedEmotes = [...prevEmotes, newEmote];
 
-      if (updatedEmotes.length > getConfig().Emote.MaxEmoteCount) {
+      if (updatedEmotes.length > config.Emote.MaxEmoteCount) {
         updatedEmotes.shift();
       }
 
