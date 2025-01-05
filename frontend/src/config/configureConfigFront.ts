@@ -1,6 +1,7 @@
 import yaml from "js-yaml";
 import { Config } from "./Config";
 import { GetPort } from "../../wailsjs/go/main/App";
+import { useConfig } from "../components/Config/Config";
 
 let config: Config;
 
@@ -47,15 +48,20 @@ export async function loadConfigFront() {
 
 export const getConfig = (): Config => {
   if (!config) {
-    throw new Error("Config is not loaded. Call loadConfig first");
+    throw new Error("Config is not loaded. Call loadConfig first OLD");
   }
   return config;
 };
 
 export async function loadBackground(): Promise<string | null> {
   try {
+      // if(useConfig() == null) {
+      //   console.log("IS NULL")
+      // }
+
     const response = await fetch(
-      `http://localhost:${getConfig().Port}/background`
+      // `http://localhost:${useConfig().Port}/background`
+      `http://localhost:3124/background`
     );
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
