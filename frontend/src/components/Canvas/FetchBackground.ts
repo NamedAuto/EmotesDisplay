@@ -1,4 +1,4 @@
-import { Config } from "./ConfigInterface";
+import { Config } from "../Config/ConfigInterface";
 
 export async function loadBackground(config: Config): Promise<string | null> {
   try {

@@ -1,23 +1,24 @@
 import React, { useEffect, useRef } from "react";
 import { Config } from "../Config/ConfigInterface";
-import { loadBackground } from "../Config/FetchBackground";
+import { loadBackground } from "./FetchBackground";
 import { useConfig } from "../Config/Config";
 import useEmotes from "./useEmotes";
 import { useWebSocketContext } from "../WebSocket/WebSocketProvider";
 
-const CanvasTest: React.FC = () => {
+const CanvasComponent: React.FC = () => {
   const backgroundImageRef = useRef<HTMLImageElement>(null);
   const backgroundCanvasRef = useRef<HTMLCanvasElement>(null);
   const emotesLayerRef = useRef<HTMLDivElement>(null);
   const backgroundContainerRef = useRef<HTMLDivElement>(null);
 
-  const config = useConfig(); // Use the config context here
+
+  const config = useConfig();
+  const { socket, isConnected, updateHandlers } = useWebSocketContext();
+
   const { emotes, placeEmoteInBackground } = useEmotes(
     config,
     backgroundCanvasRef
   );
-
-  const { socket, isConnected, updateHandlers } = useWebSocketContext();
 
   useEffect(() => {
     const handleNewEmote = (emoteUrl: string) => {
@@ -158,4 +159,4 @@ const CanvasTest: React.FC = () => {
   );
 };
 
-export default CanvasTest;
+export default CanvasComponent;
