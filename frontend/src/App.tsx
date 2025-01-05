@@ -1,10 +1,10 @@
 import "./App.css";
-import CanvasComponent from "./components/canvasComponent";
+import MyRoutes from "./components/Routes/Routes";
 
 function App() {
   return (
     <div id="App">
-      <CanvasComponent />
+      <MyRoutes />
     </div>
   );
 }

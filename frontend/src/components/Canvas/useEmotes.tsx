@@ -1,9 +1,8 @@
-import { useState, useRef } from "react";
-import { getConfig } from "../config/configureConfigFront";
+import { useState } from "react";
+import { getConfig } from "../../config/configureConfigFront";
 
 const useEmotes = (
-  backgroundCanvasRef: React.RefObject<HTMLCanvasElement>,
-//   emotesLayerRef: React.RefObject<HTMLDivElement>
+  backgroundCanvasRef: React.RefObject<HTMLCanvasElement>
 ) => {
   const [emotes, setEmotes] = useState<
     { src: string; x: number; y: number; size: number }[]
@@ -14,6 +13,12 @@ const useEmotes = (
     x: number,
     y: number
   ): boolean => {
+    /*
+    TODO: Improve efficiency of canvas
+      Store all of the valid points that can be used for an image in a set/map?
+      Would need just one call of getImageData
+      Then I can randomly choose a value from this object for a point on the image
+    */
     if (backgroundCanvasRef.current) {
       const pixelData = ctx.getImageData(x, y, 1, 1).data;
       return pixelData[3] > 0;
@@ -33,8 +38,8 @@ const useEmotes = (
       })!;
 
       do {
-        x = Math.random() * (backgroundCanvasRef.current.width);
-        y = Math.random() * (backgroundCanvasRef.current.height);
+        x = Math.random() * backgroundCanvasRef.current.width;
+        y = Math.random() * backgroundCanvasRef.current.height;
       } while (!isWithinBackground(ctx, x, y));
 
       const randomSize = getRandomEmoteSizeChange();
@@ -72,18 +77,6 @@ const useEmotes = (
       if (updatedEmotes.length > getConfig().Emote.MaxEmoteCount) {
         updatedEmotes.shift();
       }
-
-
-    //   if (emotesLayerRef.current) {
-    //     const emoteElement = document.createElement("img");
-    //     emoteElement.src = newEmote.src;
-    //     emoteElement.style.position = "absolute";
-    //     emoteElement.style.left = `${newEmote.x}px`;
-    //     emoteElement.style.top = `${newEmote.y}px`;
-    //     emoteElement.style.width = `${newEmote.size}px`;
-    //     emoteElement.style.height = `${newEmote.size}px`;
-    //     emotesLayerRef.current.appendChild(emoteElement);
-    //   }
 
       return updatedEmotes;
     });

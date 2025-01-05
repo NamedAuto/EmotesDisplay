@@ -9,8 +9,8 @@ import {
   getConfig,
   loadBackground,
   loadConfigFront,
-} from "../config/configureConfigFront";
-import { useWebSocket } from "./mywebsocket";
+} from "../../config/configureConfigFront";
+import { useWebSocket } from "../../websocket/mywebsocket";
 import useEmotes from "./useEmotes";
 
 const CanvasComponent: React.FC = () => {
