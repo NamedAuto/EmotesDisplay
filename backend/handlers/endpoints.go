@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"myproject/backend/config"
 	"net/http"
 	"os"
@@ -42,7 +41,6 @@ func configureEmotesEndpoint(mux *http.ServeMux, emotePath string) {
 // ConfigureBackgroundImageEndpoint sets up the /background endpoint.
 func configureBackgroundImageEndpoint(mux *http.ServeMux, backgroundPath string) {
 	mux.HandleFunc("/background", func(w http.ResponseWriter, r *http.Request) {
-		log.Println("In background")
 		folderPath := backgroundPath
 		files, err := os.ReadDir(folderPath)
 		if err != nil {
@@ -62,7 +60,6 @@ func configureBackgroundImageEndpoint(mux *http.ServeMux, backgroundPath string)
 			return
 		}
 
-		log.Println("Background serving?")
 		imageName := imageFiles[0]
 		imagePath := filepath.Join(folderPath, imageName)
 		http.ServeFile(w, r, imagePath)

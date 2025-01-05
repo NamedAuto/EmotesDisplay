@@ -64,3 +64,15 @@ body {
   .emote.bgColor {
     background-color: transparent;
   }
+
+  .interactive-no-select {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none;    /* Firefox */
+  -ms-user-select: none;     /* IE/Edge */
+  user-select: none;         /* Standard syntax */
+  pointer-events: auto;      /* Ensure element is still interactive */
+}
+
+.selected-frame {
+  border: 2px solid blue; /* Indicate selection with a border */
+}

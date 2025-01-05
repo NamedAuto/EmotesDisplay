@@ -20,10 +20,11 @@ type PortConfig struct {
 }
 
 type AspectRatioConfig struct {
-	Width       int     `yaml:"width"`
-	Height      int     `yaml:"height"`
-	ScaleCanvas float32 `yaml:"scaleCanvas"`
-	ScaleImage  float32 `yaml:"scaleImage"`
+	ForceWidthHeight bool    `yaml:"forceWidthHeight"`
+	Width            int     `yaml:"width"`
+	Height           int     `yaml:"height"`
+	ScaleCanvas      float32 `yaml:"scaleCanvas"`
+	ScaleImage       float32 `yaml:"scaleImage"`
 }
 
 type EmoteConfig struct {

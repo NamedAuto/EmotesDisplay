@@ -99,29 +99,78 @@ const CanvasComponent: React.FC = () => {
       backgroundImageRef.current &&
       backgroundCanvasRef.current
     ) {
-      const scaleCanvas = getConfig().AspectRatio.ScaleCanvas;
-      const scaleImage = getConfig().AspectRatio.ScaleImage;
-      const maxWidth = getConfig().AspectRatio.Width * scaleCanvas;
-      const maxHeight = getConfig().AspectRatio.Height * scaleCanvas;
-      const imageWidth = backgroundImageRef.current.naturalWidth * scaleImage;
-      const imageHeight = backgroundImageRef.current.naturalHeight * scaleImage;
-      let newWidth = imageWidth;
-      let newHeight = imageHeight;
+      // const scaleImage = getConfig().AspectRatio.ScaleImage;
+      // const imageWidth = backgroundImageRef.current.naturalWidth * scaleImage;
+      // const imageHeight = backgroundImageRef.current.naturalHeight * scaleImage;
+      const imageWidth = backgroundImageRef.current.naturalWidth;
+      const imageHeight = backgroundImageRef.current.naturalHeight;
+      if (getConfig().AspectRatio.ForceWidthHeight) {
+        // const scaleCanvas = getConfig().AspectRatio.ScaleCanvas;
+        // const maxWidth = getConfig().AspectRatio.Width * scaleCanvas;
+        // const maxHeight = getConfig().AspectRatio.Height * scaleCanvas;
+        const maxWidth = getConfig().AspectRatio.Width;
+        const maxHeight = getConfig().AspectRatio.Height;
+        let newWidth = imageWidth;
+        let newHeight = imageHeight;
 
-      if (imageWidth > maxWidth || imageHeight > maxHeight) {
-        const widthRatio = maxWidth / imageWidth;
-        const heightRatio = maxHeight / imageHeight;
-        const scalingFactor = Math.min(widthRatio, heightRatio);
-        newWidth = imageWidth * scalingFactor;
-        newHeight = imageHeight * scalingFactor;
+        if (imageWidth > maxWidth || imageHeight > maxHeight) {
+          const widthRatio = maxWidth / imageWidth;
+          const heightRatio = maxHeight / imageHeight;
+          const scalingFactor = Math.min(widthRatio, heightRatio);
+          newWidth = imageWidth * scalingFactor;
+          newHeight = imageHeight * scalingFactor;
+        }
+
+        backgroundContainerRef.current.style.width = `${newWidth}px`;
+        backgroundContainerRef.current.style.height = `${newHeight}px`;
+        backgroundCanvasRef.current.width = newWidth;
+        backgroundCanvasRef.current.height = newHeight;
+      } else {
+        backgroundContainerRef.current.style.width = `${imageWidth}px`;
+        backgroundContainerRef.current.style.height = `${imageHeight}px`;
+        backgroundCanvasRef.current.width = imageWidth;
+        backgroundCanvasRef.current.height = imageHeight;
       }
-
-      backgroundContainerRef.current.style.width = `${newWidth}px`;
-      backgroundContainerRef.current.style.height = `${newHeight}px`;
-      backgroundCanvasRef.current.width = newWidth;
-      backgroundCanvasRef.current.height = newHeight;
     }
   };
+
+  /*
+  const setContainerAndCanvasSize = () => {
+    if (
+      backgroundContainerRef.current &&
+      backgroundImageRef.current &&
+      backgroundCanvasRef.current
+    ) {
+      const scaleImage = getConfig().AspectRatio.ScaleImage;
+      const imageWidth = backgroundImageRef.current.naturalWidth * scaleImage;
+      const imageHeight = backgroundImageRef.current.naturalHeight * scaleImage;
+      if (getConfig().AspectRatio.ForceWidthHeight) {
+        const scaleCanvas = getConfig().AspectRatio.ScaleCanvas;
+        const maxWidth = getConfig().AspectRatio.Width * scaleCanvas;
+        const maxHeight = getConfig().AspectRatio.Height * scaleCanvas;
+
+
+        const widthRatio = maxWidth / imageWidth;
+        const heightRatio = maxHeight / imageHeight;
+        const scale = Math.min(widthRatio, heightRatio);
+        const newWidth = imageWidth * scale;
+        const newHeight = imageHeight * scale;
+
+        backgroundContainerRef.current.style.width = `${maxWidth}px`;
+        backgroundContainerRef.current.style.height = `${maxHeight}px`;
+        backgroundCanvasRef.current.width = newWidth;
+        backgroundCanvasRef.current.height = newHeight;
+        backgroundImageRef.current.style.width = `${newWidth}px`;;
+        backgroundImageRef.current.style.height = `${newHeight}px`;;
+      } else {
+        backgroundContainerRef.current.style.width = `${imageWidth}px`;
+        backgroundContainerRef.current.style.height = `${imageHeight}px`;
+        backgroundCanvasRef.current.width = imageWidth;
+        backgroundCanvasRef.current.height = imageHeight;
+      }
+    }
+  };
+*/
 
   return (
     <div id="backgroundContainer" ref={backgroundContainerRef}>
