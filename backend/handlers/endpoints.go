@@ -131,7 +131,15 @@ func configureDefaultEndpoint(mux *http.ServeMux) {
 		// Otherwise, serve other static assets like JS, CSS, etc.
 		data, err := assets.ReadFile("frontend/dist" + r.URL.Path)
 		if err != nil {
-			http.Error(w, "File not found", http.StatusNotFound)
+
+			data, err := assets.ReadFile("frontend/dist/index.html")
+			if err != nil {
+				http.Error(w, "Could not read index.html", http.StatusInternalServerError)
+				return
+			}
+			w.Header().Set("Content-Type", "text/html")
+			w.Write(data)
+			// http.Error(w, "File not found", http.StatusNotFound)
 			return
 		}
 
