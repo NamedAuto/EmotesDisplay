@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useConfig } from "../Config/Config";
+import { useConfig } from "../Config/ConfigProvider";
 
 interface MessageHandlers {
   [key: string]: (data: any) => void;

@@ -1,13 +1,16 @@
 import {
+  Box,
   Button,
   Checkbox,
+  createTheme,
   FormControlLabel,
   Grid2,
   TextField,
+  ThemeProvider,
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { useConfig } from "../Config/Config";
+import { useConfig } from "../Config/ConfigProvider";
 
 const SettingsPage: React.FC = () => {
   const config = useConfig();
@@ -73,174 +76,226 @@ const SettingsPage: React.FC = () => {
     console.log("Settings saved");
   };
 
+  // Create a custom theme for the Settings component
+  const darkTheme = createTheme({
+    palette: {
+      mode: "dark",
+      background: {
+        // rgb(20, 40, 48)
+        default: "#142830",
+      },
+      primary: {
+        // rgb(241, 246, 252)
+        main: "#f1f6fc",
+      },
+      text: {
+        primary: "#f1f6fc",
+      },
+    },
+    components: {
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            "& .MuiInputBase-input": {
+              color: "#f1f6fc", // Text color inside the input
+            },
+            "& .MuiInputLabel-root": {
+              color: "#f1f6fc", // Label color
+            },
+            "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#f1f6fc", // Outline color
+            },
+            "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#f1f6fc", // Outline color on hover
+            },
+          },
+        },
+      },
+    },
+  });
+
   return (
-    <div style={{ padding: "20px" }}>
-      <Grid2>
-        <Typography variant="h4" gutterBottom>
-          Youtube
-        </Typography>
-        <TextField
-          label="Api Key"
-          value={apiKey}
-          onChange={(e) => setApiKey(e.target.value)}
-          margin="normal"
-        />
-        <TextField
-          label="Video Id"
-          value={videoId}
-          onChange={(e) => setVideoId(e.target.value)}
-          margin="normal"
-        />
-        <TextField
-          label="Message Delay"
-          value={messageDelay}
-          onChange={(e) => setMessageDelay(e.target.value)}
-          type="number"
-          margin="normal"
-        />
-      </Grid2>
-
-      <Grid2>
-        <Typography variant="h4" gutterBottom>
-          Port
-        </Typography>
-        <TextField
-          label="Api Key"
-          value={port}
-          onChange={(e) => setPort(e.target.value)}
-          type="number"
-          margin="normal"
-        />
-      </Grid2>
-
-      <Grid2>
-        <Typography variant="h4" gutterBottom>
-          Aspect Ratio
-        </Typography>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={forceWidthHeight}
-              onChange={(e) => setForcedWidthHeight(e.target.checked)}
-            />
-          }
-          label="Force Width Height"
-        />
-        <TextField
-          label="Width"
-          value={canvasWidth}
-          onChange={(e) => setCanvasWidth(e.target.value)}
-          type="number"
-          margin="normal"
-        />
-        <TextField
-          label="Height"
-          value={canvasHeight}
-          onChange={(e) => setCanvasHeight(e.target.value)}
-          type="number"
-          margin="normal"
-        />
-        <TextField
-          label="Scale Canvas"
-          value={scaleCanvas}
-          onChange={(e) => setScaleCanvase(e.target.value)}
-          type="number"
-          margin="normal"
-        />
-        <TextField
-          label="Scale Image"
-          value={scaleImage}
-          onChange={(e) => setScaleImage(e.target.value)}
-          type="number"
-          margin="normal"
-        />
-      </Grid2>
-
-      <Grid2>
-        <Typography variant="h4" gutterBottom>
-          Emote
-        </Typography>
-        <TextField
-          label="Emote Width"
-          value={emoteWidth}
-          onChange={(e) => setEmoteWidth(e.target.value)}
-          type="number"
-          margin="normal"
-        />
-        <TextField
-          label="Emote Height"
-          value={emoteHeight}
-          onChange={(e) => setEmoteHeight(e.target.value)}
-          type="number"
-          margin="normal"
-        />
-        <TextField
-          label="Random Size Increase"
-          value={randomSizeIncrease}
-          onChange={(e) => setRandomSizeIncrease(e.target.value)}
-          type="number"
-          margin="normal"
-        />
-        <TextField
-          label="Random Size Decrease"
-          value={randomSizeDecrease}
-          onChange={(e) => setRandomSizeDecrease(e.target.value)}
-          type="number"
-          margin="normal"
-        />
-        <TextField
-          label="Max Emote Count"
-          value={maxEmoteCount}
-          onChange={(e) => setMaxEmoteCount(e.target.value)}
-          type="number"
-          margin="normal"
-        />
-        <TextField
-          label="Roundness"
-          value={roundness}
-          onChange={(e) => setRoundness(e.target.value)}
-          type="number"
-          margin="normal"
-        />
-        <TextField
-          label="Background Color"
-          value={backgroundColor}
-          onChange={(e) => setBackgroundColor(e.target.value)}
-          margin="normal"
-        />
-      </Grid2>
-
-      <Grid2>
-        <Typography variant="h4" gutterBottom>
-          Testing
-        </Typography>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={test}
-              onChange={(e) => setTest(e.target.checked)}
-            />
-          }
-          label="Test"
-        />
-        <TextField
-          label="Speed Of Emotes"
-          value={speedOfEmotes}
-          onChange={(e) => setSpeedOfEmotes(e.target.value)}
-          type="number"
-          margin="normal"
-        />
-      </Grid2>
-
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleSave}
-        style={{ marginTop: "20px" }}
+    <ThemeProvider theme={darkTheme}>
+      <Box
+        sx={{
+          backgroundColor: "background.default",
+          color: "text.primary",
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 2,
+          width: "100%",
+        }}
       >
-        Save Settings
-      </Button>
-    </div>
+        <Grid2>
+          <Typography variant="h4" gutterBottom>
+            Youtube
+          </Typography>
+          <TextField
+            label="Api Key"
+            value={apiKey}
+            onChange={(e) => setApiKey(e.target.value)}
+            margin="normal"
+          />
+          <TextField
+            label="Video Id"
+            value={videoId}
+            onChange={(e) => setVideoId(e.target.value)}
+            margin="normal"
+          />
+          <TextField
+            label="Message Delay"
+            value={messageDelay}
+            onChange={(e) => setMessageDelay(e.target.value)}
+            type="number"
+            margin="normal"
+          />
+        </Grid2>
+
+        <Grid2>
+          <Typography variant="h4" gutterBottom>
+            Port
+          </Typography>
+          <TextField
+            label="Port"
+            value={port}
+            onChange={(e) => setPort(e.target.value)}
+            type="number"
+            margin="normal"
+          />
+        </Grid2>
+
+        <Grid2>
+          <Typography variant="h4" gutterBottom>
+            Aspect Ratio
+          </Typography>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={forceWidthHeight}
+                onChange={(e) => setForcedWidthHeight(e.target.checked)}
+              />
+            }
+            label="Force Width Height"
+          />
+          <TextField
+            label="Width"
+            value={canvasWidth}
+            onChange={(e) => setCanvasWidth(e.target.value)}
+            type="number"
+            margin="normal"
+          />
+          <TextField
+            label="Height"
+            value={canvasHeight}
+            onChange={(e) => setCanvasHeight(e.target.value)}
+            type="number"
+            margin="normal"
+          />
+          <TextField
+            label="Scale Canvas"
+            value={scaleCanvas}
+            onChange={(e) => setScaleCanvase(e.target.value)}
+            type="number"
+            margin="normal"
+          />
+          <TextField
+            label="Scale Image"
+            value={scaleImage}
+            onChange={(e) => setScaleImage(e.target.value)}
+            type="number"
+            margin="normal"
+          />
+        </Grid2>
+
+        <Grid2>
+          <Typography variant="h4" gutterBottom>
+            Emote
+          </Typography>
+          <TextField
+            label="Emote Width"
+            value={emoteWidth}
+            onChange={(e) => setEmoteWidth(e.target.value)}
+            type="number"
+            margin="normal"
+          />
+          <TextField
+            label="Emote Height"
+            value={emoteHeight}
+            onChange={(e) => setEmoteHeight(e.target.value)}
+            type="number"
+            margin="normal"
+          />
+          <TextField
+            label="Random Size Increase"
+            value={randomSizeIncrease}
+            onChange={(e) => setRandomSizeIncrease(e.target.value)}
+            type="number"
+            margin="normal"
+          />
+          <TextField
+            label="Random Size Decrease"
+            value={randomSizeDecrease}
+            onChange={(e) => setRandomSizeDecrease(e.target.value)}
+            type="number"
+            margin="normal"
+          />
+          <TextField
+            label="Max Emote Count"
+            value={maxEmoteCount}
+            onChange={(e) => setMaxEmoteCount(e.target.value)}
+            type="number"
+            margin="normal"
+          />
+          <TextField
+            label="Roundness"
+            value={roundness}
+            onChange={(e) => setRoundness(e.target.value)}
+            type="number"
+            margin="normal"
+          />
+          <TextField
+            label="Background Color"
+            value={backgroundColor}
+            onChange={(e) => setBackgroundColor(e.target.value)}
+            margin="normal"
+          />
+        </Grid2>
+
+        <Grid2>
+          <Typography variant="h4" gutterBottom>
+            Testing
+          </Typography>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={test}
+                onChange={(e) => setTest(e.target.checked)}
+              />
+            }
+            label="Test"
+          />
+          <TextField
+            label="Speed Of Emotes"
+            value={speedOfEmotes}
+            onChange={(e) => setSpeedOfEmotes(e.target.value)}
+            type="number"
+            margin="normal"
+          />
+        </Grid2>
+
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSave}
+          style={{ marginTop: "20px" }}
+        >
+          Save Settings
+        </Button>
+      </Box>
+    </ThemeProvider>
   );
 };
 

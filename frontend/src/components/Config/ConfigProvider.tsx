@@ -67,7 +67,8 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
   }, []);
 
   if (loading) {
-    return <div>Loading configuration...</div>;
+    return
+    // return <div>Loading configuration...</div>;
   }
 
   return (

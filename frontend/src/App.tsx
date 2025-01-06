@@ -4,7 +4,9 @@ import MyRoutes from "./components/Routes/Routes";
 function App() {
   return (
     <div id="App">
-      <MyRoutes />
+      <div className="body-background">
+        <MyRoutes />
+      </div>
     </div>
   );
 }
