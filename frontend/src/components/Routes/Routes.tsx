@@ -1,22 +1,38 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+import CanvasComponent from "../Canvas/CanvasComponent";
 import NotFound from "../NotFound/NotFound";
 import Settings from "../Settings/Settings";
-import CanvasComponent from "../Canvas/CanvasComponent";
+import { WebSocketProvider } from "../WebSocket/WebSocketProvider";
 
-export default class MyRoutes extends React.Component {
-  render() {
-    return (
-      <BrowserRouter>
-        {/* <Navbar /> */}
-        <Routes>
-          <Route path="/" element={<CanvasComponent />} />
-          <Route path="/test" element={<CanvasComponent />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    );
-  }
-}
+const MyRoutes: React.FC = () => {
+  return (
+    <BrowserRouter>
+      {/* <Navbar /> */}
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <WebSocketProvider>
+              <CanvasComponent />
+            </WebSocketProvider>
+          }
+        />
+        <Route
+          path="/test"
+          element={
+            <WebSocketProvider>
+              <CanvasComponent />
+            </WebSocketProvider>
+          }
+        />
+
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
+
+export default MyRoutes;

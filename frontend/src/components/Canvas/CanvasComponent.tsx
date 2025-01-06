@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Config } from "../Config/ConfigInterface";
-import { loadBackground } from "./FetchBackground";
+import { loadBackground } from "../Config/FetchBackground";
 import { useConfig } from "../Config/Config";
 import useEmotes from "./useEmotes";
 import { useWebSocketContext } from "../WebSocket/WebSocketProvider";
