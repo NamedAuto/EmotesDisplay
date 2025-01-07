@@ -3,7 +3,7 @@ import { Config } from "../Config/ConfigInterface";
 
 const useEmotes = (
   config: Config,
-  backgroundCanvasRef: React.RefObject<HTMLCanvasElement>
+  backgroundCanvasRef: React.RefObject<HTMLCanvasElement | null>
 ) => {
   const [emotes, setEmotes] = useState<
     { src: string; x: number; y: number; size: number }[]
@@ -66,7 +66,7 @@ const useEmotes = (
   const getRandomEmoteSizeChange = (): number => {
     return Math.random() < 0.5
       ? config.Emote.Width + config.Emote.RandomSizeIncrease
-      : config.Emote.Height - config.Emote.RandomSizeDecrease;
+      : config.Emote.Width - config.Emote.RandomSizeDecrease;
   };
 
   const placeEmoteInBackground = (emoteUrl: string) => {
