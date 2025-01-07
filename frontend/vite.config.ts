@@ -1,34 +1,13 @@
-// import {defineConfig} from 'vite'
-import react from '@vitejs/plugin-react'
-
-// // https://vitejs.dev/config/
-// export default defineConfig({
-//   plugins: [react()]
-// })
-
-import { title } from "process";
 import { defineConfig } from "vite";
-import { createHtmlPlugin } from "vite-plugin-html";
-// import tsconfigPaths from 'vite-tsconfig-paths'; // Optional plugin for tsconfig paths
+import react from "@vitejs/plugin-react";
 
 export default defineConfig({
-  plugins: [
-    react(),
-    createHtmlPlugin({
-      entry: "src/main.tsx",
-      inject: {
-        data: {
-          title: "main",
-          injectScript: `<script type="module" src="/assets/main.[hash].js"></script>`,
-        },
-      },
-    }),
-  ],
+  plugins: [react()],
 
   server: {
     proxy: {
       // "/": {
-      //   target: "http://localhost:8080",
+      //   target: "http://localhost:3124",
       //   changeOrigin: true,
       //   secure: false,
       //   rewrite: (path) => path.replace(/^\/$/, ""),
@@ -56,26 +35,5 @@ export default defineConfig({
   root: "./",
   build: {
     outDir: "./dist",
-    // assetsDir: "assets",
-    // emptyOutDir: true,
-    // manifest: true,
-    // rollupOptions: {
-    //   input: {
-    //     main: "index.html",
-    //   },
-
-    // output: {
-    //   entryFileNames: `assets/[name]-[hash].js`,
-    //   chunkFileNames: `assets/[name]-[hash].js`,
-    //   assetFileNames: `assets/[name]-[hash].[ext]`,
-    // },
-    // },
   },
-  // plugins: [tsconfigPaths()]
 });
-function htmlPlugin(arg0: {
-  minify: boolean;
-  inject: { injectScript: any };
-}): import("vite").PluginOption {
-  throw new Error("Function not implemented.");
-}

@@ -4,11 +4,10 @@
     "useDefineForClassFields": true,
     "module": "ESNext",
     "lib": [
-      "ESNext",
-      "DOM"
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
     ],
-    "rootDir": "./src",
-    "outDir": "./dist",
     "moduleResolution": "Node",
     "strict": true,
     "sourceMap": true,
@@ -16,18 +15,15 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "noEmit": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "noImplicitReturns": true,
     "skipLibCheck": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "allowJs": false,
   },
   "include": [
-    "./src/**/*",
-    "./src/window.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
+    "src",
+    "vite.config.ts"
   ]
 }
