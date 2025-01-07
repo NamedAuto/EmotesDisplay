@@ -4,28 +4,31 @@ import {
   Checkbox,
   createTheme,
   FormControlLabel,
-  Grid2,
+  IconButton,
+  InputAdornment,
   TextField,
   ThemeProvider,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { useConfig } from "../Config/ConfigProvider";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const SettingsPage: React.FC = () => {
   const config = useConfig();
 
+  const [showApiKey, setShowApiKey] = useState(false);
   const [settings, setSettings] = useState({
     apiKey: config.Youtube.ApiKey,
     videoId: config.Youtube.VideoId,
-    messageDelay: config.Youtube.MessageDelay.toString(),
+    messageDelay: (config.Youtube.MessageDelay / 10).toString(),
     port: config.Port.toString(),
     forceWidthHeight: config.AspectRatio.ForceWidthHeight,
     canvasWidth: config.AspectRatio.Width.toString(),
     canvasHeight: config.AspectRatio.Height.toString(),
     scaleCanvas: config.AspectRatio.ScaleCanvas.toString(),
     scaleImage: config.AspectRatio.ScaleImage.toString(),
-    emoteHeight: config.Emote.Height.toString(),
+    // emoteHeight: config.Emote.Height.toString(),
     emoteWidth: config.Emote.Width.toString(),
     randomSizeIncrease: config.Emote.RandomSizeIncrease.toString(),
     randomSizeDecrease: config.Emote.RandomSizeDecrease.toString(),
@@ -33,7 +36,7 @@ const SettingsPage: React.FC = () => {
     emoteRoundness: config.Emote.Roundness.toString(),
     emoteBackgroundColor: config.Emote.BackgroundColor,
     test: config.Testing.Test,
-    speedOfEmotes: config.Testing.SpeedOfEmotes.toString(),
+    speedOfEmotes: (config.Testing.SpeedOfEmotes / 1000).toString(),
   });
 
   const handleReset = () => {
@@ -47,7 +50,7 @@ const SettingsPage: React.FC = () => {
       canvasHeight: config.AspectRatio.Height.toString(),
       scaleCanvas: config.AspectRatio.ScaleCanvas.toString(),
       scaleImage: config.AspectRatio.ScaleImage.toString(),
-      emoteHeight: config.Emote.Height.toString(),
+      // emoteHeight: config.Emote.Height.toString(),
       emoteWidth: config.Emote.Width.toString(),
       randomSizeIncrease: config.Emote.RandomSizeIncrease.toString(),
       randomSizeDecrease: config.Emote.RandomSizeDecrease.toString(),
@@ -67,30 +70,77 @@ const SettingsPage: React.FC = () => {
     }));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     console.log("Settings saved");
+    try {
+      const response = await fetch("/config", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Youtube: {
+            ApiKey: settings.apiKey,
+            VideoId: settings.videoId,
+            MessageDelay: Math.round(parseFloat(settings.messageDelay) * 10),
+          },
+          Port: parseInt(settings.port, 10),
+          AspectRatio: {
+            ForceWidthHeight: settings.forceWidthHeight,
+            Width: parseInt(settings.canvasWidth, 10),
+            Height: parseInt(settings.canvasHeight, 10),
+            ScaleCanvas: parseFloat(settings.scaleCanvas),
+            ScaleImage: parseFloat(settings.scaleImage),
+          },
+          Emote: {
+            // Height: parseInt(settings.emoteHeight, 10),
+            Width: parseInt(settings.emoteWidth, 10),
+            RandomSizeIncrease: parseInt(settings.randomSizeIncrease, 10),
+            RandomSizeDecrease: parseInt(settings.randomSizeDecrease, 10),
+            MaxEmoteCount: parseInt(settings.maxEmoteCount, 10),
+            Roundness: parseInt(settings.emoteRoundness, 10),
+            BackgroundColor: settings.emoteBackgroundColor,
+          },
+          Testing: {
+            Test: settings.test,
+            SpeedOfEmotes: Math.round(
+              parseFloat(settings.speedOfEmotes) * 1000
+            ),
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save config");
+      }
+      console.log("Config Saved");
+    } catch (error) {
+      console.error("Error saving config: " + error);
+    }
   };
 
-  /*
-  const handleSave = () => {
-    console.log("Settings saved");
-    // Update config and notify backend
-    config.update(formValues);
-
-    fetch('/api/config', {
-      method: 'POST', // or PUT depending on your API design
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formValues),
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Settings updated successfully:', data);
-      })
-      .catch(error => console.error('Error updating settings:', error));
+  const handleClickShowPassword = () => {
+    setShowApiKey(!showApiKey);
   };
-*/
+
+  // const handleSdasdave = () => {
+  //   console.log("Settings saved");
+  //   // Update config and notify backend
+  //   config.update(formValues);
+
+  //   fetch("/api/config", {
+  //     method: "POST", // or PUT depending on your API design
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(formValues),
+  //   })
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       console.log("Settings updated successfully:", data);
+  //     })
+  //     .catch((error) => console.error("Error updating settings:", error));
+  // };
 
   // #62B0A6
   // #960018
@@ -179,12 +229,30 @@ const SettingsPage: React.FC = () => {
         </Typography>
         <Box>
           <TextField
+            type={showApiKey ? "text" : "password"}
             name="apiKey"
             label="Api Key"
             value={settings.apiKey}
             onChange={handleInputChange}
             margin="normal"
-            sx={{ marginLeft: 2, marginRight: 2 }}
+            sx={{
+              width: "450px",
+              marginLeft: 2,
+              marginRight: 2,
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    edge="end"
+                  >
+                    {showApiKey ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
           <TextField
             name="videoId"
@@ -196,7 +264,7 @@ const SettingsPage: React.FC = () => {
           />
           <TextField
             name="messageDelay"
-            label="Message Delay"
+            label="Message Delay (seconds)"
             value={settings.messageDelay}
             onChange={handleInputChange}
             type="number"
@@ -264,7 +332,7 @@ const SettingsPage: React.FC = () => {
             margin="normal"
             sx={{ marginLeft: 2, marginRight: 2 }}
           />
-          <TextField
+          {/* <TextField
             name="scaleCanvas"
             label="Scale Canvas"
             value={settings.scaleCanvas}
@@ -281,7 +349,7 @@ const SettingsPage: React.FC = () => {
             type="number"
             margin="normal"
             sx={{ marginLeft: 2, marginRight: 2 }}
-          />
+          /> */}
         </Box>
 
         <Typography variant="h4" gutterBottom sx={{ marginTop: 4 }}>
@@ -290,14 +358,14 @@ const SettingsPage: React.FC = () => {
         <Box>
           <TextField
             name="emoteWidth"
-            label="Emote Width"
+            label="Width and Height"
             value={settings.emoteWidth}
             onChange={handleInputChange}
             type="number"
             margin="normal"
             sx={{ marginLeft: 2, marginRight: 2 }}
           />
-          <TextField
+          {/* <TextField
             name="emoteHeight"
             label="Emote Height"
             value={settings.emoteHeight}
@@ -305,10 +373,10 @@ const SettingsPage: React.FC = () => {
             type="number"
             margin="normal"
             sx={{ marginLeft: 2, marginRight: 2 }}
-          />
+          /> */}
           <TextField
             name="randomSizeIncrease"
-            label="Random Size Increase"
+            label="Random Increase Size By"
             value={settings.randomSizeIncrease}
             onChange={handleInputChange}
             type="number"
@@ -317,7 +385,7 @@ const SettingsPage: React.FC = () => {
           />
           <TextField
             name="randomSizeDecrease"
-            label="Random Size Decrease"
+            label="Random Decrease Size By"
             value={settings.randomSizeDecrease}
             onChange={handleInputChange}
             type="number"
@@ -335,7 +403,7 @@ const SettingsPage: React.FC = () => {
           />
           <TextField
             name="emoteRoundness"
-            label="Roundness"
+            label="Roundness (0 - 50)"
             value={settings.emoteRoundness}
             onChange={handleInputChange}
             type="number"
@@ -381,7 +449,7 @@ const SettingsPage: React.FC = () => {
           />
           <TextField
             name="speedOfEmotes"
-            label="Speed Of Emotes"
+            label="Speed Of Emotes (seconds)"
             value={settings.speedOfEmotes}
             onChange={handleInputChange}
             type="number"
