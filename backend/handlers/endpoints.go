@@ -16,13 +16,12 @@ import (
 
 var assets embed.FS
 
-var extensions = []string{".png", ".jpg", ".jpeg", ".webp", ".gif"} // Add more extensions as needed
+var extensions = []string{".png", ".jpg", ".jpeg", ".webp", ".gif"}
 
 func AssignAssets(embed embed.FS) {
 	assets = embed
 }
 
-// ConfigureEmotesEndpoint sets up the /emotes/:filename endpoint.
 func configureEmotesEndpoint(mux *http.ServeMux, emotePath string) {
 	mux.HandleFunc("/emotes/", func(w http.ResponseWriter, r *http.Request) {
 		filename := strings.TrimPrefix(r.URL.Path, "/emotes/")
@@ -38,7 +37,6 @@ func configureEmotesEndpoint(mux *http.ServeMux, emotePath string) {
 	})
 }
 
-// ConfigureBackgroundImageEndpoint sets up the /background endpoint.
 func configureBackgroundImageEndpoint(mux *http.ServeMux, backgroundPath string) {
 	mux.HandleFunc("/background", func(w http.ResponseWriter, r *http.Request) {
 		folderPath := backgroundPath
@@ -66,7 +64,6 @@ func configureBackgroundImageEndpoint(mux *http.ServeMux, backgroundPath string)
 	})
 }
 
-// Helper function to check if a slice contains a string.
 func contains(slice []string, item string) bool {
 	for _, s := range slice {
 		if s == item {
@@ -76,42 +73,74 @@ func contains(slice []string, item string) bool {
 	return false
 }
 
-// ConfigureConfigEndpoint sets up the /config endpoint.
 func configureConfigEndpoint(mux *http.ServeMux, yamlPath string) {
 	mux.HandleFunc("/config", func(w http.ResponseWriter, r *http.Request) {
 		configPath := filepath.Join(yamlPath, "config.yaml")
-		if _, err := os.Stat(configPath); os.IsNotExist(err) {
-			http.Error(w, "Config file not found", http.StatusNotFound)
-			return
-		}
+		if r.Method == http.MethodGet {
 
-		file, err := os.Open(configPath)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("Error reading config file: %v", err), http.StatusInternalServerError)
-			return
-		}
-		defer file.Close()
+			if _, err := os.Stat(configPath); os.IsNotExist(err) {
+				http.Error(w, "Config file not found", http.StatusNotFound)
+				return
+			}
 
-		fileContent, err := io.ReadAll(file)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("Error reading config file: %v", err), http.StatusInternalServerError)
-			return
-		}
+			file, err := os.Open(configPath)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("Error reading config file: %v", err), http.StatusInternalServerError)
+				return
+			}
+			defer file.Close()
 
-		var config config.AppConfig
-		err = yaml.Unmarshal(fileContent, &config)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("Error parsing config file: %v", err), http.StatusInternalServerError)
-			return
-		}
+			fileContent, err := io.ReadAll(file)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("Error reading config file: %v", err), http.StatusInternalServerError)
+				return
+			}
 
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(config)
+			var config config.AppConfig
+			err = yaml.Unmarshal(fileContent, &config)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("Error parsing config file: %v", err), http.StatusInternalServerError)
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(config)
+
+		} else if r.Method == http.MethodPost {
+			var config config.AppConfig
+
+			err := json.NewDecoder(r.Body).Decode(&config)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("Error decoding JSON: %v", err), http.StatusBadRequest)
+				return
+			}
+
+			// log.Println("This is what I received: ")
+			// log.Println(config)
+
+			fileContent, err := yaml.Marshal(&config)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("Error converting to YAML: %v", err), http.StatusInternalServerError)
+				return
+			}
+
+			// log.Println("This is my yaml")
+			// log.Println(string(fileContent))
+
+			err = os.WriteFile(configPath, fileContent, 0644)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("Error writing config file: %v", err), http.StatusInternalServerError)
+				return
+			}
+
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("Config saved successfully"))
+		} else {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
 	})
 }
 
-// TODO: FIX FOR REAL USE
-// ConfigureDefaultEndpoint sets up the default endpoint to serve the index.html file.
 func configureDefaultEndpoint(mux *http.ServeMux) {
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" || r.URL.Path == "/index.html" {
