@@ -4,8 +4,10 @@ import {
   Checkbox,
   createTheme,
   FormControlLabel,
+  Grid2,
   IconButton,
   InputAdornment,
+  Link,
   TextField,
   ThemeProvider,
   Typography,
@@ -173,7 +175,7 @@ const SettingsPage: React.FC = () => {
       },
       primary: {
         // #f885c0
-        main: "#f885c0",
+        main: "#f167a7",
       },
       secondary: {
         // #62B0A6
@@ -210,6 +212,8 @@ const SettingsPage: React.FC = () => {
     },
   });
 
+  const url = `http://localhost:${config.Port}/show`;
+
   return (
     <ThemeProvider theme={darkTheme}>
       <Box
@@ -224,7 +228,25 @@ const SettingsPage: React.FC = () => {
           width: "100%",
         }}
       >
-        <Typography variant="h4" gutterBottom>
+        <Box display="flex">
+          <Typography variant="h5" gutterBottom style={{ marginRight: "20px" }}>
+            Copy this link →
+          </Typography>
+          <Typography
+            variant="h5"
+            gutterBottom
+            style={{ marginLeft: "20px", marginRight: "20px" }}
+          >
+            {url}
+          </Typography>
+          <Typography variant="h5" gutterBottom style={{ marginLeft: "20px" }}>
+            <Link href={url} target="_blank" rel="noopener">
+              or for a quick view
+            </Link>
+          </Typography>
+        </Box>
+
+        <Typography variant="h4" sx={{ marginTop: 4 }}>
           Youtube
         </Typography>
         <Box>
@@ -273,7 +295,7 @@ const SettingsPage: React.FC = () => {
           />
         </Box>
 
-        <Typography variant="h4" gutterBottom sx={{ marginTop: 4 }}>
+        <Typography variant="h4" sx={{ marginTop: 4 }}>
           Port
         </Typography>
         <Box>
@@ -287,7 +309,7 @@ const SettingsPage: React.FC = () => {
           />
         </Box>
 
-        <Typography variant="h4" gutterBottom sx={{ marginTop: 4 }}>
+        <Typography variant="h4" sx={{ marginTop: 4 }}>
           Aspect Ratio
         </Typography>
         <Box
@@ -352,7 +374,7 @@ const SettingsPage: React.FC = () => {
           /> */}
         </Box>
 
-        <Typography variant="h4" gutterBottom sx={{ marginTop: 4 }}>
+        <Typography variant="h4" sx={{ marginTop: 4 }}>
           Emote
         </Typography>
         <Box>
@@ -420,7 +442,7 @@ const SettingsPage: React.FC = () => {
           />
         </Box>
 
-        <Typography variant="h4" gutterBottom sx={{ marginTop: 4 }}>
+        <Typography variant="h4" sx={{ marginTop: 4 }}>
           Testing
         </Typography>
         <Box
@@ -463,7 +485,7 @@ const SettingsPage: React.FC = () => {
             variant="contained"
             color="primary"
             onClick={handleSave}
-            style={{ marginTop: "20px" }}
+            style={{ fontSize: "18px", marginTop: "20px" }}
             sx={{ marginLeft: 2, marginRight: 2, width: "150px" }}
           >
             Save
@@ -472,7 +494,7 @@ const SettingsPage: React.FC = () => {
             variant="contained"
             color="secondary"
             onClick={handleReset}
-            style={{ marginTop: "20px" }}
+            style={{ fontSize: "18px", marginTop: "20px" }}
             sx={{ marginLeft: 2, marginRight: 2, width: "150px" }}
           >
             Reset

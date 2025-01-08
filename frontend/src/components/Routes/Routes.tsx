@@ -15,12 +15,12 @@ const MyRoutes: React.FC = () => {
           path="/"
           element={
             <WebSocketProvider>
-              <CanvasComponent />
+              <Settings />
             </WebSocketProvider>
           }
         />
         <Route
-          path="/test"
+          path="/show"
           element={
             <WebSocketProvider>
               <CanvasComponent />
