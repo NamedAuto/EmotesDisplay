@@ -19,6 +19,8 @@ const useEmotes = (
       Store all of the valid points that can be used for an image in a set/map?
       Would need just one call of getImageData
       Then I can randomly choose a value from this object for a point on the image
+      .
+      Pootentially allow for modifying transparency
     */
     if (backgroundCanvasRef.current) {
       const pixelData = ctx.getImageData(x, y, 1, 1).data;
@@ -69,18 +71,20 @@ const useEmotes = (
       : config.Emote.Width - config.Emote.RandomSizeDecrease;
   };
 
-  const placeEmoteInBackground = (emoteUrl: string) => {
-    const newEmote = createEmote(emoteUrl);
+  const placeEmoteInBackground = (emoteUrl: string[]) => {
+    for (let url of emoteUrl) {
+      const newEmote = createEmote(url);
 
-    setEmotes((prevEmotes) => {
-      const updatedEmotes = [...prevEmotes, newEmote];
+      setEmotes((prevEmotes) => {
+        const updatedEmotes = [...prevEmotes, newEmote];
 
-      if (updatedEmotes.length > config.Emote.MaxEmoteCount) {
-        updatedEmotes.shift();
-      }
+        if (updatedEmotes.length > config.Emote.MaxEmoteCount) {
+          updatedEmotes.shift();
+        }
 
-      return updatedEmotes;
-    });
+        return updatedEmotes;
+      });
+    }
   };
 
   return { emotes, placeEmoteInBackground };

@@ -137,6 +137,10 @@ func getYoutubeMessages(youtubeService *youtube.Service, videoId string, message
 
 				if len(emoteUrls) > 0 {
 					time.Sleep(100 * time.Millisecond)
+					log.Printf("These are the emoteUrls: ")
+					for _, url := range emoteUrls {
+						log.Println(url)
+					}
 					handler.EmitToAll(emoteUrls)
 				}
 			}

@@ -40,12 +40,9 @@ func (handler *WebSocketHandler) EmitToAllRandom(port int, emoteMap map[string]s
 	handler.mu.Lock()
 	defer handler.mu.Unlock()
 
-	emote := getRandomEmoteKey(emoteMap)
-	url := generateEmotesUrl(port)
-	message := parseEmoteToURL(emote, url)
-	fmt.Printf("Emit: %s\n", message)
+	message := generateRandomUrls(port, emoteMap)
 
-	msg := map[string]string{
+	msg := map[string]interface{}{
 		"type": "new-emote",
 		"data": message,
 	}
@@ -66,6 +63,19 @@ func (handler *WebSocketHandler) EmitToAllRandom(port int, emoteMap map[string]s
 	}
 }
 
+func generateRandomUrls(port int, emoteMap map[string]string) []string {
+	count := rand.Intn(3) + 1
+	var urls []string
+	for i := 0; i < count; i++ {
+		emote := getRandomEmoteKey(emoteMap)
+		url := generateEmotesUrl(port)
+		message := parseEmoteToURL(emote, url)
+		urls = append(urls, message)
+	}
+
+	return urls
+}
+
 func (handler *WebSocketHandler) EmitToAll(emoteUrls []string) {
 	handler.mu.Lock()
 	defer handler.mu.Unlock()
@@ -74,7 +84,7 @@ func (handler *WebSocketHandler) EmitToAll(emoteUrls []string) {
 		"type": "new-emote",
 		"data": emoteUrls,
 	}
-	fmt.Printf("Emit: %s\n", emoteUrls)
+	// fmt.Printf("Emit: %s\n", emoteUrls)
 
 	jsonData, err := json.Marshal(msg)
 	if err != nil {
@@ -188,18 +198,18 @@ func generateEmotesUrl(port int) string {
 	return fmt.Sprintf("http://localhost:%d/emotes/", port)
 }
 
-func getRandomEmoteValue(emoteMap map[string]string) string {
-	keys := make([]string, 0, len(emoteMap))
-	for _, key := range emoteMap {
-		keys = append(keys, key)
-	}
+// func getRandomEmoteValue(emoteMap map[string]string) string {
+// 	keys := make([]string, 0, len(emoteMap))
+// 	for _, key := range emoteMap {
+// 		keys = append(keys, key)
+// 	}
 
-	// randomIndex := rand.Intn(len(keys))
-	// randomKey := keys[randomIndex]
-	// return emoteMap[randomKey]
+// 	// randomIndex := rand.Intn(len(keys))
+// 	// randomKey := keys[randomIndex]
+// 	// return emoteMap[randomKey]
 
-	return keys[rand.Intn(len(keys))]
-}
+// 	return keys[rand.Intn(len(keys))]
+// }
 
 func getRandomEmoteKey(emoteMap map[string]string) string {
 	keys := make([]string, 0, len(emoteMap))

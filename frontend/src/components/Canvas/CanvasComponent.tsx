@@ -21,9 +21,9 @@ const CanvasComponent: React.FC = () => {
   );
 
   useEffect(() => {
-    const handleNewEmote = (emoteUrl: string) => {
-      console.log("Received new emote:", emoteUrl);
-      placeEmoteInBackground(emoteUrl);
+    const handleNewEmote = (emoteUrls: string[]) => {
+      console.log("Received new emotes:", emoteUrls);
+      placeEmoteInBackground(emoteUrls);
     };
 
     updateHandlers({
