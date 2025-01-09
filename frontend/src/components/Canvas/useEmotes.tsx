@@ -48,18 +48,21 @@ const useEmotes = (
     };
   };
 
-  const createEmoteGroup = (emoteUrls: string[]): Emote[] => {
+  const createEmoteGroup = (
+    emoteUrls: string[],
+    randomEmoteSizeChange: number
+  ): Emote[] => {
     let x = 0;
     const emoteGroup: Emote[] = [];
 
     for (let i = 0; i < emoteUrls.length; i++) {
       const srcAndDate = `${emoteUrls[i]}?${new Date().getTime()}`;
-      x += config.Emote.Width;
+      x += randomEmoteSizeChange;
       emoteGroup.push({
         src: srcAndDate,
         x: x,
         y: 0,
-        size: config.Emote.Width,
+        size: randomEmoteSizeChange,
       });
     }
 
@@ -100,9 +103,19 @@ const useEmotes = (
   const giveEmoteGroupPositionAndSize = (
     emoteGroup: Emote[],
     x: number,
-    y: number,
-    size: number
-  ) => {};
+    y: number
+  ) => {
+    // .size is the same as the width and height
+    const midpoint = (emoteGroup.length * emoteGroup[0].size) / 2;
+    console.log("My midpoint is: " + midpoint);
+    console.log("For length: " + emoteGroup.length);
+    console.log("Size of: " + emoteGroup[0].size)
+
+    for (let emote of emoteGroup) {
+      emote.x = emote.x + x - midpoint;
+      emote.y = emote.y + y;
+    }
+  };
 
   const placeEmoteInBackground = (emoteUrl: string[]) => {
     for (let url of emoteUrl) {
@@ -122,12 +135,11 @@ const useEmotes = (
 
   const placeEmotesGroupInBackground = (emoteUrls: string[]) => {
     // Create a group of emotes by mapping over the URLs and creating emote objects
-    const newEmoteGroup = createEmoteGroup(emoteUrls);
+    const randomEmoteSizeChange = getRandomEmoteSizeChange();
+    const newEmoteGroup = createEmoteGroup(emoteUrls, randomEmoteSizeChange);
 
     const { x, y } = getRandomPosition();
-    const randomEmoteSizeChange = getRandomEmoteSizeChange();
-
-    console.log("HEY: " + newEmoteGroup[0].src);
+    giveEmoteGroupPositionAndSize(newEmoteGroup, x, y);
 
     // Add this new group to the state
     setEmotesGroups((prevGroups) => {
@@ -141,7 +153,7 @@ const useEmotes = (
     });
   };
 
-  return { emotes, emotesGroups, placeEmotesGroupInBackground };
+  return { emotesGroups, placeEmotesGroupInBackground };
 };
 
 export default useEmotes;
