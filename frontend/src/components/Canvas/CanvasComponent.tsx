@@ -194,7 +194,7 @@ const CanvasComponent: React.FC = () => {
                   height: emote.size,
                   borderRadius: `${config.Emote.Roundness}%`,
                   backgroundColor: config.Emote.BackgroundColor,
-                  transform: "translate(-50%, -50%)",
+                  transform: "translate(0%, -50%)",
                   zIndex: 3,
                 }}
                 alt={`emote-${emoteIdx}`}

@@ -55,15 +55,20 @@ const useEmotes = (
     let x = 0;
     const emoteGroup: Emote[] = [];
 
+    /* 
+    I want the emotes to be next to each other with zero gap between them
+    Therefore, add the size(width) between each x position and use the same
+    y position to keep them aligned
+     */
     for (let i = 0; i < emoteUrls.length; i++) {
       const srcAndDate = `${emoteUrls[i]}?${new Date().getTime()}`;
-      x += randomEmoteSizeChange;
       emoteGroup.push({
         src: srcAndDate,
         x: x,
         y: 0,
         size: randomEmoteSizeChange,
       });
+      x += randomEmoteSizeChange;
     }
 
     return emoteGroup;
@@ -105,11 +110,20 @@ const useEmotes = (
     x: number,
     y: number
   ) => {
-    // .size is the same as the width and height
+    /*
+     .size is the same as the width and height
+     (x,y) it the (top,left) of the emote
+     I want the [emoteGroup] to be centered at the given (x,y)
+     To do this, I get the midpoint of the group of emotes and
+     then subtract the midpoint from each .x value
+     The emotes will then be transformed so that the center of 
+     the group will be on the (x,y)
+     This requires a transform of "translate(0%, -50%)"
+     The x does not need to be translated as that was done when
+     subtracting the midpoint. The .y needs to be translated "up"
+     to have the (x,y) be the center
+    */
     const midpoint = (emoteGroup.length * emoteGroup[0].size) / 2;
-    console.log("My midpoint is: " + midpoint);
-    console.log("For length: " + emoteGroup.length);
-    console.log("Size of: " + emoteGroup[0].size)
 
     for (let emote of emoteGroup) {
       emote.x = emote.x + x - midpoint;
@@ -139,6 +153,7 @@ const useEmotes = (
     const newEmoteGroup = createEmoteGroup(emoteUrls, randomEmoteSizeChange);
 
     const { x, y } = getRandomPosition();
+    console.log("My Position is: X: " + x + " Y: " + y);
     giveEmoteGroupPositionAndSize(newEmoteGroup, x, y);
 
     // Add this new group to the state
@@ -157,3 +172,15 @@ const useEmotes = (
 };
 
 export default useEmotes;
+
+/*
+
+left 928.68,     top: 769.716
+Width 57
+
+My Position is: X: 900.1801863879832 Y: 769.7156590892711
+My midpoint is: 28.5
+For length: 1
+Size of: 57
+
+*/
