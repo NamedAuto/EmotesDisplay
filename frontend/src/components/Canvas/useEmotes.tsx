@@ -1,13 +1,19 @@
 import { useState } from "react";
 import { Config } from "../Config/ConfigInterface";
 
+interface Emote {
+  src: string;
+  x: number;
+  y: number;
+  size: number;
+}
+
 const useEmotes = (
   config: Config,
   backgroundCanvasRef: React.RefObject<HTMLCanvasElement | null>
 ) => {
-  const [emotes, setEmotes] = useState<
-    { src: string; x: number; y: number; size: number }[]
-  >([]);
+  const [emotes, setEmotes] = useState<Emote[]>([]);
+  const [emotesGroups, setEmotesGroups] = useState<{ emotes: Emote[] }[]>([]);
 
   const isWithinBackground = (
     ctx: CanvasRenderingContext2D,
@@ -29,39 +35,59 @@ const useEmotes = (
     return false;
   };
 
-  const createEmote = (
-    emoteUrl: string
-  ): { src: string; x: number; y: number; size: number } => {
+  const createEmote = (emoteUrl: string): Emote => {
+    const { x, y } = getRandomPosition();
+    const randomSize = getRandomEmoteSizeChange();
+    const srcAndDate = `${emoteUrl}?${new Date().getTime()}`;
+
+    return {
+      src: srcAndDate,
+      x,
+      y,
+      size: randomSize,
+    };
+  };
+
+  const createEmoteGroup = (emoteUrls: string[]): Emote[] => {
+    let x = 0;
+    const emoteGroup: Emote[] = [];
+
+    for (let i = 0; i < emoteUrls.length; i++) {
+      const srcAndDate = `${emoteUrls[i]}?${new Date().getTime()}`;
+      x += config.Emote.Width;
+      emoteGroup.push({
+        src: srcAndDate,
+        x: x,
+        y: 0,
+        size: config.Emote.Width,
+      });
+    }
+
+    return emoteGroup;
+  };
+
+  const getRandomPosition = (): { x: number; y: number } => {
     let x = 0;
     let y = 0;
 
     if (backgroundCanvasRef.current) {
-      const ctx = backgroundCanvasRef.current.getContext("2d", {
-        willReadFrequently: true,
-      })!;
+      const ctx = backgroundCanvasRef.current.getContext("2d", {})!;
 
       do {
         x = Math.random() * backgroundCanvasRef.current.width;
         y = Math.random() * backgroundCanvasRef.current.height;
       } while (!isWithinBackground(ctx, x, y));
 
-      const randomSize = getRandomEmoteSizeChange();
-      const srcAndDate = `${emoteUrl}?${new Date().getTime()}`;
-
       return {
-        src: srcAndDate,
         x,
         y,
-        size: randomSize,
       };
     }
 
     console.log("Background Canvas not available to add emote");
     return {
-      src: "",
       x,
       y,
-      size: 0,
     };
   };
 
@@ -70,6 +96,13 @@ const useEmotes = (
       ? config.Emote.Width + config.Emote.RandomSizeIncrease
       : config.Emote.Width - config.Emote.RandomSizeDecrease;
   };
+
+  const giveEmoteGroupPositionAndSize = (
+    emoteGroup: Emote[],
+    x: number,
+    y: number,
+    size: number
+  ) => {};
 
   const placeEmoteInBackground = (emoteUrl: string[]) => {
     for (let url of emoteUrl) {
@@ -87,7 +120,28 @@ const useEmotes = (
     }
   };
 
-  return { emotes, placeEmoteInBackground };
+  const placeEmotesGroupInBackground = (emoteUrls: string[]) => {
+    // Create a group of emotes by mapping over the URLs and creating emote objects
+    const newEmoteGroup = createEmoteGroup(emoteUrls);
+
+    const { x, y } = getRandomPosition();
+    const randomEmoteSizeChange = getRandomEmoteSizeChange();
+
+    console.log("HEY: " + newEmoteGroup[0].src);
+
+    // Add this new group to the state
+    setEmotesGroups((prevGroups) => {
+      const updatedGroups = [...prevGroups, { emotes: newEmoteGroup }];
+
+      if (updatedGroups.length > config.Emote.MaxEmoteCount) {
+        updatedGroups.shift(); // Optionally limit the number of groups
+      }
+
+      return updatedGroups;
+    });
+  };
+
+  return { emotes, emotesGroups, placeEmotesGroupInBackground };
 };
 
 export default useEmotes;

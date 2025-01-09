@@ -28,7 +28,7 @@ const CanvasComponent: React.FC = () => {
   const config = useConfig();
   const { socket, isConnected, updateHandlers } = useWebSocketContext();
 
-  const { emotes, placeEmoteInBackground } = useEmotes(
+  const { emotes, emotesGroups, placeEmotesGroupInBackground } = useEmotes(
     config,
     backgroundCanvasRef
   );
@@ -36,7 +36,7 @@ const CanvasComponent: React.FC = () => {
   useEffect(() => {
     const handleNewEmote = (emoteUrls: string[]) => {
       console.log("Received new emotes:", emoteUrls);
-      placeEmoteInBackground(emoteUrls);
+      placeEmotesGroupInBackground(emoteUrls);
     };
 
     updateHandlers({
@@ -168,26 +168,40 @@ const CanvasComponent: React.FC = () => {
         ref={emotesLayerRef}
         // style={{ position: "absolute", top: 0, left: 0 }}
       >
-        {emotes.map((emote, idx) => (
-          <img
-            key={idx}
-            src={emote.src}
-            className="emote"
-            crossOrigin="anonymous"
-            style={{
-              position: "absolute",
-              left: emote.x,
-              top: emote.y,
-              width: emote.size,
-              height: emote.size,
-              borderRadius: `${config.Emote.Roundness}%`,
-              backgroundColor: config.Emote.BackgroundColor,
-              transform: "translate(-50%, -50%)",
-              zIndex: 3,
-            }}
-            alt={`emote-${idx}`}
-          />
-        ))}
+        {emotesGroups.map((group, groupIdx) => (
+        <Box
+          key={groupIdx}
+          className="emote-group"
+          sx={{
+            position: "absolute",
+            top: `${groupIdx * 100}px`,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 3,
+          }}
+        >
+          {group.emotes.map((emote, emoteIdx) => (
+            <img
+              key={emoteIdx}
+              src={emote.src}
+              className="emote"
+              crossOrigin="anonymous"
+              style={{
+                position: "absolute",
+                left: emote.x,
+                top: emote.y,
+                width: emote.size,
+                height: emote.size,
+                borderRadius: `${config.Emote.Roundness}%`,
+                backgroundColor: config.Emote.BackgroundColor,
+                transform: "translate(-50%, -50%)",
+                zIndex: 3,
+              }}
+              alt={`emote-${emoteIdx}`}
+            />
+          ))}
+        </Box>
+      ))}
       </Box>
     </Box>
   );
