@@ -1,16 +1,14 @@
-html, body, #root {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-.body-background {
-  background-color: transparent;
-  height: 100%;
-  width: 100%;
+html,
+body,
+#root {
+  margin: 0;  
+  padding: 0; 
+  height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  /* width: 100%; */
+  overflow: visible;
 }
 
 #backgroundContainer {
@@ -18,13 +16,17 @@ html, body, #root {
   position: relative;
   justify-content: center;
   align-items: center;
-  width: 1920px;
-  height: 1080px;
+  width: 100%;
+  height: 100%;
   overflow: visible;
+  /* transform-origin: top left; */
 }
 
 #backgroundImage {
   position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: cover;
   width: 100%;
   height: 100%;
   z-index: 1;
@@ -32,6 +34,9 @@ html, body, #root {
 
 #backgroundCanvas {
   position: absolute;
+  top: 0;
+  left: 0;
+  visibility: hidden;
   width: 100%;
   height: 100%;
   z-index: 2;
@@ -39,15 +44,22 @@ html, body, #root {
 }
 
 .emotesLayer {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
   z-index: 3;
   /* pointer-events: none; */
 }
 
 .emote {
   position: absolute;
-  width: 50px;
-  height: 50px;
+  width: 5vw;
+  height: 5vw;
   object-fit: cover;
   /*background-color: lightblue;*/
   /*border-radius: 50%;*/

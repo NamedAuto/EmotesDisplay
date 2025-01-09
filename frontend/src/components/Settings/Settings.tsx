@@ -220,12 +220,12 @@ const SettingsPage: React.FC = () => {
         sx={{
           backgroundColor: "background.default",
           color: "text.primary",
-          minHeight: "100vh",
+          height: "100vh",
+          width: "100vw",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          width: "100%",
         }}
       >
         <Box display="flex">
