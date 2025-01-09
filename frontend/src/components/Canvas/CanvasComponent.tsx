@@ -1,9 +1,11 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Config } from "../Config/ConfigInterface";
 import { loadBackground } from "../Config/FetchBackground";
 import { useConfig } from "../Config/ConfigProvider";
 import useEmotes from "./useEmotes";
 import { useWebSocketContext } from "../WebSocket/WebSocketProvider";
+import Box from "@mui/material/Box";
+import useWindowSize from "./windowSize";
 
 const CanvasComponent: React.FC = () => {
   const backgroundImageRef = useRef<HTMLImageElement>(null);
@@ -11,6 +13,17 @@ const CanvasComponent: React.FC = () => {
   const emotesLayerRef = useRef<HTMLDivElement>(null);
   const backgroundContainerRef = useRef<HTMLDivElement>(null);
 
+  // const { width, height } = useWindowSize();
+  // const [scale, setScale] = useState(1);
+  // const initialWidth = 1920; // or your preferred reference width
+  // const initialHeight = 1080; // or your preferred reference height
+
+  // // Calculate scale factor based on window size
+  // useEffect(() => {
+  //   const scaleWidth = width / initialWidth;
+  //   const scaleHeight = height / initialHeight;
+  //   setScale(Math.min(scaleWidth, scaleHeight)); // Maintain the aspect ratio
+  // }, [width, height]);
 
   const config = useConfig();
   const { socket, isConnected, updateHandlers } = useWebSocketContext();
@@ -32,7 +45,10 @@ const CanvasComponent: React.FC = () => {
   }, [updateHandlers]);
 
   useEffect(() => {
-    if (!config) return;
+    if (!config) {
+      console.log("Config not ready");
+      return;
+    }
 
     const initialize = async () => {
       try {
@@ -54,8 +70,16 @@ const CanvasComponent: React.FC = () => {
 
     // Initialize only if config is available
     initialize();
-  }, []);
 
+    return () => {
+      console.log("I am closing");
+    };
+  }, [config]);
+
+  /*
+  TODO: Fix two background images loading during Strict.Mode
+    The first one is not removed and instead, the second image is overlapped on top
+  */
   const loadImageOntoCanvas = async (config: Config) => {
     try {
       const url = await loadBackground(config);
@@ -126,13 +150,23 @@ const CanvasComponent: React.FC = () => {
   };
 
   return (
-    <div id="backgroundContainer" ref={backgroundContainerRef}>
+    <Box
+      id="backgroundContainer"
+      ref={backgroundContainerRef}
+      // style={{
+      //   width: `${initialWidth}px`,
+      //   height: `${initialHeight}px`,
+      //   transform: `scale(${scale})`,
+      //   // transformOrigin: 'top left',
+      //   position: 'relative',
+      // }}
+    >
       <img id="backgroundImage" ref={backgroundImageRef} alt="Background" />
       <canvas id="backgroundCanvas" ref={backgroundCanvasRef}></canvas>
-      <div
+      <Box
         className="emotesLayer"
         ref={emotesLayerRef}
-        style={{ position: "absolute", top: 0, left: 0 }}
+        // style={{ position: "absolute", top: 0, left: 0 }}
       >
         {emotes.map((emote, idx) => (
           <img
@@ -154,8 +188,8 @@ const CanvasComponent: React.FC = () => {
             alt={`emote-${idx}`}
           />
         ))}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 
