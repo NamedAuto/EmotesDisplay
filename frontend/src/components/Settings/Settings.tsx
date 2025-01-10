@@ -1,20 +1,20 @@
 import {
   Box,
   Button,
-  Checkbox,
   createTheme,
-  FormControlLabel,
-  Grid2,
-  IconButton,
-  InputAdornment,
+  Divider,
   Link,
-  TextField,
   ThemeProvider,
   Typography,
 } from "@mui/material";
-import React, { ChangeEvent, useState } from "react";
+import React, { useState } from "react";
 import { useConfig } from "../Config/ConfigProvider";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import AspectRatioSettings from "./AspectRatioSettings";
+import EmoteSettings from "./EmoteSettings";
+import PortSettings from "./PortSettings";
+import TestingSettings from "./TestingSettings";
+import YouTubeSettings from "./YoutubeSettings";
+import HeaderSettings from "./HeaderSettings";
 
 const SettingsPage: React.FC = () => {
   const config = useConfig();
@@ -128,25 +128,6 @@ const SettingsPage: React.FC = () => {
     setShowApiKey(!showApiKey);
   };
 
-  // const handleSdasdave = () => {
-  //   console.log("Settings saved");
-  //   // Update config and notify backend
-  //   config.update(formValues);
-
-  //   fetch("/api/config", {
-  //     method: "POST", // or PUT depending on your API design
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(formValues),
-  //   })
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       console.log("Settings updated successfully:", data);
-  //     })
-  //     .catch((error) => console.error("Error updating settings:", error));
-  // };
-
   // #62B0A6
   // #960018
   // #e9325e
@@ -168,7 +149,6 @@ const SettingsPage: React.FC = () => {
   //rgb(98, 176, 159)
   // #6c072c
 
-  // Create a custom theme for the Settings component
   const darkTheme = createTheme({
     palette: {
       mode: "dark",
@@ -215,7 +195,8 @@ const SettingsPage: React.FC = () => {
     },
   });
 
-  const url = `http://localhost:${config.Port}/show`;
+  const dividerMargin = 2;
+  const dividerColor = "2px solid #6c072c";
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -227,286 +208,69 @@ const SettingsPage: React.FC = () => {
           width: "100vw",
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
+          // alignItems: "center",
+          // justifyContent: "center",
         }}
       >
-        <Box display="flex">
-          <Typography variant="h5" gutterBottom style={{ marginRight: "20px" }}>
-            Copy this link →
-          </Typography>
-          <Typography
-            variant="h5"
-            gutterBottom
-            style={{ marginLeft: "20px", marginRight: "20px" }}
-          >
-            {url}
-          </Typography>
-          <Typography variant="h5" gutterBottom style={{ marginLeft: "20px" }}>
-            <Link href={url} target="_blank" rel="noopener">
-              or for a quick view
-            </Link>
-          </Typography>
-        </Box>
+        <HeaderSettings port={settings.port} />
 
-        <Typography variant="h4" sx={{ marginTop: 4 }}>
-          Youtube
-        </Typography>
-        <Box>
-          <TextField
-            type={showApiKey ? "text" : "password"}
-            name="apiKey"
-            label="Api Key"
-            value={settings.apiKey}
-            onChange={handleInputChange}
-            margin="normal"
-            sx={{
-              width: "450px",
-              marginLeft: 2,
-              marginRight: 2,
-            }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    edge="end"
-                  >
-                    {showApiKey ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
+        <Divider sx={{ borderBottom: dividerColor, marginY: dividerMargin }} />
+
+        <YouTubeSettings
+          apiKey={settings.apiKey}
+          videoId={settings.videoId}
+          messageDelay={settings.messageDelay}
+          handleInputChange={handleInputChange}
+          showApiKey={showApiKey}
+          handleClickShowPassword={handleClickShowPassword}
+        />
+
+        <Divider sx={{ borderBottom: dividerColor, marginY: dividerMargin }} />
+
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-around",
+            marginBottom: 3,
+          }}
+        >
+          <PortSettings
+            port={settings.port}
+            handleInputChange={handleInputChange}
           />
-          <TextField
-            name="videoId"
-            label="Video Id"
-            value={settings.videoId}
-            onChange={handleInputChange}
-            margin="normal"
-            sx={{ marginLeft: 2, marginRight: 2 }}
-          />
-          <TextField
-            name="messageDelay"
-            label="Message Delay (seconds)"
-            value={settings.messageDelay}
-            onChange={handleInputChange}
-            type="number"
-            margin="normal"
-            sx={{ marginLeft: 2, marginRight: 2 }}
+
+          <TestingSettings
+            settings={settings}
+            handleInputChange={handleInputChange}
           />
         </Box>
 
-        <Typography variant="h4" sx={{ marginTop: 4 }}>
-          Port
-        </Typography>
-        <Box>
-          <TextField
-            name="port"
-            label="Port"
-            value={settings.port}
-            onChange={handleInputChange}
-            type="number"
-            margin="normal"
-          />
-        </Box>
+        <Divider sx={{ borderBottom: dividerColor, marginY: dividerMargin }} />
 
-        <Typography variant="h4" sx={{ marginTop: 4 }}>
-          Aspect Ratio
-        </Typography>
+        <AspectRatioSettings
+          forceWidthHeight={settings.forceWidthHeight}
+          width={settings.canvasWidth}
+          height={settings.canvasHeight}
+          handleInputChange={handleInputChange}
+        />
+
+        <Divider sx={{ borderBottom: dividerColor, marginY: dividerMargin }} />
+
+        <EmoteSettings
+          settings={settings}
+          handleInputChange={handleInputChange}
+        />
+
+        <Divider sx={{ borderBottom: dividerColor, marginY: dividerMargin }} />
+
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            flexWrap: "wrap",
           }}
         >
-          <FormControlLabel
-            control={
-              <Checkbox
-                name="forceWidthHeight"
-                checked={settings.forceWidthHeight}
-                onChange={handleInputChange}
-                // sx={{
-                //   "& .MuiSvgIcon-root": {
-                //     border: settings.test ? "2px solid #f885c0" : "none",
-                //     borderRadius: "4px",
-                //   },
-                // }}
-              />
-            }
-            label="Force Width Height"
-            sx={{ marginLeft: 2, marginRight: 2 }}
-          />
-          <TextField
-            name="canvasWidth"
-            label="Width"
-            value={settings.canvasWidth}
-            onChange={handleInputChange}
-            type="number"
-            margin="normal"
-            sx={{ marginLeft: 2, marginRight: 2 }}
-          />
-          <TextField
-            name="canvasHeight"
-            label="Height"
-            value={settings.canvasHeight}
-            onChange={handleInputChange}
-            type="number"
-            margin="normal"
-            sx={{ marginLeft: 2, marginRight: 2 }}
-          />
-          {/* <TextField
-            name="scaleCanvas"
-            label="Scale Canvas"
-            value={settings.scaleCanvas}
-            onChange={handleInputChange}
-            type="number"
-            margin="normal"
-            sx={{ marginLeft: 2, marginRight: 2 }}
-          />
-          <TextField
-            name="scaleImage"
-            label="Scale Image"
-            value={settings.scaleImage}
-            onChange={handleInputChange}
-            type="number"
-            margin="normal"
-            sx={{ marginLeft: 2, marginRight: 2 }}
-          /> */}
-        </Box>
-
-        <Typography variant="h4" sx={{ marginTop: 4 }}>
-          Emote
-        </Typography>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <TextField
-            name="emoteWidth"
-            label="Width and Height"
-            value={settings.emoteWidth}
-            onChange={handleInputChange}
-            type="number"
-            margin="normal"
-            sx={{ marginLeft: 2, marginRight: 2 }}
-          />
-          {/* <TextField
-            name="emoteHeight"
-            label="Emote Height"
-            value={settings.emoteHeight}
-            onChange={handleInputChange}
-            type="number"
-            margin="normal"
-            sx={{ marginLeft: 2, marginRight: 2 }}
-          /> */}
-          <TextField
-            name="randomSizeIncrease"
-            label="Random Increase Size By"
-            value={settings.randomSizeIncrease}
-            onChange={handleInputChange}
-            type="number"
-            margin="normal"
-            sx={{ marginLeft: 2, marginRight: 2 }}
-          />
-          <TextField
-            name="randomSizeDecrease"
-            label="Random Decrease Size By"
-            value={settings.randomSizeDecrease}
-            onChange={handleInputChange}
-            type="number"
-            margin="normal"
-            sx={{ marginLeft: 2, marginRight: 2 }}
-          />
-          <TextField
-            name="maxEmoteCount"
-            label="Max Emote Count"
-            value={settings.maxEmoteCount}
-            onChange={handleInputChange}
-            type="number"
-            margin="normal"
-            sx={{ marginLeft: 2, marginRight: 2 }}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                name="groupEmotes"
-                checked={settings.groupEmotes}
-                onChange={handleInputChange}
-                // sx={{
-                //   "& .MuiSvgIcon-root": {
-                //     border: settings.test ? "2px solid #f885c0" : "none",
-                //     borderRadius: "4px",
-                //   },
-                // }}
-              />
-            }
-            label="Group Emotes"
-            sx={{ marginLeft: 2, marginRight: 2 }}
-          />
-          <TextField
-            name="emoteRoundness"
-            label="Roundness (0 - 50)"
-            value={settings.emoteRoundness}
-            onChange={handleInputChange}
-            type="number"
-            margin="normal"
-            sx={{ marginLeft: 2, marginRight: 2 }}
-          />
-          <TextField
-            name="emoteBackgroundColor"
-            label="Background Color"
-            value={settings.emoteBackgroundColor}
-            onChange={handleInputChange}
-            margin="normal"
-            sx={{ marginLeft: 2, marginRight: 2 }}
-          />
-        </Box>
-
-        <Typography variant="h4" sx={{ marginTop: 4 }}>
-          Testing
-        </Typography>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <FormControlLabel
-            control={
-              <Checkbox
-                name="test"
-                checked={settings.test}
-                onChange={handleInputChange}
-                // sx={{
-                //   "& .MuiSvgIcon-root": {
-                //     border: settings.test ? "2px solid #f885c0" : "none",
-                //     borderRadius: "4px",
-                //   },
-                // }}
-              />
-            }
-            label="Test"
-            sx={{ marginLeft: 2, marginRight: 2 }}
-          />
-          <TextField
-            name="speedOfEmotes"
-            label="Speed Of Emotes (seconds)"
-            value={settings.speedOfEmotes}
-            onChange={handleInputChange}
-            type="number"
-            margin="normal"
-            sx={{ marginLeft: 2, marginRight: 2 }}
-          />
-        </Box>
-
-        <Box sx={{ marginTop: 4 }}>
           <Button
             variant="contained"
             color="primary"
