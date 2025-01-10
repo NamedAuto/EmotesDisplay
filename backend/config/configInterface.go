@@ -20,6 +20,7 @@ type EmoteConfig struct {
 	RandomSizeIncrease int    `yaml:"randomSizeIncrease"` // Increase emote size by up to this number
 	RandomSizeDecrease int    `yaml:"randomSizeDecrease"` // Decrease emote size by up to this number
 	MaxEmoteCount      int    `yaml:"maxEmoteCount"`      // Maximum number of emotes to display on the screen at once
+	GroupEmotes        bool   `yaml:"groupEmotes"`        // Group emotes fro mthe same message or separate
 	Roundness          int    `yaml:"roundness"`          // Value to round the emote image
 	BackgroundColor    string `yaml:"backgroundColor"`    // Add color to the transparent part of the emotes
 }

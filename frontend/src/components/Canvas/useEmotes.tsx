@@ -18,26 +18,6 @@ const useEmotes = (
 ) => {
   const [emotesGroups, setEmotesGroups] = useState<{ emotes: Emote[] }[]>([]);
 
-  const isWithinBackground = (
-    ctx: CanvasRenderingContext2D,
-    x: number,
-    y: number
-  ): boolean => {
-    /*
-    TODO: Improve efficiency of canvas
-      Store all of the valid points that can be used for an image in a set/map?
-      Would need just one call of getImageData
-      Then I can randomly choose a value from this object for a point on the image
-      .
-      Pootentially allow for modifying transparency
-    */
-    if (backgroundCanvasRef.current) {
-      const pixelData = ctx.getImageData(x, y, 1, 1).data;
-      return pixelData[3] > 0;
-    }
-    return false;
-  };
-
   const createEmoteGroup = (
     emoteUrls: string[],
     emoteSize: number,
@@ -73,33 +53,10 @@ const useEmotes = (
   };
 
   const getRandomPosition = (nonTransparentPositions: Position[]): Position => {
-    let x = 0;
-    let y = 0;
-
     const randomIndex = Math.floor(
       Math.random() * nonTransparentPositions.length
     );
     return nonTransparentPositions[randomIndex];
-
-    // if (backgroundCanvasRef.current) {
-    //   const ctx = backgroundCanvasRef.current.getContext("2d", {})!;
-
-    //   do {
-    //     x = Math.random() * backgroundCanvasRef.current.width;
-    //     y = Math.random() * backgroundCanvasRef.current.height;
-    //   } while (!isWithinBackground(ctx, x, y));
-
-    //   return {
-    //     x,
-    //     y,
-    //   };
-    // }
-
-    // console.log("Background Canvas not available to add emote");
-    // return {
-    //   x,
-    //   y,
-    // };
   };
 
   const getRandomEmoteSizeChange = (): number => {
@@ -108,18 +65,9 @@ const useEmotes = (
       : config.Emote.Width - config.Emote.RandomSizeDecrease;
   };
 
-  const placeEmotesGroupInBackground = (
-    emoteUrls: string[],
-    nonTransparentPositions: RefObject<Position[]>
-  ) => {
-    const nonArray = nonTransparentPositions.current;
-    console.log(nonArray.length)
-    const emoteSize = getRandomEmoteSizeChange();
-    const randomPos = getRandomPosition(nonArray);
-    const newEmoteGroup = createEmoteGroup(emoteUrls, emoteSize, randomPos);
-
+  const updateEmotesGroups = (emoteGroup: Emote[]) => {
     setEmotesGroups((prevGroups) => {
-      const updatedGroups = [...prevGroups, { emotes: newEmoteGroup }];
+      const updatedGroups = [...prevGroups, { emotes: emoteGroup }];
 
       if (updatedGroups.length > config.Emote.MaxEmoteCount) {
         updatedGroups.shift();
@@ -127,6 +75,26 @@ const useEmotes = (
 
       return updatedGroups;
     });
+  };
+
+  const placeEmotesGroupInBackground = (
+    emoteUrls: string[],
+    nonTransparentPositions: RefObject<Position[]>
+  ) => {
+    if (config.Emote.GroupEmotes) {
+      const emoteSize = getRandomEmoteSizeChange();
+      const randomPos = getRandomPosition(nonTransparentPositions.current);
+      const newEmoteGroup = createEmoteGroup(emoteUrls, emoteSize, randomPos);
+      updateEmotesGroups(newEmoteGroup);
+    } else {
+      for (let emote of emoteUrls) {
+        const tempArray = [emote];
+        const emoteSize = getRandomEmoteSizeChange();
+        const randomPos = getRandomPosition(nonTransparentPositions.current);
+        const newEmoteGroup = createEmoteGroup(tempArray, emoteSize, randomPos);
+        updateEmotesGroups(newEmoteGroup);
+      }
+    }
   };
 
   return { emotesGroups, placeEmotesGroupInBackground };

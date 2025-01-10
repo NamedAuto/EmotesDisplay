@@ -1,23 +1,18 @@
 interface EmoteConfig {
   Width: number;
   Height: number;
-  Roundness: number;
-  BackgroundColor: string;
-  MaxEmoteCount: number;
   RandomSizeIncrease: number;
   RandomSizeDecrease: number;
+  MaxEmoteCount: number;
+  GroupEmotes: boolean;
+  Roundness: number;
+  BackgroundColor: string;
 }
 
 interface YoutubeConfig {
   ApiKey: string;
   VideoId: string;
   MessageDelay: number;
-}
-
-interface PortConfig {
-  App: number;
-  Browser: number;
-  // port: number;
 }
 
 interface AspectRatioConfig {
