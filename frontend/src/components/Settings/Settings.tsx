@@ -35,6 +35,7 @@ const SettingsPage: React.FC = () => {
     randomSizeIncrease: config.Emote.RandomSizeIncrease.toString(),
     randomSizeDecrease: config.Emote.RandomSizeDecrease.toString(),
     maxEmoteCount: config.Emote.MaxEmoteCount.toString(),
+    groupEmotes: config.Emote.GroupEmotes,
     emoteRoundness: config.Emote.Roundness.toString(),
     emoteBackgroundColor: config.Emote.BackgroundColor,
     test: config.Testing.Test,
@@ -57,6 +58,7 @@ const SettingsPage: React.FC = () => {
       randomSizeIncrease: config.Emote.RandomSizeIncrease.toString(),
       randomSizeDecrease: config.Emote.RandomSizeDecrease.toString(),
       maxEmoteCount: config.Emote.MaxEmoteCount.toString(),
+      groupEmotes: config.Emote.GroupEmotes,
       emoteRoundness: config.Emote.Roundness.toString(),
       emoteBackgroundColor: config.Emote.BackgroundColor,
       test: config.Testing.Test,
@@ -100,6 +102,7 @@ const SettingsPage: React.FC = () => {
             RandomSizeIncrease: parseInt(settings.randomSizeIncrease, 10),
             RandomSizeDecrease: parseInt(settings.randomSizeDecrease, 10),
             MaxEmoteCount: parseInt(settings.maxEmoteCount, 10),
+            GroupEmotes: settings.groupEmotes,
             Roundness: parseInt(settings.emoteRoundness, 10),
             BackgroundColor: settings.emoteBackgroundColor,
           },
@@ -377,7 +380,13 @@ const SettingsPage: React.FC = () => {
         <Typography variant="h4" sx={{ marginTop: 4 }}>
           Emote
         </Typography>
-        <Box>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <TextField
             name="emoteWidth"
             label="Width and Height"
@@ -421,6 +430,23 @@ const SettingsPage: React.FC = () => {
             onChange={handleInputChange}
             type="number"
             margin="normal"
+            sx={{ marginLeft: 2, marginRight: 2 }}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                name="groupEmotes"
+                checked={settings.groupEmotes}
+                onChange={handleInputChange}
+                // sx={{
+                //   "& .MuiSvgIcon-root": {
+                //     border: settings.test ? "2px solid #f885c0" : "none",
+                //     borderRadius: "4px",
+                //   },
+                // }}
+              />
+            }
+            label="Group Emotes"
             sx={{ marginLeft: 2, marginRight: 2 }}
           />
           <TextField

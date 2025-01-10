@@ -1,6 +1,6 @@
 youtube:
   apiKey: # Your google API key here
-  videoId:  # Your video id goes here
+  videoId: # Your video id goes here
 
   # Delay before new message is received from YouTube
   # Scaled by a factor of 10
@@ -41,6 +41,9 @@ emote:
 
   # The max amount of emotes displayed before the oldest one is removed
   maxEmoteCount: 200
+
+  # Group emotes from the same message together or keep them separate
+  groupEmotes: true
 
   # Add rounded edges around the emote. Emotes will be cut off at the edges
   # 0 leaves the emote alone
