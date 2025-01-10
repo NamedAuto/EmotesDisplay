@@ -4,9 +4,10 @@ import {
   createTheme,
   Divider,
   ThemeProvider,
-  Tooltip
+  Tooltip,
 } from "@mui/material";
 import React, { useState } from "react";
+import { Config } from "../Config/ConfigInterface";
 import { useConfig } from "../Config/ConfigProvider";
 import AspectRatioSettings from "./AspectRatioSettings";
 import EmoteSettings from "./EmoteSettings";
@@ -15,21 +16,40 @@ import PortSettings from "./PortSettings";
 import TestingSettings from "./TestingSettings";
 import YouTubeSettings from "./YoutubeSettings";
 
+interface MySettings {
+  apiKey: string;
+  videoId: string;
+  messageDelay: string;
+  port: string;
+  forceWidthHeight: boolean;
+  canvasWidth: string;
+  canvasHeight: string;
+  scaleCanvas: string;
+  scaleImage: string;
+  emoteWidth: string;
+  randomSizeIncrease: string;
+  randomSizeDecrease: string;
+  maxEmoteCount: string;
+  groupEmotes: boolean;
+  emoteRoundness: string;
+  emoteBackgroundColor: string;
+  test: boolean;
+  speedOfEmotes: string;
+}
+
 const SettingsPage: React.FC = () => {
   const config = useConfig();
 
-  const [showApiKey, setShowApiKey] = useState(false);
-  const [settings, setSettings] = useState({
+  const formatSettings = (config: Config) => ({
     apiKey: config.Youtube.ApiKey,
     videoId: config.Youtube.VideoId,
-    messageDelay: (config.Youtube.MessageDelay / 10).toString(),
+    messageDelay: (config.Youtube.MessageDelay / 1000).toString(),
     port: config.Port.toString(),
     forceWidthHeight: config.AspectRatio.ForceWidthHeight,
     canvasWidth: config.AspectRatio.Width.toString(),
     canvasHeight: config.AspectRatio.Height.toString(),
     scaleCanvas: config.AspectRatio.ScaleCanvas.toString(),
     scaleImage: config.AspectRatio.ScaleImage.toString(),
-    // emoteHeight: config.Emote.Height.toString(),
     emoteWidth: config.Emote.Width.toString(),
     randomSizeIncrease: config.Emote.RandomSizeIncrease.toString(),
     randomSizeDecrease: config.Emote.RandomSizeDecrease.toString(),
@@ -41,28 +61,11 @@ const SettingsPage: React.FC = () => {
     speedOfEmotes: (config.Testing.SpeedOfEmotes / 1000).toString(),
   });
 
+  const [showApiKey, setShowApiKey] = useState(false);
+  const [settings, setSettings] = useState<MySettings>(formatSettings(config));
+
   const handleReset = () => {
-    setSettings({
-      apiKey: config.Youtube.ApiKey,
-      videoId: config.Youtube.VideoId,
-      messageDelay: (config.Youtube.MessageDelay / 10).toString(),
-      port: config.Port.toString(),
-      forceWidthHeight: config.AspectRatio.ForceWidthHeight,
-      canvasWidth: config.AspectRatio.Width.toString(),
-      canvasHeight: config.AspectRatio.Height.toString(),
-      scaleCanvas: config.AspectRatio.ScaleCanvas.toString(),
-      scaleImage: config.AspectRatio.ScaleImage.toString(),
-      // emoteHeight: config.Emote.Height.toString(),
-      emoteWidth: config.Emote.Width.toString(),
-      randomSizeIncrease: config.Emote.RandomSizeIncrease.toString(),
-      randomSizeDecrease: config.Emote.RandomSizeDecrease.toString(),
-      maxEmoteCount: config.Emote.MaxEmoteCount.toString(),
-      groupEmotes: config.Emote.GroupEmotes,
-      emoteRoundness: config.Emote.Roundness.toString(),
-      emoteBackgroundColor: config.Emote.BackgroundColor,
-      test: config.Testing.Test,
-      speedOfEmotes: (config.Testing.SpeedOfEmotes / 1000).toString(),
-    });
+    setSettings(formatSettings(config));
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,6 +79,7 @@ const SettingsPage: React.FC = () => {
   const handleSave = async () => {
     console.log("Saving Settings");
     try {
+      const tempConfig = createConfigCopyWithUpdate(config, settings);
       // Force to ignore wails.localhost
       const url = `http://localhost:${config.Port}/config`;
       const response = await fetch(url, {
@@ -83,74 +87,54 @@ const SettingsPage: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          Youtube: {
-            ApiKey: settings.apiKey,
-            VideoId: settings.videoId,
-            MessageDelay: Math.round(parseFloat(settings.messageDelay) * 10),
-          },
-          Port: parseInt(settings.port, 10),
-          AspectRatio: {
-            ForceWidthHeight: settings.forceWidthHeight,
-            Width: parseInt(settings.canvasWidth, 10),
-            Height: parseInt(settings.canvasHeight, 10),
-            ScaleCanvas: parseFloat(settings.scaleCanvas),
-            ScaleImage: parseFloat(settings.scaleImage),
-          },
-          Emote: {
-            // Height: parseInt(settings.emoteHeight, 10),
-            Width: parseInt(settings.emoteWidth, 10),
-            RandomSizeIncrease: parseInt(settings.randomSizeIncrease, 10),
-            RandomSizeDecrease: parseInt(settings.randomSizeDecrease, 10),
-            MaxEmoteCount: parseInt(settings.maxEmoteCount, 10),
-            GroupEmotes: settings.groupEmotes,
-            Roundness: parseInt(settings.emoteRoundness, 10),
-            BackgroundColor: settings.emoteBackgroundColor,
-          },
-          Testing: {
-            Test: settings.test,
-            SpeedOfEmotes: Math.round(
-              parseFloat(settings.speedOfEmotes) * 1000
-            ),
-          },
-        }),
+        body: JSON.stringify(tempConfig),
       });
 
       if (!response.ok) {
         throw new Error("Failed to save config");
       }
-      saveToLocalConfig();
+
+      Object.assign(config, tempConfig);
       console.log("Config Saved");
     } catch (error) {
       console.error("Error saving config: " + error);
     }
   };
 
-  const saveToLocalConfig = () => {
-    config.Youtube.ApiKey = settings.apiKey;
-    config.Youtube.VideoId = settings.videoId;
-    config.Youtube.MessageDelay = Math.round(
-      parseFloat(settings.messageDelay) * 10
-    );
-
-    config.AspectRatio.ForceWidthHeight = settings.forceWidthHeight;
-    config.AspectRatio.Width = parseInt(settings.canvasWidth, 10);
-    config.AspectRatio.Height = parseInt(settings.canvasHeight, 10);
-    config.AspectRatio.ScaleCanvas = parseFloat(settings.scaleCanvas);
-    config.AspectRatio.ScaleImage = parseFloat(settings.scaleImage);
-
-    config.Emote.Width = parseInt(settings.emoteWidth, 10);
-    config.Emote.RandomSizeIncrease = parseInt(settings.randomSizeIncrease, 10);
-    config.Emote.RandomSizeDecrease = parseInt(settings.randomSizeDecrease, 10);
-    config.Emote.MaxEmoteCount = parseInt(settings.maxEmoteCount, 10);
-    config.Emote.GroupEmotes = settings.groupEmotes;
-    config.Emote.Roundness = parseInt(settings.emoteRoundness, 10);
-    config.Emote.BackgroundColor = settings.emoteBackgroundColor;
-
-    config.Testing.Test = settings.test;
-    config.Testing.SpeedOfEmotes = Math.round(
-      parseFloat(settings.speedOfEmotes) * 1000
-    );
+  const createConfigCopyWithUpdate = (config: Config, settings: MySettings) => {
+    return {
+      ...config,
+      Youtube: {
+        ...config.Youtube,
+        ApiKey: settings.apiKey,
+        VideoId: settings.videoId,
+        MessageDelay: Math.round(parseFloat(settings.messageDelay) * 1000),
+      },
+      Port: parseInt(settings.port, 10),
+      AspectRatio: {
+        ...config.AspectRatio,
+        ForceWidthHeight: settings.forceWidthHeight,
+        Width: parseInt(settings.canvasWidth, 10),
+        Height: parseInt(settings.canvasHeight, 10),
+        ScaleCanvas: parseFloat(settings.scaleCanvas),
+        ScaleImage: parseFloat(settings.scaleImage),
+      },
+      Emote: {
+        ...config.Emote,
+        Width: parseInt(settings.emoteWidth, 10),
+        RandomSizeIncrease: parseInt(settings.randomSizeIncrease, 10),
+        RandomSizeDecrease: parseInt(settings.randomSizeDecrease, 10),
+        MaxEmoteCount: parseInt(settings.maxEmoteCount, 10),
+        GroupEmotes: settings.groupEmotes,
+        Roundness: parseInt(settings.emoteRoundness, 10),
+        BackgroundColor: settings.emoteBackgroundColor,
+      },
+      Testing: {
+        ...config.Testing,
+        Test: settings.test,
+        SpeedOfEmotes: Math.round(parseFloat(settings.speedOfEmotes) * 1000),
+      },
+    };
   };
 
   const handleClickShowPassword = () => {
@@ -226,7 +210,6 @@ const SettingsPage: React.FC = () => {
 
   const dividerMargin = 2;
   const dividerColor = "2px solid #6c072c";
-
   return (
     <ThemeProvider theme={darkTheme}>
       <Box
@@ -241,7 +224,7 @@ const SettingsPage: React.FC = () => {
           // justifyContent: "center",
         }}
       >
-        <HeaderSettings port={settings.port} />
+        <HeaderSettings port={config.Port.toString()} />
 
         <Divider sx={{ borderBottom: dividerColor, marginY: dividerMargin }} />
 
