@@ -59,10 +59,9 @@ const useEmotes = (
     return nonTransparentPositions[randomIndex];
   };
 
-  const getRandomEmoteSizeChange = (): number => {
-    return Math.random() < 0.5
-      ? config.Emote.Width + config.Emote.RandomSizeIncrease
-      : config.Emote.Width - config.Emote.RandomSizeDecrease;
+  const getRandomEmoteSizeChange = (max: number, min: number): number => {
+    const sizeChange = Math.floor(Math.random() * (max - min + 1)) + min;
+    return config.Emote.Width + sizeChange;
   };
 
   const updateEmotesGroups = (emoteGroup: Emote[]) => {
@@ -82,14 +81,20 @@ const useEmotes = (
     nonTransparentPositions: RefObject<Position[]>
   ) => {
     if (config.Emote.GroupEmotes) {
-      const emoteSize = getRandomEmoteSizeChange();
+      const emoteSize = getRandomEmoteSizeChange(
+        config.Emote.RandomSizeIncrease,
+        config.Emote.RandomSizeDecrease * -1
+      );
       const randomPos = getRandomPosition(nonTransparentPositions.current);
       const newEmoteGroup = createEmoteGroup(emoteUrls, emoteSize, randomPos);
       updateEmotesGroups(newEmoteGroup);
     } else {
       for (let emote of emoteUrls) {
         const tempArray = [emote];
-        const emoteSize = getRandomEmoteSizeChange();
+        const emoteSize = getRandomEmoteSizeChange(
+          config.Emote.RandomSizeIncrease,
+          config.Emote.RandomSizeDecrease * -1
+        );
         const randomPos = getRandomPosition(nonTransparentPositions.current);
         const newEmoteGroup = createEmoteGroup(tempArray, emoteSize, randomPos);
         updateEmotesGroups(newEmoteGroup);
