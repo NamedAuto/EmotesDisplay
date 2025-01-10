@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { RefObject, useEffect, useRef, useState } from "react";
 import { Config } from "../Config/ConfigInterface";
 import { loadBackground } from "../Config/FetchBackground";
 import { useConfig } from "../Config/ConfigProvider";
-import useEmotes from "./useEmotes";
+import useEmotes, { Position } from "./useEmotes";
 import { useWebSocketContext } from "../WebSocket/WebSocketProvider";
 import Box from "@mui/material/Box";
 import useWindowSize from "./windowSize";
@@ -27,6 +27,7 @@ const CanvasComponent: React.FC = () => {
 
   const config = useConfig();
   const { socket, isConnected, updateHandlers } = useWebSocketContext();
+  const nonTransparentPositions = useRef<Position[]>([]);
 
   const { emotesGroups, placeEmotesGroupInBackground } = useEmotes(
     config,
@@ -36,7 +37,7 @@ const CanvasComponent: React.FC = () => {
   useEffect(() => {
     const handleNewEmote = (emoteUrls: string[]) => {
       console.log("Received new emotes:", emoteUrls);
-      placeEmotesGroupInBackground(emoteUrls);
+      placeEmotesGroupInBackground(emoteUrls, nonTransparentPositions);
     };
 
     updateHandlers({
@@ -105,11 +106,38 @@ const CanvasComponent: React.FC = () => {
               backgroundCanvasRef.current.width,
               backgroundCanvasRef.current.height
             );
+            storeNonTransparentPoints(
+              ctx,
+              backgroundCanvasRef as RefObject<HTMLCanvasElement>
+            );
           }
         };
       }
     } catch (error) {
       console.error("Failed to load image:", error);
+    }
+  };
+
+  const storeNonTransparentPoints = (
+    ctx: CanvasRenderingContext2D,
+    canvasRef: React.RefObject<HTMLCanvasElement>
+  ) => {
+    // console.log("AM IN HERE");
+    let width = canvasRef.current.width;
+    let height = canvasRef.current.height;
+    const imageData = ctx.getImageData(0, 0, width, height);
+    console.log("Initial Image Data:", imageData);
+    const data = imageData.data;
+    for (let i = 0; i < data.length; i += 4) {
+      const alpha = data[i + 3]; // Get the alpha value
+
+      if (alpha > 0) {
+        // Check if the pixel is non-transparent
+        // console.log("IT IS")
+        const x = (i / 4) % width;
+        const y = Math.floor(i / 4 / width);
+        nonTransparentPositions.current.push({ x, y });
+      }
     }
   };
 
@@ -188,13 +216,13 @@ const CanvasComponent: React.FC = () => {
                 crossOrigin="anonymous"
                 style={{
                   position: "absolute",
-                  left: emote.x,
-                  top: emote.y,
+                  left: emote.pos.x,
+                  top: emote.pos.y,
                   width: emote.size,
                   height: emote.size,
                   borderRadius: `${config.Emote.Roundness}%`,
                   backgroundColor: config.Emote.BackgroundColor,
-                  transform: "translate(0%, -50%)",
+                  // transform: "translate(0%, -50%)",
                   zIndex: 3,
                 }}
                 alt={`emote-${emoteIdx}`}
