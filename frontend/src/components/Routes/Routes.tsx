@@ -11,14 +11,7 @@ const MyRoutes: React.FC = () => {
     <BrowserRouter>
       {/* <Navbar /> */}
       <Routes>
-        <Route
-          path="/"
-          element={
-            <WebSocketProvider>
-              <Settings />
-            </WebSocketProvider>
-          }
-        />
+        <Route path="/" element={<Settings />} />
         <Route
           path="/show"
           element={

@@ -77,7 +77,9 @@ const SettingsPage: React.FC = () => {
   const handleSave = async () => {
     console.log("Settings saved");
     try {
-      const response = await fetch("/config", {
+      // Force to ignore wails.localhost
+      const url = `http://localhost:${config.Port}/config`
+      const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
