@@ -19,7 +19,7 @@ func GenerateEmoteMap(emotePath string) map[string]string {
 	for _, file := range emoteFiles {
 		if !file.IsDir() {
 			emoteName := strings.TrimSuffix(file.Name(), filepath.Ext(file.Name()))
-			emoteKey := fmt.Sprintf(":_%s:", emoteName)
+			emoteKey := fmt.Sprintf(":_%s:", strings.ToLower(emoteName))
 			emoteMap[emoteKey] = filepath.Join(emotePath, file.Name())
 		}
 	}

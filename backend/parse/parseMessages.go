@@ -22,8 +22,10 @@ func ParseMessageForEmotes(message string, emoteUrl string, emoteMap map[string]
 	matches := regex.FindAllString(message, -1)
 
 	for _, emoteText := range matches {
-		if _, exists := emoteMap[emoteText]; exists {
-			cleanedText := strings.ReplaceAll(emoteText, ":", "")
+		loweredText := strings.ToLower((emoteText))
+
+		if _, exists := emoteMap[loweredText]; exists {
+			cleanedText := strings.ReplaceAll(loweredText, ":", "")
 			cleanedText = strings.ReplaceAll(cleanedText, "_", "")
 			newEmoteUrl := emoteUrl + cleanedText
 
