@@ -3,18 +3,17 @@ import {
   Button,
   createTheme,
   Divider,
-  Link,
   ThemeProvider,
-  Typography,
+  Tooltip
 } from "@mui/material";
 import React, { useState } from "react";
 import { useConfig } from "../Config/ConfigProvider";
 import AspectRatioSettings from "./AspectRatioSettings";
 import EmoteSettings from "./EmoteSettings";
+import HeaderSettings from "./HeaderSettings";
 import PortSettings from "./PortSettings";
 import TestingSettings from "./TestingSettings";
 import YouTubeSettings from "./YoutubeSettings";
-import HeaderSettings from "./HeaderSettings";
 
 const SettingsPage: React.FC = () => {
   const config = useConfig();
@@ -46,7 +45,7 @@ const SettingsPage: React.FC = () => {
     setSettings({
       apiKey: config.Youtube.ApiKey,
       videoId: config.Youtube.VideoId,
-      messageDelay: config.Youtube.MessageDelay.toString(),
+      messageDelay: (config.Youtube.MessageDelay / 10).toString(),
       port: config.Port.toString(),
       forceWidthHeight: config.AspectRatio.ForceWidthHeight,
       canvasWidth: config.AspectRatio.Width.toString(),
@@ -62,7 +61,7 @@ const SettingsPage: React.FC = () => {
       emoteRoundness: config.Emote.Roundness.toString(),
       emoteBackgroundColor: config.Emote.BackgroundColor,
       test: config.Testing.Test,
-      speedOfEmotes: config.Testing.SpeedOfEmotes.toString(),
+      speedOfEmotes: (config.Testing.SpeedOfEmotes / 1000).toString(),
     });
   };
 
@@ -75,10 +74,10 @@ const SettingsPage: React.FC = () => {
   };
 
   const handleSave = async () => {
-    console.log("Settings saved");
+    console.log("Saving Settings");
     try {
       // Force to ignore wails.localhost
-      const url = `http://localhost:${config.Port}/config`
+      const url = `http://localhost:${config.Port}/config`;
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -120,10 +119,38 @@ const SettingsPage: React.FC = () => {
       if (!response.ok) {
         throw new Error("Failed to save config");
       }
+      saveToLocalConfig();
       console.log("Config Saved");
     } catch (error) {
       console.error("Error saving config: " + error);
     }
+  };
+
+  const saveToLocalConfig = () => {
+    config.Youtube.ApiKey = settings.apiKey;
+    config.Youtube.VideoId = settings.videoId;
+    config.Youtube.MessageDelay = Math.round(
+      parseFloat(settings.messageDelay) * 10
+    );
+
+    config.AspectRatio.ForceWidthHeight = settings.forceWidthHeight;
+    config.AspectRatio.Width = parseInt(settings.canvasWidth, 10);
+    config.AspectRatio.Height = parseInt(settings.canvasHeight, 10);
+    config.AspectRatio.ScaleCanvas = parseFloat(settings.scaleCanvas);
+    config.AspectRatio.ScaleImage = parseFloat(settings.scaleImage);
+
+    config.Emote.Width = parseInt(settings.emoteWidth, 10);
+    config.Emote.RandomSizeIncrease = parseInt(settings.randomSizeIncrease, 10);
+    config.Emote.RandomSizeDecrease = parseInt(settings.randomSizeDecrease, 10);
+    config.Emote.MaxEmoteCount = parseInt(settings.maxEmoteCount, 10);
+    config.Emote.GroupEmotes = settings.groupEmotes;
+    config.Emote.Roundness = parseInt(settings.emoteRoundness, 10);
+    config.Emote.BackgroundColor = settings.emoteBackgroundColor;
+
+    config.Testing.Test = settings.test;
+    config.Testing.SpeedOfEmotes = Math.round(
+      parseFloat(settings.speedOfEmotes) * 1000
+    );
   };
 
   const handleClickShowPassword = () => {
@@ -273,24 +300,36 @@ const SettingsPage: React.FC = () => {
             flexWrap: "wrap",
           }}
         >
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSave}
-            style={{ fontSize: "18px", marginTop: "20px" }}
-            sx={{ marginLeft: 2, marginRight: 2, width: "150px" }}
+          <Tooltip
+            title="Saves changes. If changing anything not in Aspect Ratio or Emote, 
+            need to restart app to see changes, else refresh desired /show url"
+            arrow
           >
-            Save
-          </Button>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={handleReset}
-            style={{ fontSize: "18px", marginTop: "20px" }}
-            sx={{ marginLeft: 2, marginRight: 2, width: "150px" }}
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSave}
+              style={{ fontSize: "18px", marginTop: "20px" }}
+              sx={{ marginLeft: 2, marginRight: 2, width: "150px" }}
+            >
+              Save
+            </Button>
+          </Tooltip>
+
+          <Tooltip
+            title="Reset settings back to the original settings at app launch."
+            arrow
           >
-            Reset
-          </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleReset}
+              style={{ fontSize: "18px", marginTop: "20px" }}
+              sx={{ marginLeft: 2, marginRight: 2, width: "150px" }}
+            >
+              Reset
+            </Button>
+          </Tooltip>
         </Box>
       </Box>
     </ThemeProvider>
