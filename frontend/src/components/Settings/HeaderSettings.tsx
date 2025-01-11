@@ -99,7 +99,7 @@ const HeaderSettings: React.FC<HeaderSettingsProps> = ({ port }) => {
         </Typography>
       </Tooltip>
 
-      <Tooltip title="Open a window with the url" arrow>
+      <Tooltip title="Open a window with the url. Can zoom in or out" arrow>
         <Typography
           variant="h5"
           gutterBottom
@@ -110,7 +110,7 @@ const HeaderSettings: React.FC<HeaderSettingsProps> = ({ port }) => {
             target="_blank"
             rel="noopener"
           >
-            or click and zoom out
+            or click here
           </Link>
         </Typography>
       </Tooltip>
