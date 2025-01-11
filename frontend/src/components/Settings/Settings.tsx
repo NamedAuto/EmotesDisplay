@@ -141,27 +141,6 @@ const SettingsPage: React.FC = () => {
     setShowApiKey(!showApiKey);
   };
 
-  // #62B0A6
-  // #960018
-  // #e9325e
-  // #f885c0
-
-  // #aa1241
-  // #c0022d
-  // #c7002e
-  // #c2002b
-
-  // #d39059
-  // #f1f6fc
-  //rgb(241, 246, 252)
-
-  //rgb(22, 54, 50)
-  //rgb(37, 94, 86)
-  // #224a44
-
-  //rgb(98, 176, 159)
-  // #6c072c
-
   const darkTheme = createTheme({
     palette: {
       mode: "dark",
@@ -170,7 +149,7 @@ const SettingsPage: React.FC = () => {
         default: "#142830",
       },
       primary: {
-        // #f885c0
+        // #f167a7
         main: "#f167a7",
       },
       secondary: {
@@ -284,8 +263,7 @@ const SettingsPage: React.FC = () => {
           }}
         >
           <Tooltip
-            title="Saves changes. If changing anything not in Aspect Ratio or Emote, 
-            need to restart app to see changes, else refresh desired /show url"
+            title="Saves changes. Has some quirks involving saving. Read README"
             arrow
           >
             <Button
@@ -299,10 +277,7 @@ const SettingsPage: React.FC = () => {
             </Button>
           </Tooltip>
 
-          <Tooltip
-            title="Reset settings back to the original settings at app launch."
-            arrow
-          >
+          <Tooltip title="Reset settings back to the last save" arrow>
             <Button
               variant="contained"
               color="secondary"

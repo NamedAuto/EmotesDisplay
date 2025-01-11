@@ -33,7 +33,7 @@ const AspectRatioSettings: React.FC<AspectRatioSettingsProps> = ({
         flexWrap: "wrap",
       }}
     >
-      <Tooltip title="If checked, scale images down to width x height" arrow>
+      <Tooltip title="If checked, scales images larger than width x height down to fit inside" arrow>
         <FormControlLabel
           control={
             <Checkbox

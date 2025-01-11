@@ -45,7 +45,7 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
         <TextField
           type={showApiKey ? "text" : "password"}
           name="apiKey"
-          label="Youtube Api Key"
+          label="Api Key"
           value={apiKey}
           onChange={handleInputChange}
           margin="normal"
@@ -67,17 +67,17 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
       </Tooltip>
 
       <Tooltip
-        title="Found at the end of the url. Include everything after ?v= in the url."
+        title="Found at the end of the youtube url. Include everything after the ?v= in the url."
         arrow
       >
         <TextField
           name="videoId"
-          label="Video Id"
+          label="Youtube Video Id"
           value={videoId}
           onChange={handleInputChange}
           margin="normal"
           sx={{ marginLeft: 2, marginRight: 2 }}
-        />
+        />  
       </Tooltip>
 
       <Tooltip title="Check README if you change this number." arrow>
