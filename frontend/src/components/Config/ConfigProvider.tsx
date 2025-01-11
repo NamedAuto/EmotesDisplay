@@ -15,7 +15,7 @@ export async function loadConfigFront(): Promise<Config | null> {
   let config: Config | null = null;
 
   if (isWailsApp) {
-    let WAILS_PORT = 3124;
+    let WAILS_PORT = 1324;
     WAILS_PORT = await GetPort();
 
     try {

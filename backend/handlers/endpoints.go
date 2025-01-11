@@ -141,6 +141,26 @@ func configureConfigEndpoint(mux *http.ServeMux, yamlPath string) {
 	})
 }
 
+func configureVersionEndpoint(mux *http.ServeMux) {
+	mux.HandleFunc("/version", func(w http.ResponseWriter, r *http.Request) {
+		latestVersion, err := GetLatestReleaseVersion()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		response := map[string]string{
+			"owner":          Owner,
+			"repoName":       RepoName,
+			"currentVersion": AppVersion,
+			"latestVersion":  latestVersion,
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
+	})
+}
+
 func configureDefaultEndpoint(mux *http.ServeMux) {
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" || r.URL.Path == "/index.html" {
@@ -196,5 +216,6 @@ func ConfigureEndpoints(mux *http.ServeMux, emotePath string, yamlPath string, b
 	configureEmotesEndpoint(mux, emotePath)
 	configureConfigEndpoint(mux, yamlPath)
 	configureBackgroundImageEndpoint(mux, backgroundPath)
+	configureVersionEndpoint(mux)
 	configureDefaultEndpoint(mux)
 }
