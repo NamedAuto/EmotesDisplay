@@ -6,14 +6,12 @@ import (
 	"path/filepath"
 )
 
-var (
-	EmotePath      string
-	YamlPath       string
-	BackgroundPath string
-)
-
-func SetupFilePaths() {
+func SetupFilePaths() MyPaths {
 	env := os.Getenv("ENV")
+
+	var emotePath string
+	var yamlPath string
+	var backgroundPath string
 
 	if env == "development" {
 		log.Println("In development")
@@ -23,9 +21,9 @@ func SetupFilePaths() {
 			log.Fatalf("Error getting current working directory: %v", err)
 		}
 
-		EmotePath = filepath.Join(cwd, "public", "emotes")
-		YamlPath = filepath.Join(cwd, "config")
-		BackgroundPath = filepath.Join(cwd, "public", "background")
+		emotePath = filepath.Join(cwd, "public", "emotes")
+		yamlPath = filepath.Join(cwd, "config")
+		backgroundPath = filepath.Join(cwd, "public", "background")
 
 	} else {
 		log.Println("In production")
@@ -35,12 +33,13 @@ func SetupFilePaths() {
 		}
 		exeDir := filepath.Dir(exePath)
 
-		EmotePath = filepath.Join(exeDir, "public", "emotes")
-		YamlPath = filepath.Join(exeDir, "config")
-		BackgroundPath = filepath.Join(exeDir, "public", "background")
+		emotePath = filepath.Join(exeDir, "public", "emotes")
+		yamlPath = filepath.Join(exeDir, "config")
+		backgroundPath = filepath.Join(exeDir, "public", "background")
 	}
 
 	// log.Printf("EMOTEPATH: %s", EmotePath)
 	// log.Printf("YAMLPATH: %s", YamlPath)
 	// log.Printf("BACKGROUNDPATH: %s", BackgroundPath)
+	return MyPaths{EmotePath: emotePath, YamlPath: yamlPath, BackgroundPath: backgroundPath}
 }

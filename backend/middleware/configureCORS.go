@@ -1,13 +1,12 @@
 package middleware
 
 import (
-	"myproject/backend/config"
 	"net/http"
 
 	"github.com/rs/cors"
 )
 
-func ConfigureCORS(handler http.Handler, config config.AppConfig) http.Handler {
+func ConfigureCORS(handler http.Handler) http.Handler {
 	c := cors.New(cors.Options{
 		// AllowedOrigins:   []string{"http://localhost:8080", "http://wails.localhost:", "http://wails.localhost"}, // + strconv.Itoa(config.Port.Browser)}, // Adjust as needed
 		AllowedOrigins:   []string{"*"},

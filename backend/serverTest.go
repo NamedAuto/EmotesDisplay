@@ -4,21 +4,19 @@ import (
 	"fmt"
 	"log"
 	"myproject/backend/config"
-	"myproject/backend/handlers"
+	"myproject/backend/httpserver"
 	"myproject/backend/middleware"
 	"net/http"
 )
 
 func maasdin() {
-	config.SetupFilePaths()
+	myPaths := config.SetupFilePaths()
+	repo := config.Repo{}
 
 	mux := http.NewServeMux()
-	handlers.ConfigureEndpoints(mux,
-		config.EmotePath,
-		config.YamlPath,
-		config.BackgroundPath)
+	httpserver.ConfigureEndpoints(mux, myPaths, repo)
 
-	middleware.ConfigureCORS(mux, config.AppConfig{})
+	middleware.ConfigureCORS(mux)
 
 	fmt.Println("Server started at :8080")
 	log.Fatal(http.ListenAndServe(":8080", mux))

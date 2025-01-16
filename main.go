@@ -4,7 +4,7 @@ import (
 	"embed"
 	"fmt"
 	"log"
-	"myproject/backend/handlers"
+	"myproject/backend/httpserver"
 	"os"
 
 	"github.com/wailsapp/wails/v2"
@@ -33,7 +33,7 @@ func main() {
 		I will be serving these files as well to allow an external browser to access
 		the frontend and therefore need these assets to be used in an endpoint
 	*/
-	handlers.AssignAssets(assets)
+	httpserver.AssignAssets(assets)
 
 	// Create application with options
 	err := wails.Run(&options.App{

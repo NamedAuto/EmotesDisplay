@@ -8,7 +8,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func LoadConfig(configPath string) (*AppConfig, error) {
+func LoadYamlConfig(configPath string) (*AppConfig, error) {
 	file, err := os.Open(filepath.Join(configPath, "config.yaml"))
 	if err != nil {
 		log.Fatalf("Error opening file: %v", err)

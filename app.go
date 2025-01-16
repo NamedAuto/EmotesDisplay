@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"myproject/backend/config"
 	"myproject/backend/server"
 )
 
@@ -29,5 +30,5 @@ func (a *App) Greet(name string) string {
 }
 
 func (a *App) GetPort() int {
-	return server.MyConfig.Port
+	return config.GetMyConfig().Port
 }

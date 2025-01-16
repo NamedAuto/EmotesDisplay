@@ -1,4 +1,4 @@
-package handlers
+package httpserver
 
 import (
 	"embed"
@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"myproject/backend/config"
+	"myproject/backend/handlers"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -141,18 +142,18 @@ func configureConfigEndpoint(mux *http.ServeMux, yamlPath string) {
 	})
 }
 
-func configureVersionEndpoint(mux *http.ServeMux) {
+func configureVersionEndpoint(mux *http.ServeMux, repo config.Repo) {
 	mux.HandleFunc("/version", func(w http.ResponseWriter, r *http.Request) {
-		latestVersion, err := GetLatestReleaseVersion()
+		latestVersion, err := handlers.GetLatestReleaseVersion(repo.Owner, repo.RepoName)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		response := map[string]string{
-			"owner":          Owner,
-			"repoName":       RepoName,
-			"currentVersion": AppVersion,
+			"owner":          repo.Owner,
+			"repoName":       repo.RepoName,
+			"currentVersion": repo.AppVersion,
 			"latestVersion":  latestVersion,
 		}
 
@@ -211,11 +212,11 @@ func configureDefaultEndpoint(mux *http.ServeMux) {
 	})
 }
 
-func ConfigureEndpoints(mux *http.ServeMux, emotePath string, yamlPath string, backgroundPath string) {
+func ConfigureEndpoints(mux *http.ServeMux, myPaths config.MyPaths, repo config.Repo) {
 
-	configureEmotesEndpoint(mux, emotePath)
-	configureConfigEndpoint(mux, yamlPath)
-	configureBackgroundImageEndpoint(mux, backgroundPath)
-	configureVersionEndpoint(mux)
+	configureEmotesEndpoint(mux, myPaths.EmotePath)
+	configureConfigEndpoint(mux, myPaths.YamlPath)
+	configureBackgroundImageEndpoint(mux, myPaths.BackgroundPath)
+	configureVersionEndpoint(mux, repo)
 	configureDefaultEndpoint(mux)
 }
