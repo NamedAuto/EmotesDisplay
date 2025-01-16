@@ -5,12 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"myproject/backend/config"
-	"myproject/backend/handlers"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/NamedAuto/EmotesDisplay/backend/config"
+	"github.com/NamedAuto/EmotesDisplay/backend/github"
 
 	"gopkg.in/yaml.v2"
 )
@@ -144,7 +145,7 @@ func configureConfigEndpoint(mux *http.ServeMux, yamlPath string) {
 
 func configureVersionEndpoint(mux *http.ServeMux, repo config.Repo) {
 	mux.HandleFunc("/version", func(w http.ResponseWriter, r *http.Request) {
-		latestVersion, err := handlers.GetLatestReleaseVersion(repo.Owner, repo.RepoName)
+		latestVersion, err := github.GetLatestReleaseVersion(repo.Owner, repo.RepoName)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

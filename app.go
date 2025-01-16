@@ -3,8 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
-	"myproject/backend/config"
-	"myproject/backend/server"
+
+	"github.com/NamedAuto/EmotesDisplay/backend/config"
+	"github.com/NamedAuto/EmotesDisplay/backend/server"
 )
 
 // App struct

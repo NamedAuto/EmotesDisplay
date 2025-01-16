@@ -3,9 +3,10 @@ package httpserver
 import (
 	"fmt"
 	"log"
-	"myproject/backend/config"
-	"myproject/backend/middleware"
 	"net/http"
+
+	"github.com/NamedAuto/EmotesDisplay/backend/config"
+	"github.com/NamedAuto/EmotesDisplay/backend/middleware"
 )
 
 func StartHttpServer(mux *http.ServeMux, myPaths config.MyPaths, repo config.Repo, port int) {

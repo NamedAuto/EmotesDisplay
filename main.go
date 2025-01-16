@@ -4,8 +4,9 @@ import (
 	"embed"
 	"fmt"
 	"log"
-	"myproject/backend/httpserver"
 	"os"
+
+	"github.com/NamedAuto/EmotesDisplay/backend/httpserver"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"

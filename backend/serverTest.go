@@ -3,10 +3,11 @@ package main
 import (
 	"fmt"
 	"log"
-	"myproject/backend/config"
-	"myproject/backend/httpserver"
-	"myproject/backend/middleware"
 	"net/http"
+
+	"github.com/NamedAuto/EmotesDisplay/backend/config"
+	"github.com/NamedAuto/EmotesDisplay/backend/httpserver"
+	"github.com/NamedAuto/EmotesDisplay/backend/middleware"
 )
 
 func maasdin() {

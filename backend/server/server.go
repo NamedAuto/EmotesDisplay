@@ -3,12 +3,13 @@ package server
 import (
 	"context"
 	"log"
-	"myproject/backend/config"
-	"myproject/backend/httpserver"
-	"myproject/backend/myyoutube"
-	"myproject/backend/websocketserver"
 	"net/http"
 	"time"
+
+	"github.com/NamedAuto/EmotesDisplay/backend/config"
+	"github.com/NamedAuto/EmotesDisplay/backend/httpserver"
+	"github.com/NamedAuto/EmotesDisplay/backend/myyoutube"
+	"github.com/NamedAuto/EmotesDisplay/backend/websocketserver"
 )
 
 var handler = &websocketserver.WebSocketHandler{}

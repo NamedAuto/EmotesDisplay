@@ -1,4 +1,4 @@
-module myproject
+module github.com/NamedAuto/EmotesDisplay
 
 go 1.21
 

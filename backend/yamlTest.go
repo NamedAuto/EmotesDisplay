@@ -3,7 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
-	"myproject/backend/config"
+
+	"github.com/NamedAuto/EmotesDisplay/backend/config"
 )
 
 func yaml() {

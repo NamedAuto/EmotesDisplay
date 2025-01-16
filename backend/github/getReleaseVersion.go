@@ -1,11 +1,12 @@
-package handlers
+package github
 
 import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"myproject/backend/config"
 	"net/http"
+
+	"github.com/NamedAuto/EmotesDisplay/backend/config"
 )
 
 // const AppVersion = "v2.0"
