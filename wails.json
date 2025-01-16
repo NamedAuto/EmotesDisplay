@@ -1,6 +1,7 @@
 {
   "$schema": "https://wails.io/schemas/config.v2.json",
   "name": "Emotes Display",
+  "version": "2",
   "outputfilename": "Emotes Display",
   "frontend:install": "pnpm install",
   "frontend:build": "pnpm run build",
@@ -15,5 +16,11 @@
     "dir": "./frontend/dist",
     "output": "./frontend/dist",
     "entry": "./frontend/dist/index.html"
+  },
+  "info": {
+    "companyName": "NamedAuto",
+    "productName": "Emotes Display",
+    "productVersion": "2.0.0",
+    "info": ""
   }
 }

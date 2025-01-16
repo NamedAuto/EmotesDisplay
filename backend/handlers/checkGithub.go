@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-const AppVersion = "v2.1-beta"
+const AppVersion = "v2.0"
 const Owner = "NamedAuto"
 const RepoName = "EmotesDisplay"
 

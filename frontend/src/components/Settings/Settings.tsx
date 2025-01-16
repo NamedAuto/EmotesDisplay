@@ -145,8 +145,8 @@ const SettingsPage: React.FC = () => {
     palette: {
       mode: "dark",
       background: {
-        // #142830
-        default: "#142830",
+        // #122f3a
+        default: "#122f3a",
       },
       primary: {
         // #f167a7
