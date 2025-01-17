@@ -143,12 +143,17 @@ const SettingsPage: React.FC = () => {
     setShowApiKey(!showApiKey);
   };
 
-  const handleStartPreview = () => {
+  const handleStart = () => {
     // const eventData = { type: "customEvent", data: { key: "value" } };
-    // const eventData = { type: "startDefault", data: { key: "" } };
-    const eventData = { type: "connectYoutube", data: { key: "" } };
+    const eventData = { type: "startDefault", data: { key: "" } };
+    // const eventData = { type: "connectYoutube", data: { key: "" } };
     sendMessage(eventData);
   };
+
+  const handleStop = () => {
+    const eventData = { type: "stopDefault", data: { key: "" } };
+    sendMessage(eventData);
+  }
 
   const darkTheme = createTheme({
     palette: {
@@ -301,11 +306,20 @@ const SettingsPage: React.FC = () => {
           <Button
             variant="contained"
             color="secondary"
-            onClick={handleStartPreview}
+            onClick={handleStart}
             style={{ fontSize: "18px", marginTop: "20px" }}
             sx={{ marginLeft: 2, marginRight: 2, width: "150px" }}
           >
-            Start Preview
+            Start
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleStop}
+            style={{ fontSize: "18px", marginTop: "20px" }}
+            sx={{ marginLeft: 2, marginRight: 2, width: "150px" }}
+          >
+            Stop
           </Button>
         </Box>
       </Box>

@@ -2,6 +2,7 @@ package config
 
 import (
 	"log"
+	"sync"
 
 	"github.com/joho/godotenv"
 )
@@ -22,6 +23,7 @@ var repo Repo
 var myPaths MyPaths
 var emoteMap map[string]string
 var myConfig *AppConfig
+var mu sync.RWMutex
 
 const appVersion = "v2.0"
 const owner = "NamedAuto"
@@ -60,5 +62,13 @@ func GetEmoteMap() map[string]string {
 }
 
 func GetMyConfig() *AppConfig {
+	mu.RLock()
+	defer mu.RUnlock()
 	return myConfig
+}
+
+func SetMyConfig(newConfig *AppConfig) {
+	mu.Lock()
+	defer mu.Unlock()
+	*myConfig = *newConfig
 }

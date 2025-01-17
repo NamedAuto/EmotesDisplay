@@ -8,7 +8,6 @@ import (
 	"os"
 	"regexp"
 	"sync"
-	"time"
 
 	"github.com/NamedAuto/EmotesDisplay/backend/defaultView"
 	"github.com/NamedAuto/EmotesDisplay/backend/myyoutube"
@@ -128,8 +127,9 @@ func (handler *WebSocketHandler) HandleMessage(ws *websocket.Conn, message []byt
 		myyoutube.ConnectToYoutube(handler, youtubeService)
 	case "disconnectYoutube":
 	case "startDefault":
-		defaultView.StartDefaultView(handler, youtubeService.DefaultService)
+		defaultView.StartDefault(handler, youtubeService.DefaultService)
 	case "stopDefault":
+		defaultView.StopDefault()
 	default:
 		log.Printf("Unknown event type: %s", eventType)
 	}
@@ -221,19 +221,4 @@ func parseEmoteToURL(emote string, url string) string {
 	emoteURL := url + cleanedText
 
 	return emoteURL
-}
-
-func (handler *WebSocketHandler) RunAtFlag(interval time.Duration, fn func(), stopChan chan bool) {
-	ticker := time.NewTicker(interval)
-	defer ticker.Stop()
-
-	for {
-		select {
-		case <-ticker.C:
-			fn()
-		case <-stopChan:
-			log.Println("Ending function")
-			return
-		}
-	}
 }

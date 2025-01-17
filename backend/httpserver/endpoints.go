@@ -109,9 +109,9 @@ func configureConfigEndpoint(mux *http.ServeMux, yamlPath string) {
 			json.NewEncoder(w).Encode(config)
 
 		} else if r.Method == http.MethodPost {
-			var config config.AppConfig
+			var newConfig config.AppConfig
 
-			err := json.NewDecoder(r.Body).Decode(&config)
+			err := json.NewDecoder(r.Body).Decode(&newConfig)
 			if err != nil {
 				http.Error(w, fmt.Sprintf("Error decoding JSON: %v", err), http.StatusBadRequest)
 				return
@@ -120,7 +120,7 @@ func configureConfigEndpoint(mux *http.ServeMux, yamlPath string) {
 			// log.Println("This is what I received: ")
 			// log.Println(config)
 
-			fileContent, err := yaml.Marshal(&config)
+			fileContent, err := yaml.Marshal(&newConfig)
 			if err != nil {
 				http.Error(w, fmt.Sprintf("Error converting to YAML: %v", err), http.StatusInternalServerError)
 				return
@@ -135,6 +135,7 @@ func configureConfigEndpoint(mux *http.ServeMux, yamlPath string) {
 				return
 			}
 
+			config.SetMyConfig(&newConfig)
 			w.WriteHeader(http.StatusOK)
 			w.Write([]byte("Config saved successfully"))
 		} else {

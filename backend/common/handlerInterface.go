@@ -2,7 +2,6 @@ package common
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/NamedAuto/EmotesDisplay/backend/service"
 	"github.com/gorilla/websocket"
@@ -16,5 +15,4 @@ type HandlerInterface interface {
 	HandleMessage(ws *websocket.Conn, message []byte, youtubeService *service.YoutubeService)
 	EmitToAllRandom(port int, emoteMap map[string]string)
 	EmitToAll(emoteUrls []string)
-	RunAtFlag(interval time.Duration, fn func(), stopChan chan bool)
 }
