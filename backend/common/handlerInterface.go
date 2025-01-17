@@ -15,5 +15,6 @@ type HandlerInterface interface {
 	HandleConnections(allowedOrigin string, youtubeService *service.YoutubeService) http.HandlerFunc
 	HandleMessage(ws *websocket.Conn, message []byte, youtubeService *service.YoutubeService)
 	EmitToAllRandom(port int, emoteMap map[string]string)
+	EmitToAll(emoteUrls []string)
 	RunAtFlag(interval time.Duration, fn func(), stopChan chan bool)
 }

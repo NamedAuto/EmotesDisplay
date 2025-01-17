@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/NamedAuto/EmotesDisplay/backend/defaultView"
+	"github.com/NamedAuto/EmotesDisplay/backend/myyoutube"
 	"github.com/NamedAuto/EmotesDisplay/backend/service"
 	"github.com/gorilla/websocket"
 	"golang.org/x/exp/rand"
@@ -124,9 +125,9 @@ func (handler *WebSocketHandler) HandleMessage(ws *websocket.Conn, message []byt
 		log.Printf("Received customEvent with data: %v", data)
 
 	case "connectYoutube":
+		myyoutube.ConnectToYoutube(handler, youtubeService)
 	case "disconnectYoutube":
 	case "startDefault":
-		// youtubeService.DefaultService
 		defaultView.StartDefaultView(handler, youtubeService.DefaultService)
 	case "stopDefault":
 	default:

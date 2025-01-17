@@ -145,7 +145,8 @@ const SettingsPage: React.FC = () => {
 
   const handleStartPreview = () => {
     // const eventData = { type: "customEvent", data: { key: "value" } };
-    const eventData = { type: "startDefault", data: { key: "" } };
+    // const eventData = { type: "startDefault", data: { key: "" } };
+    const eventData = { type: "connectYoutube", data: { key: "" } };
     sendMessage(eventData);
   };
 
