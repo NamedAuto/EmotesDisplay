@@ -10,7 +10,10 @@ import (
 
 var ticker *time.Ticker
 
-func startEmitTimer(handler common.HandlerInterface, defaultService *service.DefaultService, stopChan chan bool) {
+func startEmitTimer(handler common.HandlerInterface,
+	defaultService *service.DefaultService,
+	stopChan chan bool) {
+
 	defer wg.Done()
 	lastSpeedOfEmotes := defaultService.Config.Testing.SpeedOfEmotes
 	duration := time.Duration(lastSpeedOfEmotes) * time.Millisecond

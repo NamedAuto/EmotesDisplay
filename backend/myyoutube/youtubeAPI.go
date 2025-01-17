@@ -32,7 +32,11 @@ type LiveChatMessagesResponse struct {
 	PollingIntervalMillis int64
 }
 
-func GetLiveChatMessagesAsync(service *youtube.Service, liveChatID string, pageToken string) (chan []*youtube.LiveChatMessage, chan string, chan int64, chan error) {
+func GetLiveChatMessagesAsync(
+	service *youtube.Service,
+	liveChatID string,
+	pageToken string) (chan []*youtube.LiveChatMessage, chan string, chan int64, chan error) {
+
 	messagesChan := make(chan []*youtube.LiveChatMessage)
 	nextPageTokenChan := make(chan string)
 	pollingIntervalMillisChan := make(chan int64)
@@ -58,7 +62,11 @@ func GetLiveChatMessagesAsync(service *youtube.Service, liveChatID string, pageT
 	return messagesChan, nextPageTokenChan, pollingIntervalMillisChan, errorChan
 }
 
-func GetLiveChatMessages(service *youtube.Service, liveChatID string, pageToken string) ([]*youtube.LiveChatMessage, string, error) {
+func GetLiveChatMessages(
+	service *youtube.Service,
+	liveChatID string,
+	pageToken string) ([]*youtube.LiveChatMessage, string, error) {
+
 	call := service.LiveChatMessages.List(liveChatID, []string{"snippet", "authorDetails"})
 	if pageToken != "" {
 		call = call.PageToken(pageToken)

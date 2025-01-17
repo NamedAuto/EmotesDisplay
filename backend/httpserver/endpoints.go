@@ -87,21 +87,24 @@ func configureConfigEndpoint(mux *http.ServeMux, yamlPath string) {
 
 			file, err := os.Open(configPath)
 			if err != nil {
-				http.Error(w, fmt.Sprintf("Error reading config file: %v", err), http.StatusInternalServerError)
+				http.Error(w, fmt.Sprintf("Error reading config file: %v", err),
+					http.StatusInternalServerError)
 				return
 			}
 			defer file.Close()
 
 			fileContent, err := io.ReadAll(file)
 			if err != nil {
-				http.Error(w, fmt.Sprintf("Error reading config file: %v", err), http.StatusInternalServerError)
+				http.Error(w, fmt.Sprintf("Error reading config file: %v", err),
+					http.StatusInternalServerError)
 				return
 			}
 
 			var config config.AppConfig
 			err = yaml.Unmarshal(fileContent, &config)
 			if err != nil {
-				http.Error(w, fmt.Sprintf("Error parsing config file: %v", err), http.StatusInternalServerError)
+				http.Error(w, fmt.Sprintf("Error parsing config file: %v", err),
+					http.StatusInternalServerError)
 				return
 			}
 
@@ -113,7 +116,8 @@ func configureConfigEndpoint(mux *http.ServeMux, yamlPath string) {
 
 			err := json.NewDecoder(r.Body).Decode(&newConfig)
 			if err != nil {
-				http.Error(w, fmt.Sprintf("Error decoding JSON: %v", err), http.StatusBadRequest)
+				http.Error(w, fmt.Sprintf("Error decoding JSON: %v", err),
+					http.StatusBadRequest)
 				return
 			}
 
@@ -122,7 +126,8 @@ func configureConfigEndpoint(mux *http.ServeMux, yamlPath string) {
 
 			fileContent, err := yaml.Marshal(&newConfig)
 			if err != nil {
-				http.Error(w, fmt.Sprintf("Error converting to YAML: %v", err), http.StatusInternalServerError)
+				http.Error(w, fmt.Sprintf("Error converting to YAML: %v", err),
+					http.StatusInternalServerError)
 				return
 			}
 
@@ -131,7 +136,8 @@ func configureConfigEndpoint(mux *http.ServeMux, yamlPath string) {
 
 			err = os.WriteFile(configPath, fileContent, 0644)
 			if err != nil {
-				http.Error(w, fmt.Sprintf("Error writing config file: %v", err), http.StatusInternalServerError)
+				http.Error(w, fmt.Sprintf("Error writing config file: %v", err),
+					http.StatusInternalServerError)
 				return
 			}
 

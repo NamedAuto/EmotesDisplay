@@ -65,7 +65,10 @@ func (handler *WebSocketHandler) ConfigureUpgrader(allowedOrigin string) websock
 	}
 }
 
-func (handler *WebSocketHandler) HandleConnections(allowedOrigin string, youtubeService *service.YoutubeService) http.HandlerFunc {
+func (handler *WebSocketHandler) HandleConnections(
+	allowedOrigin string,
+	youtubeService *service.YoutubeService) http.HandlerFunc {
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		upgrader := handler.ConfigureUpgrader(allowedOrigin)
 		log.Println("Attempting to upgrade to WebSocket...")
@@ -100,7 +103,11 @@ func (handler *WebSocketHandler) HandleConnections(allowedOrigin string, youtube
 	}
 }
 
-func (handler *WebSocketHandler) HandleMessage(ws *websocket.Conn, message []byte, youtubeService *service.YoutubeService) {
+func (handler *WebSocketHandler) HandleMessage(
+	ws *websocket.Conn,
+	message []byte,
+	youtubeService *service.YoutubeService) {
+
 	var event map[string]interface{}
 	if err := json.Unmarshal(message, &event); err != nil {
 		log.Printf("Unmarshal error: %v", err)
@@ -126,6 +133,7 @@ func (handler *WebSocketHandler) HandleMessage(ws *websocket.Conn, message []byt
 	case "connectYoutube":
 		myyoutube.ConnectToYoutube(handler, youtubeService)
 	case "disconnectYoutube":
+		myyoutube.DisconnectFromYoutube()
 	case "startDefault":
 		defaultView.StartDefault(handler, youtubeService.DefaultService)
 	case "stopDefault":

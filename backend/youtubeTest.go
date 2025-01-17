@@ -13,20 +13,22 @@ import (
 
 func masin() {
 	ctx := context.Background()
-	apiKey := "AIzaSyAxOjESchGSZKbX4bgXOI9RWLno8YnFERA" // Replace with your actual API key
+	apiKey := "AIzaSyAxOjESchGSZKbX4bgXOI9RWLno8YnFERA"
 
 	youtubeService, err := youtube.NewService(ctx, option.WithAPIKey(apiKey))
 	if err != nil {
 		log.Fatalf("Unable to create YouTube service: %v", err)
 	}
 
-	liveChatID, err := myyoutube.GetLiveChatID(youtubeService, "OzwdRFDaW18") // Replace with your live stream video ID
+	liveChatID, err := myyoutube.GetLiveChatID(youtubeService, "OzwdRFDaW18")
 	if err != nil {
 		log.Fatalf("Error getting live chat ID: %v", err)
 	}
 
-	// Fetch live chat messages asynchronously
-	messagesChan, nextPageTokenChan, pollingIntervalMillisChan, errorChan := myyoutube.GetLiveChatMessagesAsync(youtubeService, liveChatID, "")
+	messagesChan,
+		nextPageTokenChan,
+		pollingIntervalMillisChan,
+		errorChan := myyoutube.GetLiveChatMessagesAsync(youtubeService, liveChatID, "")
 
 	// Handle the results or errors
 	select {

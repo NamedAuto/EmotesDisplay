@@ -8,9 +8,13 @@ import (
 	"github.com/NamedAuto/EmotesDisplay/backend/service"
 )
 
-func StartWebSocketServer(mux *http.ServeMux, handler *WebSocketHandler, youtubeService *service.YoutubeService) {
-	log.Printf("Starting websocket server on port %d\n", youtubeService.DefaultService.Config.Port)
-	allowedOrigin := fmt.Sprintf("http://localhost:%d", youtubeService.DefaultService.Config.Port)
+func StartWebSocketServer(mux *http.ServeMux,
+	handler *WebSocketHandler,
+	youtubeService *service.YoutubeService) {
+
+	port := youtubeService.DefaultService.Config.Port
+	log.Printf("Starting websocket server on port %d\n", port)
+	allowedOrigin := fmt.Sprintf("http://localhost:%d", port)
 
 	mux.HandleFunc("/ws", handler.HandleConnections(allowedOrigin, youtubeService))
 }
