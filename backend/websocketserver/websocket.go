@@ -10,6 +10,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/NamedAuto/EmotesDisplay/backend/defaultView"
+	"github.com/NamedAuto/EmotesDisplay/backend/service"
 	"github.com/gorilla/websocket"
 	"golang.org/x/exp/rand"
 )
@@ -36,7 +38,7 @@ func (handler *WebSocketHandler) RemoveConnection(ws *websocket.Conn) {
 	}
 }
 
-func (handler *WebSocketHandler) configureUpgrader(allowedOrigin string) websocket.Upgrader {
+func (handler *WebSocketHandler) ConfigureUpgrader(allowedOrigin string) websocket.Upgrader {
 	return websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
 			log.Println("Received connection attempt from origin:", r.Header.Get("Origin"))
@@ -63,9 +65,9 @@ func (handler *WebSocketHandler) configureUpgrader(allowedOrigin string) websock
 	}
 }
 
-func (handler *WebSocketHandler) handleConnections(allowedOrigin string) http.HandlerFunc {
+func (handler *WebSocketHandler) HandleConnections(allowedOrigin string, youtubeService *service.YoutubeService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		upgrader := handler.configureUpgrader(allowedOrigin)
+		upgrader := handler.ConfigureUpgrader(allowedOrigin)
 		log.Println("Attempting to upgrade to WebSocket...")
 		ws, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
@@ -87,7 +89,7 @@ func (handler *WebSocketHandler) handleConnections(allowedOrigin string) http.Ha
 					break
 				}
 				log.Printf("Received: %s\n", msg)
-				handler.handleMessage(ws, msg)
+				handler.HandleMessage(ws, msg, youtubeService)
 			}
 		}()
 
@@ -98,7 +100,7 @@ func (handler *WebSocketHandler) handleConnections(allowedOrigin string) http.Ha
 	}
 }
 
-func (handler *WebSocketHandler) handleMessage(ws *websocket.Conn, message []byte) {
+func (handler *WebSocketHandler) HandleMessage(ws *websocket.Conn, message []byte, youtubeService *service.YoutubeService) {
 	var event map[string]interface{}
 	if err := json.Unmarshal(message, &event); err != nil {
 		log.Printf("Unmarshal error: %v", err)
@@ -120,6 +122,13 @@ func (handler *WebSocketHandler) handleMessage(ws *websocket.Conn, message []byt
 		}
 
 		log.Printf("Received customEvent with data: %v", data)
+
+	case "connectYoutube":
+	case "disconnectYoutube":
+	case "startDefault":
+		// youtubeService.DefaultService
+		defaultView.StartDefaultView(handler, youtubeService.DefaultService)
+	case "stopDefault":
 	default:
 		log.Printf("Unknown event type: %s", eventType)
 	}

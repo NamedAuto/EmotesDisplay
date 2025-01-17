@@ -8,13 +8,15 @@ import (
 
 	"github.com/NamedAuto/EmotesDisplay/backend/config"
 	"github.com/NamedAuto/EmotesDisplay/backend/httpserver"
-	"github.com/NamedAuto/EmotesDisplay/backend/myyoutube"
+	"github.com/NamedAuto/EmotesDisplay/backend/service"
 	"github.com/NamedAuto/EmotesDisplay/backend/websocketserver"
 )
 
 var handler = &websocketserver.WebSocketHandler{}
 var mux = http.NewServeMux()
 var myConfig *config.AppConfig
+var defaultService *service.DefaultService
+var youtubeService *service.YoutubeService
 
 func startEmits(ctx context.Context, myConfig *config.AppConfig, emoteMap map[string]string) {
 	if myConfig.Testing.Test {
@@ -25,13 +27,6 @@ func startEmits(ctx context.Context, myConfig *config.AppConfig, emoteMap map[st
 			stopChan <- true
 		}()
 
-	} else {
-		log.Println("Connecting to youtube")
-		myyoutube.ConfigureYoutube(ctx, myConfig.Youtube.ApiKey)
-		go myyoutube.GetYoutubeMessages(myyoutube.YoutubeService, myConfig.Youtube.VideoId, myConfig.Youtube.MessageDelay)
-
-		// done := make(chan string)
-		// go myyoutube.StartYoutube(ctx, myConfig)
 	}
 }
 
@@ -43,8 +38,18 @@ func StartServer(ctx context.Context) {
 	repo := config.GetRepo()
 	emoteMap := config.GetEmoteMap()
 
-	go websocketserver.StartWebSocketServer(mux, handler, myConfig.Port)
+	defaultService = &service.DefaultService{
+		Config:   myConfig,
+		EmoteMap: emoteMap,
+	}
+
+	youtubeService = &service.YoutubeService{
+		Ctx:            &ctx,
+		DefaultService: defaultService,
+	}
+
+	go websocketserver.StartWebSocketServer(mux, handler, youtubeService)
 	go httpserver.StartHttpServer(mux, myPaths, repo, myConfig.Port)
 
-	startEmits(ctx, myConfig, emoteMap)
+	// startEmits(ctx, myConfig, emoteMap)
 }

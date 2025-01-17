@@ -144,7 +144,8 @@ const SettingsPage: React.FC = () => {
   };
 
   const handleStartPreview = () => {
-    const eventData = { type: "customEvent", data: { key: "value" } };
+    // const eventData = { type: "customEvent", data: { key: "value" } };
+    const eventData = { type: "startDefault", data: { key: "" } };
     sendMessage(eventData);
   };
 
