@@ -11,7 +11,14 @@ const MyRoutes: React.FC = () => {
     <BrowserRouter>
       {/* <Navbar /> */}
       <Routes>
-        <Route path="/" element={<Settings />} />
+        <Route
+          path="/"
+          element={
+            <WebSocketProvider>
+              <Settings />
+            </WebSocketProvider>
+          }
+        />
         <Route
           path="/show"
           element={
@@ -21,7 +28,7 @@ const MyRoutes: React.FC = () => {
           }
         />
 
-        <Route path="/settings" element={<Settings />} />
+        {/* <Route path="/settings" element={<Settings />} /> */}
         <Route path="/*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

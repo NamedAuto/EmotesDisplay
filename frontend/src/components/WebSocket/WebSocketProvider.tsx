@@ -15,6 +15,7 @@ interface WebSocketContextType {
   socket: WebSocket | null;
   isConnected: boolean;
   updateHandlers: (handlers: MessageHandlers) => void;
+  sendMessage: (message: object) => void;
 }
 
 interface WebSocketProviderProps {
@@ -75,8 +76,16 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
     handlersRef.current = handlers;
   };
 
+  const sendMessage = (message: object) => {
+    if (socket?.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify(message));
+    } else {
+      console.error("WebSocket is not open. Cannot send message.");
+    }
+  };
+
   return (
-    <WebSocketContext.Provider value={{ socket, isConnected, updateHandlers }}>
+    <WebSocketContext.Provider value={{ socket, isConnected, updateHandlers, sendMessage }}>
       {children}
     </WebSocketContext.Provider>
   );

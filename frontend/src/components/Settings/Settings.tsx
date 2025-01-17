@@ -6,7 +6,7 @@ import {
   ThemeProvider,
   Tooltip,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Config } from "../Config/ConfigInterface";
 import { useConfig } from "../Config/ConfigProvider";
 import AspectRatioSettings from "./AspectRatioSettings";
@@ -15,6 +15,7 @@ import HeaderSettings from "./HeaderSettings";
 import PortSettings from "./PortSettings";
 import TestingSettings from "./TestingSettings";
 import YouTubeSettings from "./YoutubeSettings";
+import { useWebSocketContext } from "../WebSocket/WebSocketProvider";
 
 interface MySettings {
   apiKey: string;
@@ -39,6 +40,7 @@ interface MySettings {
 
 const SettingsPage: React.FC = () => {
   const config = useConfig();
+  const { sendMessage } = useWebSocketContext();
 
   const formatSettings = (config: Config) => ({
     apiKey: config.Youtube.ApiKey,
@@ -139,6 +141,11 @@ const SettingsPage: React.FC = () => {
 
   const handleClickShowPassword = () => {
     setShowApiKey(!showApiKey);
+  };
+
+  const handleStartPreview = () => {
+    const eventData = { type: "customEvent", data: { key: "value" } };
+    sendMessage(eventData);
   };
 
   const darkTheme = createTheme({
@@ -288,6 +295,16 @@ const SettingsPage: React.FC = () => {
               Reset
             </Button>
           </Tooltip>
+
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleStartPreview}
+            style={{ fontSize: "18px", marginTop: "20px" }}
+            sx={{ marginLeft: 2, marginRight: 2, width: "150px" }}
+          >
+            Start Preview
+          </Button>
         </Box>
       </Box>
     </ThemeProvider>
