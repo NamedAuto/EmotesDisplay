@@ -12,34 +12,16 @@ import darkTheme from "./settingsTheme";
 import TestingSettings from "./TestingSettings";
 import YouTubeSettings from "./YoutubeSettings";
 import { createConfigCopyWithUpdate, formatSettings } from "./settingUtils";
+import { setupHandlers } from "./settingsHandlers";
 
 const SettingsPage: React.FC = () => {
   const config = useConfig();
-  const { updateHandlers, sendMessage } = useWebSocketContext();
 
+  const { updateHandlers, sendMessage } = useWebSocketContext();
   const [isDefaultConnected, setIsDefaultConnected] = useState(false);
   const [isYoutubeConnected, setIsYoutubeConnected] = useState(false);
   useEffect(() => {
-    const handleDefaultConnection = (something: string) => {
-      if (something == "connected") {
-        setIsDefaultConnected(true);
-      } else {
-        setIsDefaultConnected(false);
-      }
-    };
-
-    const handleYoutubeConnection = (something: string) => {
-      if (something == "connected") {
-        setIsYoutubeConnected(true);
-      } else {
-        setIsYoutubeConnected(false);
-      }
-    };
-
-    updateHandlers({
-      "default-connection": handleDefaultConnection,
-      "youtube-connection": handleYoutubeConnection,
-    });
+    setupHandlers(updateHandlers, setIsDefaultConnected, setIsYoutubeConnected);
   }, [updateHandlers]);
 
   const [showApiKey, setShowApiKey] = useState(false);
