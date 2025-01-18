@@ -1,67 +1,45 @@
-import {
-  Box,
-  Button,
-  createTheme,
-  Divider,
-  ThemeProvider,
-  Tooltip,
-} from "@mui/material";
+import { Box, Button, Divider, ThemeProvider, Tooltip } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Config } from "../Config/ConfigInterface";
 import { useConfig } from "../Config/ConfigProvider";
+import { useWebSocketContext } from "../WebSocket/WebSocketProvider";
 import AspectRatioSettings from "./AspectRatioSettings";
 import EmoteSettings from "./EmoteSettings";
 import HeaderSettings from "./HeaderSettings";
 import PortSettings from "./PortSettings";
+import { MySettings } from "./settingsInterface";
+import darkTheme from "./settingsTheme";
 import TestingSettings from "./TestingSettings";
 import YouTubeSettings from "./YoutubeSettings";
-import { useWebSocketContext } from "../WebSocket/WebSocketProvider";
-
-interface MySettings {
-  apiKey: string;
-  videoId: string;
-  messageDelay: string;
-  port: string;
-  forceWidthHeight: boolean;
-  canvasWidth: string;
-  canvasHeight: string;
-  scaleCanvas: string;
-  scaleImage: string;
-  emoteWidth: string;
-  randomSizeIncrease: string;
-  randomSizeDecrease: string;
-  maxEmoteCount: string;
-  groupEmotes: boolean;
-  emoteRoundness: string;
-  emoteBackgroundColor: string;
-  test: boolean;
-  speedOfEmotes: string;
-}
+import { createConfigCopyWithUpdate, formatSettings } from "./settingUtils";
 
 const SettingsPage: React.FC = () => {
   const config = useConfig();
-  const { sendMessage } = useWebSocketContext();
+  const { updateHandlers, sendMessage } = useWebSocketContext();
 
-  const formatSettings = (config: Config) => ({
-    apiKey: config.Youtube.ApiKey,
-    videoId: config.Youtube.VideoId,
-    messageDelay: (config.Youtube.MessageDelay / 1000).toString(),
-    port: config.Port.toString(),
-    forceWidthHeight: config.AspectRatio.ForceWidthHeight,
-    canvasWidth: config.AspectRatio.Width.toString(),
-    canvasHeight: config.AspectRatio.Height.toString(),
-    scaleCanvas: config.AspectRatio.ScaleCanvas.toString(),
-    scaleImage: config.AspectRatio.ScaleImage.toString(),
-    emoteWidth: config.Emote.Width.toString(),
-    randomSizeIncrease: config.Emote.RandomSizeIncrease.toString(),
-    randomSizeDecrease: config.Emote.RandomSizeDecrease.toString(),
-    maxEmoteCount: config.Emote.MaxEmoteCount.toString(),
-    groupEmotes: config.Emote.GroupEmotes,
-    emoteRoundness: config.Emote.Roundness.toString(),
-    emoteBackgroundColor: config.Emote.BackgroundColor,
-    test: config.Testing.Test,
-    speedOfEmotes: (config.Testing.SpeedOfEmotes / 1000).toString(),
-  });
+  const [isDefaultConnected, setIsDefaultConnected] = useState(false);
+  const [isYoutubeConnected, setIsYoutubeConnected] = useState(false);
+  useEffect(() => {
+    const handleDefaultConnection = (something: string) => {
+      if (something == "connected") {
+        setIsDefaultConnected(true);
+      } else {
+        setIsDefaultConnected(false);
+      }
+    };
+
+    const handleYoutubeConnection = (something: string) => {
+      if (something == "connected") {
+        setIsYoutubeConnected(true);
+      } else {
+        setIsYoutubeConnected(false);
+      }
+    };
+
+    updateHandlers({
+      "default-connection": handleDefaultConnection,
+    });
+  }, [updateHandlers]);
 
   const [showApiKey, setShowApiKey] = useState(false);
   const [settings, setSettings] = useState<MySettings>(formatSettings(config));
@@ -103,104 +81,29 @@ const SettingsPage: React.FC = () => {
     }
   };
 
-  const createConfigCopyWithUpdate = (config: Config, settings: MySettings) => {
-    return {
-      ...config,
-      Youtube: {
-        ...config.Youtube,
-        ApiKey: settings.apiKey,
-        VideoId: settings.videoId,
-        MessageDelay: Math.round(parseFloat(settings.messageDelay) * 1000),
-      },
-      Port: parseInt(settings.port, 10),
-      AspectRatio: {
-        ...config.AspectRatio,
-        ForceWidthHeight: settings.forceWidthHeight,
-        Width: parseInt(settings.canvasWidth, 10),
-        Height: parseInt(settings.canvasHeight, 10),
-        ScaleCanvas: parseFloat(settings.scaleCanvas),
-        ScaleImage: parseFloat(settings.scaleImage),
-      },
-      Emote: {
-        ...config.Emote,
-        Width: parseInt(settings.emoteWidth, 10),
-        RandomSizeIncrease: parseInt(settings.randomSizeIncrease, 10),
-        RandomSizeDecrease: parseInt(settings.randomSizeDecrease, 10),
-        MaxEmoteCount: parseInt(settings.maxEmoteCount, 10),
-        GroupEmotes: settings.groupEmotes,
-        Roundness: parseInt(settings.emoteRoundness, 10),
-        BackgroundColor: settings.emoteBackgroundColor,
-      },
-      Testing: {
-        ...config.Testing,
-        Test: settings.test,
-        SpeedOfEmotes: Math.round(parseFloat(settings.speedOfEmotes) * 1000),
-      },
-    };
-  };
-
   const handleClickShowPassword = () => {
     setShowApiKey(!showApiKey);
   };
 
-  const handleStart = () => {
-    // const eventData = { type: "customEvent", data: { key: "value" } };
-    // const eventData = { type: "startDefault", data: { key: "" } };
+  const handleYoutubeStart = () => {
     const eventData = { type: "connectYoutube", data: { key: "" } };
     sendMessage(eventData);
   };
 
-  const handleStop = () => {
-    // const eventData = { type: "stopDefault", data: { key: "" } };
+  const handleYoutubeStop = () => {
     const eventData = { type: "disconnectYoutube", data: { key: "" } };
     sendMessage(eventData);
   };
 
-  const darkTheme = createTheme({
-    palette: {
-      mode: "dark",
-      background: {
-        // #122f3a
-        default: "#122f3a",
-      },
-      primary: {
-        // #f167a7
-        main: "#f167a7",
-      },
-      secondary: {
-        // #62B0A6
-        main: "#62B0A6",
-      },
-      text: {
-        // #e40031
-        primary: "#e40031",
-      },
-    },
-    components: {
-      MuiTextField: {
-        styleOverrides: {
-          root: {
-            "& .MuiInputBase-input": {
-              // #f4458f
-              color: "#f4458f", // Text color inside the input
-            },
-            "& .MuiInputLabel-root": {
-              // #f885c0
-              color: "#f885c0", // Label color
-            },
-            "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-              // #62B0A6
-              borderColor: "#62B0A6", // Outline color
-            },
-            "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-              // #e40031
-              borderColor: "#e40031", // Outline color on hover
-            },
-          },
-        },
-      },
-    },
-  });
+  const handleDefaultStart = () => {
+    const eventData = { type: "startDefault", data: { key: "" } };
+    sendMessage(eventData);
+  };
+
+  const handleDefaultStop = () => {
+    const eventData = { type: "stopDefault", data: { key: "" } };
+    sendMessage(eventData);
+  };
 
   const dividerMargin = 2;
   const dividerColor = "2px solid #6c072c";
@@ -306,21 +209,26 @@ const SettingsPage: React.FC = () => {
 
           <Button
             variant="contained"
-            color="secondary"
-            onClick={handleStart}
+            color={isDefaultConnected ? "secondary" : "primary"}
+            onClick={
+              isDefaultConnected ? handleDefaultStop : handleDefaultStart
+            }
             style={{ fontSize: "18px", marginTop: "20px" }}
             sx={{ marginLeft: 2, marginRight: 2, width: "150px" }}
           >
-            Start
+            {isDefaultConnected ? "Stop Default" : "Start Default"}
           </Button>
+
           <Button
             variant="contained"
-            color="secondary"
-            onClick={handleStop}
+            color={isYoutubeConnected ? "secondary" : "primary"}
+            onClick={
+              isYoutubeConnected ? handleYoutubeStop : handleYoutubeStart
+            }
             style={{ fontSize: "18px", marginTop: "20px" }}
             sx={{ marginLeft: 2, marginRight: 2, width: "150px" }}
           >
-            Stop
+            {isYoutubeConnected ? "Stop Youtube" : "Start Youtube"}
           </Button>
         </Box>
       </Box>

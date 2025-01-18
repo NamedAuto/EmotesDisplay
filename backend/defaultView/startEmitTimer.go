@@ -36,6 +36,7 @@ func startEmitTimer(handler common.HandlerInterface,
 			}
 
 		case <-stopChan:
+			handler.DefaultConnection(false)
 			log.Println("Ending function")
 			ticker.Stop()
 			return

@@ -183,7 +183,7 @@ func (handler *WebSocketHandler) EmitToAll(emoteUrls []string) {
 	emit(msg, handler)
 }
 
-func (handler *WebSocketHandler) DefauiltConnection(connected bool) {
+func (handler *WebSocketHandler) DefaultConnection(connected bool) {
 	handler.mu.Lock()
 	defer handler.mu.Unlock()
 

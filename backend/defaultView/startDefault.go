@@ -26,5 +26,6 @@ func StartDefault(handler common.HandlerInterface, defaultService *service.Defau
 	stopChan = make(chan bool)
 	wg.Add(1)
 
+	handler.DefaultConnection(true)
 	go startEmitTimer(handler, defaultService, stopChan)
 }
