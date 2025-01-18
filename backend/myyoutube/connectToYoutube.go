@@ -13,6 +13,7 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
+// can try encapsuling in a struct to remove tight coupling
 var (
 	stopChan chan bool
 	wg       sync.WaitGroup
@@ -22,11 +23,12 @@ var apiCallCounter = 0
 
 func ConnectToYoutube(handler common.HandlerInterface, myYoutubeService *service.YoutubeService) {
 	log.Println("Connecting to youtube")
-	ConfigureYoutube(*myYoutubeService.Ctx, myYoutubeService.DefaultService.Config.Youtube.ApiKey)
-
 	mu.Lock()
 	defer mu.Unlock()
 
+	log.Println("Why")
+	log.Println(stopChan)
+	log.Println()
 	if stopChan != nil {
 		log.Println("Youtube goroutine is already running")
 		return
@@ -35,8 +37,7 @@ func ConnectToYoutube(handler common.HandlerInterface, myYoutubeService *service
 	stopChan = make(chan bool)
 	wg.Add(1)
 
-	log.Println("HEY")
-	go GetYoutubeMessages(handler, youtubeService, myYoutubeService, stopChan)
+	go GetYoutubeMessages(handler, youtubeService, myYoutubeService)
 }
 
 func DisconnectFromYoutube() {
@@ -64,16 +65,28 @@ func GetYoutubeMessages(
 	handler common.HandlerInterface,
 	youtubeService *youtube.Service,
 	myYoutubeService *service.YoutubeService,
-	stopChan chan bool,
 ) {
 
-	defer wg.Done()
+	defer func() {
+		log.Println("GetYoutubeMessages - exiting goroutine")
+		wg.Done()
+	}()
 
 	apiCallCounter++
 	liveChatId, err := GetLiveChatID(youtubeService,
 		myYoutubeService.DefaultService.Config.Youtube.VideoId)
 	if err != nil {
 		log.Printf("Error getting live chat ID: %v\n", err)
+		if stopChan != nil {
+			close(stopChan)
+			log.Println("Hello there")
+			stopChan = nil
+			log.Println(stopChan)
+			log.Println("What")
+		}
+		// stopChan <- true
+		// DisconnectFromYoutube()
+		// wg.Done()
 		return
 	}
 
@@ -100,7 +113,8 @@ func GetYoutubeMessages(
 
 			if err != nil {
 				log.Println("Error in YouTube messages:", err)
-				break
+				DisconnectFromYoutube()
+				return
 			}
 
 			if len(messages) > 0 {
@@ -134,7 +148,7 @@ func GetYoutubeMessages(
 
 			if currentMessageDelay != lastMessageDelay {
 				if pollingIntervalMillis > int64(currentMessageDelay) {
-					log.Printf("Polling to fast, setting to %d\n", pollingIntervalMillis)
+					log.Printf("Polling too fast, setting to %d\n", pollingIntervalMillis)
 					currentMessageDelay = int(pollingIntervalMillis)
 				}
 				lastMessageDelay = currentMessageDelay

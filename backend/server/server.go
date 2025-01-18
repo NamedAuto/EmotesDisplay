@@ -7,6 +7,7 @@ import (
 
 	"github.com/NamedAuto/EmotesDisplay/backend/config"
 	"github.com/NamedAuto/EmotesDisplay/backend/httpserver"
+	"github.com/NamedAuto/EmotesDisplay/backend/myyoutube"
 	"github.com/NamedAuto/EmotesDisplay/backend/service"
 	"github.com/NamedAuto/EmotesDisplay/backend/websocketserver"
 )
@@ -35,6 +36,7 @@ func StartServer(ctx context.Context) {
 		DefaultService: defaultService,
 	}
 
+	go myyoutube.ConfigureYoutube(ctx, myConfig.Youtube.ApiKey)
 	go websocketserver.StartWebSocketServer(mux, handler, youtubeService)
 	go httpserver.StartHttpServer(mux, myPaths, repo, myConfig.Port)
 }
