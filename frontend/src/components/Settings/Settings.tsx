@@ -145,15 +145,16 @@ const SettingsPage: React.FC = () => {
 
   const handleStart = () => {
     // const eventData = { type: "customEvent", data: { key: "value" } };
-    const eventData = { type: "startDefault", data: { key: "" } };
-    // const eventData = { type: "connectYoutube", data: { key: "" } };
+    // const eventData = { type: "startDefault", data: { key: "" } };
+    const eventData = { type: "connectYoutube", data: { key: "" } };
     sendMessage(eventData);
   };
 
   const handleStop = () => {
-    const eventData = { type: "stopDefault", data: { key: "" } };
+    // const eventData = { type: "stopDefault", data: { key: "" } };
+    const eventData = { type: "disconnectYoutube", data: { key: "" } };
     sendMessage(eventData);
-  }
+  };
 
   const darkTheme = createTheme({
     palette: {

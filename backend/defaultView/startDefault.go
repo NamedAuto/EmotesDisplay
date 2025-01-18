@@ -16,15 +16,14 @@ var (
 
 func StartDefault(handler common.HandlerInterface, defaultService *service.DefaultService) {
 	mu.Lock()
+	defer mu.Unlock()
 
 	if stopChan != nil {
-		mu.Unlock()
 		log.Println("Goroutine is already running.")
 		return
 	}
 
 	stopChan = make(chan bool)
-	mu.Unlock()
 	wg.Add(1)
 
 	go startEmitTimer(handler, defaultService, stopChan)

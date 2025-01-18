@@ -3,6 +3,7 @@ package myyoutube
 import (
 	"fmt"
 	"log"
+	"sync"
 	"time"
 
 	"github.com/NamedAuto/EmotesDisplay/backend/common"
@@ -12,24 +13,63 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
+var (
+	stopChan chan bool
+	wg       sync.WaitGroup
+	mu       sync.Mutex
+)
+var apiCallCounter = 0
+
 func ConnectToYoutube(handler common.HandlerInterface, myYoutubeService *service.YoutubeService) {
 	log.Println("Connecting to youtube")
 	ConfigureYoutube(*myYoutubeService.Ctx, myYoutubeService.DefaultService.Config.Youtube.ApiKey)
-	go GetYoutubeMessages(handler, youtubeService, myYoutubeService)
 
-	// done := make(chan string)
-	// go myyoutube.StartYoutube(ctx, myConfig)
+	mu.Lock()
+	defer mu.Unlock()
+
+	if stopChan != nil {
+		log.Println("Youtube goroutine is already running")
+		return
+	}
+
+	stopChan = make(chan bool)
+	wg.Add(1)
+
+	log.Println("HEY")
+	go GetYoutubeMessages(handler, youtubeService, myYoutubeService, stopChan)
 }
 
 func DisconnectFromYoutube() {
+	mu.Lock()
+	defer mu.Unlock()
+
+	if stopChan != nil {
+		close(stopChan)
+		stopChan = nil
+		if ticker != nil {
+			ticker.Stop()
+		}
+		log.Println("Disconnecting from YouTube")
+		// close(stopChan)
+	} else {
+		log.Println("No youtube goroutine to stop")
+	}
+
+	wg.Wait()
 }
+
+var ticker *time.Ticker
 
 func GetYoutubeMessages(
 	handler common.HandlerInterface,
 	youtubeService *youtube.Service,
-	myYoutubeService *service.YoutubeService) {
+	myYoutubeService *service.YoutubeService,
+	stopChan chan bool,
+) {
 
-	apiCallCounter := 1
+	defer wg.Done()
+
+	apiCallCounter++
 	liveChatId, err := GetLiveChatID(youtubeService,
 		myYoutubeService.DefaultService.Config.Youtube.VideoId)
 	if err != nil {
@@ -39,48 +79,71 @@ func GetYoutubeMessages(
 
 	nextPageToken := ""
 
+	lastMessageDelay := myYoutubeService.DefaultService.Config.Youtube.MessageDelay
+	duration := time.Duration(lastMessageDelay) * time.Millisecond
+	ticker = time.NewTicker(duration)
+	defer ticker.Stop()
+
 	for {
-		// go func() {
-		messages,
-			newNextPageToken,
-			err := GetLiveChatMessages(youtubeService, liveChatId, nextPageToken)
+		select {
+		case <-stopChan:
+			log.Println("Received stop signal. Stopping message retrieval.")
+			return
+		case <-ticker.C:
+			messages,
+				newNextPageToken,
+				pollingIntervalMillis,
+				err := GetLiveChatMessages(youtubeService, liveChatId, nextPageToken)
 
-		apiCallCounter++
-		log.Printf("API Call counter: %d", apiCallCounter)
+			apiCallCounter++
+			log.Printf("API Call counter: %d", apiCallCounter)
 
-		if err != nil {
-			log.Println("Error in YouTube messages:", err)
-			break
-			// return
-		}
+			if err != nil {
+				log.Println("Error in YouTube messages:", err)
+				break
+			}
 
-		if len(messages) > 0 {
-			for _, message := range messages {
-				// displayName := message.AuthorDetails.DisplayName
-				msg := message.Snippet.DisplayMessage
-				// log.Printf("%s: %s", displayName, msg)
+			if len(messages) > 0 {
+				for _, message := range messages {
+					displayName := message.AuthorDetails.DisplayName
+					msg := message.Snippet.DisplayMessage
+					log.Printf("%s: %s", displayName, msg)
 
-				baseUrl := fmt.Sprintf("http://localhost:%d/emotes/",
-					myYoutubeService.DefaultService.Config.Port)
-				emoteUrls := parse.ParseMessageForEmotes(
-					msg,
-					baseUrl,
-					myYoutubeService.DefaultService.EmoteMap)
+					baseUrl := fmt.Sprintf("http://localhost:%d/emotes/",
+						myYoutubeService.DefaultService.Config.Port)
+					emoteUrls := parse.ParseMessageForEmotes(
+						msg,
+						baseUrl,
+						myYoutubeService.DefaultService.EmoteMap)
 
-				if len(emoteUrls) > 0 {
-					time.Sleep(100 * time.Millisecond)
-					log.Printf("These are the emoteUrls: ")
-					for _, url := range emoteUrls {
-						log.Println(url)
+					if len(emoteUrls) > 0 {
+						time.Sleep(100 * time.Millisecond)
+						log.Printf("These are the emoteUrls: ")
+						for _, url := range emoteUrls {
+							log.Println(url)
+						}
+						handler.EmitToAll(emoteUrls)
 					}
-					handler.EmitToAll(emoteUrls)
 				}
 			}
+
+			nextPageToken = newNextPageToken
+
+			mu.Lock()
+			currentMessageDelay := myYoutubeService.DefaultService.Config.Youtube.MessageDelay
+
+			if currentMessageDelay != lastMessageDelay {
+				if pollingIntervalMillis > int64(currentMessageDelay) {
+					log.Printf("Polling to fast, setting to %d\n", pollingIntervalMillis)
+					currentMessageDelay = int(pollingIntervalMillis)
+				}
+				lastMessageDelay = currentMessageDelay
+				duration = time.Duration(currentMessageDelay) * time.Millisecond
+
+				ticker.Stop()
+				ticker = time.NewTicker(duration)
+			}
+			mu.Unlock()
 		}
-
-		time.Sleep(time.Duration(
-			myYoutubeService.DefaultService.Config.Youtube.MessageDelay) * time.Second)
-
-		nextPageToken = newNextPageToken
 	}
 }

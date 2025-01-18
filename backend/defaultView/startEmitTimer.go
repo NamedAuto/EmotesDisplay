@@ -15,6 +15,7 @@ func startEmitTimer(handler common.HandlerInterface,
 	stopChan chan bool) {
 
 	defer wg.Done()
+
 	lastSpeedOfEmotes := defaultService.Config.Testing.SpeedOfEmotes
 	duration := time.Duration(lastSpeedOfEmotes) * time.Millisecond
 	ticker = time.NewTicker(duration)

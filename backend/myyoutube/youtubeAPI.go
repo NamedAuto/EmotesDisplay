@@ -65,7 +65,7 @@ func GetLiveChatMessagesAsync(
 func GetLiveChatMessages(
 	service *youtube.Service,
 	liveChatID string,
-	pageToken string) ([]*youtube.LiveChatMessage, string, error) {
+	pageToken string) ([]*youtube.LiveChatMessage, string, int64, error) {
 
 	call := service.LiveChatMessages.List(liveChatID, []string{"snippet", "authorDetails"})
 	if pageToken != "" {
@@ -74,8 +74,8 @@ func GetLiveChatMessages(
 
 	response, err := call.Do()
 	if err != nil {
-		return nil, "", fmt.Errorf("error retrieving live chat messages: %v", err)
+		return nil, "", 0, fmt.Errorf("error retrieving live chat messages: %v", err)
 	}
 
-	return response.Items, response.NextPageToken, nil
+	return response.Items, response.NextPageToken, response.PollingIntervalMillis, nil
 }
