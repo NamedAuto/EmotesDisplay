@@ -154,20 +154,7 @@ func (handler *WebSocketHandler) EmitToAllRandom(port int, emoteMap map[string]s
 		"data": message,
 	}
 
-	jsonData, err := json.Marshal(msg)
-	if err != nil {
-		log.Printf("Error marshalling message to JSON: %v", err)
-		return
-	}
-
-	for _, ws := range handler.connections {
-		if ws != nil {
-			err := ws.WriteMessage(websocket.TextMessage, jsonData)
-			if err != nil {
-				log.Printf("Write error: %v", err)
-			}
-		}
-	}
+	emit(msg, handler)
 }
 
 func generateRandomUrls(port int, emoteMap map[string]string) []string {
@@ -193,6 +180,50 @@ func (handler *WebSocketHandler) EmitToAll(emoteUrls []string) {
 	}
 	// fmt.Printf("Emit: %s\n", emoteUrls)
 
+	emit(msg, handler)
+}
+
+func (handler *WebSocketHandler) DefauiltConnection(connected bool) {
+	handler.mu.Lock()
+	defer handler.mu.Unlock()
+
+	var msg map[string]interface{}
+	if connected {
+		msg = map[string]interface{}{
+			"type": "default-connection",
+			"data": "connected",
+		}
+	} else {
+		msg = map[string]interface{}{
+			"type": "default-connection",
+			"data": "disconnected",
+		}
+	}
+
+	emit(msg, handler)
+}
+
+func (handler *WebSocketHandler) EmitConnectionToYoutube(connected bool) {
+	handler.mu.Lock()
+	defer handler.mu.Unlock()
+
+	var msg map[string]interface{}
+	if connected {
+		msg = map[string]interface{}{
+			"type": "youtube-connection",
+			"data": "connected",
+		}
+	} else {
+		msg = map[string]interface{}{
+			"type": "youtube-connection",
+			"data": "disconnected",
+		}
+	}
+
+	emit(msg, handler)
+}
+
+func emit(msg map[string]interface{}, handler *WebSocketHandler) {
 	jsonData, err := json.Marshal(msg)
 	if err != nil {
 		log.Printf("Error marshalling message to JSON: %v", err)

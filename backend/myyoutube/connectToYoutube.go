@@ -26,9 +26,6 @@ func ConnectToYoutube(handler common.HandlerInterface, myYoutubeService *service
 	mu.Lock()
 	defer mu.Unlock()
 
-	log.Println("Why")
-	log.Println(stopChan)
-	log.Println()
 	if stopChan != nil {
 		log.Println("Youtube goroutine is already running")
 		return
@@ -50,8 +47,7 @@ func DisconnectFromYoutube() {
 		if ticker != nil {
 			ticker.Stop()
 		}
-		log.Println("Disconnecting from YouTube")
-		// close(stopChan)
+		log.Println("Disconnecting from youtube")
 	} else {
 		log.Println("No youtube goroutine to stop")
 	}
@@ -67,10 +63,7 @@ func GetYoutubeMessages(
 	myYoutubeService *service.YoutubeService,
 ) {
 
-	defer func() {
-		log.Println("GetYoutubeMessages - exiting goroutine")
-		wg.Done()
-	}()
+	defer wg.Done()
 
 	apiCallCounter++
 	liveChatId, err := GetLiveChatID(youtubeService,
@@ -79,14 +72,8 @@ func GetYoutubeMessages(
 		log.Printf("Error getting live chat ID: %v\n", err)
 		if stopChan != nil {
 			close(stopChan)
-			log.Println("Hello there")
 			stopChan = nil
-			log.Println(stopChan)
-			log.Println("What")
 		}
-		// stopChan <- true
-		// DisconnectFromYoutube()
-		// wg.Done()
 		return
 	}
 
@@ -113,15 +100,21 @@ func GetYoutubeMessages(
 
 			if err != nil {
 				log.Println("Error in YouTube messages:", err)
-				DisconnectFromYoutube()
+				if stopChan != nil {
+					close(stopChan)
+					stopChan = nil
+					if ticker != nil {
+						ticker = nil
+					}
+				}
 				return
 			}
 
 			if len(messages) > 0 {
 				for _, message := range messages {
-					displayName := message.AuthorDetails.DisplayName
+					// displayName := message.AuthorDetails.DisplayName
 					msg := message.Snippet.DisplayMessage
-					log.Printf("%s: %s", displayName, msg)
+					// log.Printf("%s: %s", displayName, msg)
 
 					baseUrl := fmt.Sprintf("http://localhost:%d/emotes/",
 						myYoutubeService.DefaultService.Config.Port)
@@ -132,10 +125,10 @@ func GetYoutubeMessages(
 
 					if len(emoteUrls) > 0 {
 						time.Sleep(100 * time.Millisecond)
-						log.Printf("These are the emoteUrls: ")
-						for _, url := range emoteUrls {
-							log.Println(url)
-						}
+						// log.Printf("These are the emoteUrls: ")
+						// for _, url := range emoteUrls {
+						// 	log.Println(url)
+						// }
 						handler.EmitToAll(emoteUrls)
 					}
 				}
