@@ -38,6 +38,7 @@ const SettingsPage: React.FC = () => {
 
     updateHandlers({
       "default-connection": handleDefaultConnection,
+      "youtube-connection": handleYoutubeConnection,
     });
   }, [updateHandlers]);
 

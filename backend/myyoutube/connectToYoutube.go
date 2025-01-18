@@ -79,6 +79,7 @@ func GetYoutubeMessages(
 
 	nextPageToken := ""
 
+	handler.EmitConnectionToYoutube(true)
 	lastMessageDelay := myYoutubeService.DefaultService.Config.Youtube.MessageDelay
 	duration := time.Duration(lastMessageDelay) * time.Millisecond
 	ticker = time.NewTicker(duration)
@@ -88,6 +89,7 @@ func GetYoutubeMessages(
 		select {
 		case <-stopChan:
 			log.Println("Received stop signal. Stopping message retrieval.")
+			handler.EmitConnectionToYoutube(false)
 			return
 		case <-ticker.C:
 			messages,
@@ -100,6 +102,7 @@ func GetYoutubeMessages(
 
 			if err != nil {
 				log.Println("Error in YouTube messages:", err)
+				handler.EmitConnectionToYoutube(false)
 				if stopChan != nil {
 					close(stopChan)
 					stopChan = nil
@@ -139,7 +142,8 @@ func GetYoutubeMessages(
 			mu.Lock()
 			currentMessageDelay := myYoutubeService.DefaultService.Config.Youtube.MessageDelay
 
-			if currentMessageDelay != lastMessageDelay {
+			if currentMessageDelay != lastMessageDelay ||
+				pollingIntervalMillis > int64(currentMessageDelay) {
 				if pollingIntervalMillis > int64(currentMessageDelay) {
 					log.Printf("Polling too fast, setting to %d\n", pollingIntervalMillis)
 					currentMessageDelay = int(pollingIntervalMillis)
