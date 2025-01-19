@@ -8,12 +8,12 @@ import {
   Tooltip,
 } from "@mui/material";
 
-interface TestingSettingsProps {
+interface PreviewSettingsProps {
   settings: any;
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const TestingSettings: React.FC<TestingSettingsProps> = ({
+const PreviewSettings: React.FC<PreviewSettingsProps> = ({
   settings,
   handleInputChange,
 }) => (
@@ -44,4 +44,4 @@ const TestingSettings: React.FC<TestingSettingsProps> = ({
   </Box>
 );
 
-export default TestingSettings;
+export default PreviewSettings;

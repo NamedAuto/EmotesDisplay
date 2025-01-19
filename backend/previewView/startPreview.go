@@ -1,4 +1,4 @@
-package defaultView
+package previewView
 
 import (
 	"log"
@@ -14,7 +14,7 @@ var (
 	mu       sync.Mutex
 )
 
-func StartDefault(handler common.HandlerInterface, defaultService *service.DefaultService) {
+func StartPreview(handler common.HandlerInterface, previewService *service.PreviewService) {
 	mu.Lock()
 	defer mu.Unlock()
 
@@ -26,6 +26,6 @@ func StartDefault(handler common.HandlerInterface, defaultService *service.Defau
 	stopChan = make(chan bool)
 	wg.Add(1)
 
-	handler.DefaultConnection(true)
-	go startEmitTimer(handler, defaultService, stopChan)
+	handler.EmitPreviewConnection(true)
+	go startEmitTimer(handler, previewService, stopChan)
 }

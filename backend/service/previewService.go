@@ -4,7 +4,7 @@ import (
 	"github.com/NamedAuto/EmotesDisplay/backend/config"
 )
 
-type DefaultService struct {
+type PreviewService struct {
 	Config   *config.AppConfig
 	EmoteMap map[string]string
 }

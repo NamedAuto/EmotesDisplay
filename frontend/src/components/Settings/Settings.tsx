@@ -1,27 +1,26 @@
 import { Box, Button, Divider, ThemeProvider, Tooltip } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { Config } from "../Config/ConfigInterface";
 import { useConfig } from "../Config/ConfigProvider";
 import { useWebSocketContext } from "../WebSocket/WebSocketProvider";
 import AspectRatioSettings from "./AspectRatioSettings";
 import EmoteSettings from "./EmoteSettings";
 import HeaderSettings from "./HeaderSettings";
 import PortSettings from "./PortSettings";
-import { MySettings } from "./settingsInterface";
-import darkTheme from "./settingsTheme";
-import TestingSettings from "./TestingSettings";
+import PreviewSettings from "./PreviewSettings";
 import YouTubeSettings from "./YoutubeSettings";
 import { createConfigCopyWithUpdate, formatSettings } from "./settingUtils";
 import { setupHandlers } from "./settingsHandlers";
+import { MySettings } from "./settingsInterface";
+import darkTheme from "./SettingsTheme";
 
 const SettingsPage: React.FC = () => {
   const config = useConfig();
 
   const { updateHandlers, sendMessage } = useWebSocketContext();
-  const [isDefaultConnected, setIsDefaultConnected] = useState(false);
+  const [isPreviewConnected, setIsPreviewConnected] = useState(false);
   const [isYoutubeConnected, setIsYoutubeConnected] = useState(false);
   useEffect(() => {
-    setupHandlers(updateHandlers, setIsDefaultConnected, setIsYoutubeConnected);
+    setupHandlers(updateHandlers, setIsPreviewConnected, setIsYoutubeConnected);
   }, [updateHandlers]);
 
   const [showApiKey, setShowApiKey] = useState(false);
@@ -78,13 +77,13 @@ const SettingsPage: React.FC = () => {
     sendMessage(eventData);
   };
 
-  const handleDefaultStart = () => {
-    const eventData = { type: "startDefault", data: { key: "" } };
+  const handlePreviewStart = () => {
+    const eventData = { type: "startPreview", data: { key: "" } };
     sendMessage(eventData);
   };
 
-  const handleDefaultStop = () => {
-    const eventData = { type: "stopDefault", data: { key: "" } };
+  const handlePreviewStop = () => {
+    const eventData = { type: "stopPreview", data: { key: "" } };
     sendMessage(eventData);
   };
 
@@ -131,7 +130,7 @@ const SettingsPage: React.FC = () => {
             handleInputChange={handleInputChange}
           />
 
-          <TestingSettings
+          <PreviewSettings
             settings={settings}
             handleInputChange={handleInputChange}
           />
@@ -192,7 +191,7 @@ const SettingsPage: React.FC = () => {
 
           <Tooltip
             title={
-              isDefaultConnected
+              isPreviewConnected
                 ? "Stop displaying random emotes on the screen"
                 : "Display random emotes on the screen"
             }
@@ -200,20 +199,20 @@ const SettingsPage: React.FC = () => {
           >
             <Button
               variant="contained"
-              color={isDefaultConnected ? "secondary" : "primary"}
+              color={isPreviewConnected ? "secondary" : "primary"}
               onClick={
-                isDefaultConnected ? handleDefaultStop : handleDefaultStart
+                isPreviewConnected ? handlePreviewStop : handlePreviewStart
               }
               style={{ fontSize: "18px", marginTop: "20px" }}
               sx={{ marginLeft: 2, marginRight: 2, width: "200px" }}
             >
-              {isDefaultConnected ? "Stop Preview" : "Start Preview"}
+              {isPreviewConnected ? "Stop Preview" : "Start Preview"}
             </Button>
           </Tooltip>
 
           <Tooltip
             title={
-              isDefaultConnected
+              isPreviewConnected
                 ? "Disconnect from youtube"
                 : "Connect to youtube and display emotes from chat"
             }

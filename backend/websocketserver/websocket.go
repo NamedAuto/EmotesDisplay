@@ -9,8 +9,8 @@ import (
 	"regexp"
 	"sync"
 
-	"github.com/NamedAuto/EmotesDisplay/backend/defaultView"
 	"github.com/NamedAuto/EmotesDisplay/backend/myyoutube"
+	"github.com/NamedAuto/EmotesDisplay/backend/previewView"
 	"github.com/NamedAuto/EmotesDisplay/backend/service"
 	"github.com/gorilla/websocket"
 	"golang.org/x/exp/rand"
@@ -134,10 +134,10 @@ func (handler *WebSocketHandler) HandleMessage(
 		myyoutube.ConnectToYoutube(handler, youtubeService)
 	case "disconnectYoutube":
 		myyoutube.DisconnectFromYoutube()
-	case "startDefault":
-		defaultView.StartDefault(handler, youtubeService.DefaultService)
-	case "stopDefault":
-		defaultView.StopDefault()
+	case "startPreview":
+		previewView.StartPreview(handler, youtubeService.PreviewService)
+	case "stopPreview":
+		previewView.StopPreview()
 	default:
 		log.Printf("Unknown event type: %s", eventType)
 	}
@@ -183,19 +183,19 @@ func (handler *WebSocketHandler) EmitToAll(emoteUrls []string) {
 	emit(msg, handler)
 }
 
-func (handler *WebSocketHandler) DefaultConnection(connected bool) {
+func (handler *WebSocketHandler) EmitPreviewConnection(connected bool) {
 	handler.mu.Lock()
 	defer handler.mu.Unlock()
 
 	var msg map[string]interface{}
 	if connected {
 		msg = map[string]interface{}{
-			"type": "default-connection",
+			"type": "preview-connection",
 			"data": "connected",
 		}
 	} else {
 		msg = map[string]interface{}{
-			"type": "default-connection",
+			"type": "preview-connection",
 			"data": "disconnected",
 		}
 	}
@@ -203,7 +203,7 @@ func (handler *WebSocketHandler) DefaultConnection(connected bool) {
 	emit(msg, handler)
 }
 
-func (handler *WebSocketHandler) EmitConnectionToYoutube(connected bool) {
+func (handler *WebSocketHandler) EmitYoutubeConnection(connected bool) {
 	handler.mu.Lock()
 	defer handler.mu.Unlock()
 

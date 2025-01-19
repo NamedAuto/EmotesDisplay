@@ -15,6 +15,6 @@ type HandlerInterface interface {
 	HandleMessage(ws *websocket.Conn, message []byte, youtubeService *service.YoutubeService)
 	EmitToAllRandom(port int, emoteMap map[string]string)
 	EmitToAll(emoteUrls []string)
-	DefaultConnection(connected bool)
-	EmitConnectionToYoutube(connected bool)
+	EmitPreviewConnection(connected bool)
+	EmitYoutubeConnection(connected bool)
 }

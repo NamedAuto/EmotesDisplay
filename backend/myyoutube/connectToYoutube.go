@@ -67,7 +67,7 @@ func GetYoutubeMessages(
 
 	apiCallCounter++
 	liveChatId, err := GetLiveChatID(youtubeService,
-		myYoutubeService.DefaultService.Config.Youtube.VideoId)
+		myYoutubeService.PreviewService.Config.Youtube.VideoId)
 	if err != nil {
 		log.Printf("Error getting live chat ID: %v\n", err)
 		if stopChan != nil {
@@ -79,8 +79,8 @@ func GetYoutubeMessages(
 
 	nextPageToken := ""
 
-	handler.EmitConnectionToYoutube(true)
-	lastMessageDelay := myYoutubeService.DefaultService.Config.Youtube.MessageDelay
+	handler.EmitYoutubeConnection(true)
+	lastMessageDelay := myYoutubeService.PreviewService.Config.Youtube.MessageDelay
 	duration := time.Duration(lastMessageDelay) * time.Millisecond
 	ticker = time.NewTicker(duration)
 	defer ticker.Stop()
@@ -89,7 +89,7 @@ func GetYoutubeMessages(
 		select {
 		case <-stopChan:
 			log.Println("Received stop signal. Stopping message retrieval.")
-			handler.EmitConnectionToYoutube(false)
+			handler.EmitYoutubeConnection(false)
 			return
 		case <-ticker.C:
 			messages,
@@ -102,7 +102,7 @@ func GetYoutubeMessages(
 
 			if err != nil {
 				log.Println("Error in YouTube messages:", err)
-				handler.EmitConnectionToYoutube(false)
+				handler.EmitYoutubeConnection(false)
 				if stopChan != nil {
 					close(stopChan)
 					stopChan = nil
@@ -120,11 +120,11 @@ func GetYoutubeMessages(
 					// log.Printf("%s: %s", displayName, msg)
 
 					baseUrl := fmt.Sprintf("http://localhost:%d/emotes/",
-						myYoutubeService.DefaultService.Config.Port)
+						myYoutubeService.PreviewService.Config.Port)
 					emoteUrls := parse.ParseMessageForEmotes(
 						msg,
 						baseUrl,
-						myYoutubeService.DefaultService.EmoteMap)
+						myYoutubeService.PreviewService.EmoteMap)
 
 					if len(emoteUrls) > 0 {
 						time.Sleep(100 * time.Millisecond)
@@ -140,7 +140,7 @@ func GetYoutubeMessages(
 			nextPageToken = newNextPageToken
 
 			mu.Lock()
-			currentMessageDelay := myYoutubeService.DefaultService.Config.Youtube.MessageDelay
+			currentMessageDelay := myYoutubeService.PreviewService.Config.Youtube.MessageDelay
 
 			if currentMessageDelay != lastMessageDelay ||
 				pollingIntervalMillis > int64(currentMessageDelay) {

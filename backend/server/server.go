@@ -15,7 +15,7 @@ import (
 var handler = &websocketserver.WebSocketHandler{}
 var mux = http.NewServeMux()
 var myConfig *config.AppConfig
-var defaultService *service.DefaultService
+var previewService *service.PreviewService
 var youtubeService *service.YoutubeService
 
 func StartServer(ctx context.Context) {
@@ -26,14 +26,14 @@ func StartServer(ctx context.Context) {
 	repo := config.GetRepo()
 	emoteMap := config.GetEmoteMap()
 
-	defaultService = &service.DefaultService{
+	previewService = &service.PreviewService{
 		Config:   myConfig,
 		EmoteMap: emoteMap,
 	}
 
 	youtubeService = &service.YoutubeService{
 		Ctx:            &ctx,
-		DefaultService: defaultService,
+		PreviewService: previewService,
 	}
 
 	go myyoutube.ConfigureYoutube(ctx, myConfig.Youtube.ApiKey)

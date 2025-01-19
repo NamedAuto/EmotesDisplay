@@ -12,7 +12,7 @@ func StartWebSocketServer(mux *http.ServeMux,
 	handler *WebSocketHandler,
 	youtubeService *service.YoutubeService) {
 
-	port := youtubeService.DefaultService.Config.Port
+	port := youtubeService.PreviewService.Config.Port
 	log.Printf("Starting websocket server on port %d\n", port)
 	allowedOrigin := fmt.Sprintf("http://localhost:%d", port)
 

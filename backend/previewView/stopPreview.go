@@ -1,8 +1,8 @@
-package defaultView
+package previewView
 
 import "log"
 
-func StopDefault() {
+func StopPreview() {
 	mu.Lock()
 	defer mu.Unlock()
 

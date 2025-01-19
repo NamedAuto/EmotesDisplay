@@ -1,4 +1,4 @@
-package defaultView
+package previewView
 
 import (
 	"log"
@@ -11,12 +11,12 @@ import (
 var ticker *time.Ticker
 
 func startEmitTimer(handler common.HandlerInterface,
-	defaultService *service.DefaultService,
+	previewService *service.PreviewService,
 	stopChan chan bool) {
 
 	defer wg.Done()
 
-	lastSpeedOfEmotes := defaultService.Config.Testing.SpeedOfEmotes
+	lastSpeedOfEmotes := previewService.Config.Testing.SpeedOfEmotes
 	duration := time.Duration(lastSpeedOfEmotes) * time.Millisecond
 	ticker = time.NewTicker(duration)
 	defer ticker.Stop()
@@ -24,9 +24,9 @@ func startEmitTimer(handler common.HandlerInterface,
 	for {
 		select {
 		case <-ticker.C:
-			handler.EmitToAllRandom(defaultService.Config.Port, defaultService.EmoteMap)
+			handler.EmitToAllRandom(previewService.Config.Port, previewService.EmoteMap)
 
-			currentSpeedOfEmotes := defaultService.Config.Testing.SpeedOfEmotes
+			currentSpeedOfEmotes := previewService.Config.Testing.SpeedOfEmotes
 			if currentSpeedOfEmotes != lastSpeedOfEmotes {
 				lastSpeedOfEmotes = currentSpeedOfEmotes
 				duration = time.Duration(currentSpeedOfEmotes) * time.Millisecond
@@ -36,7 +36,7 @@ func startEmitTimer(handler common.HandlerInterface,
 			}
 
 		case <-stopChan:
-			handler.DefaultConnection(false)
+			handler.EmitPreviewConnection(false)
 			log.Println("Ending function")
 			ticker.Stop()
 			return

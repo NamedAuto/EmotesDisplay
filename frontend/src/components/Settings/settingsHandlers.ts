@@ -1,13 +1,13 @@
 import { WebSocketContextType } from "../WebSocket/websocketTypes";
 
-const handleDefaultConnection = (
+const handlePreviewConnection = (
   something: string,
-  setIsDefaultConnected: React.Dispatch<React.SetStateAction<boolean>>
+  setIsPreviewConnected: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   if (something == "connected") {
-    setIsDefaultConnected(true);
+    setIsPreviewConnected(true);
   } else {
-    setIsDefaultConnected(false);
+    setIsPreviewConnected(false);
   }
 };
 
@@ -24,12 +24,12 @@ const handleYoutubeConnection = (
 
 export const setupHandlers = (
   updateHandlers: WebSocketContextType["updateHandlers"],
-  setIsDefaultConnected: React.Dispatch<React.SetStateAction<boolean>>,
+  setIsPreviewConnected: React.Dispatch<React.SetStateAction<boolean>>,
   setIsYoutubeConnected: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   updateHandlers({
-    "default-connection": (data: any) =>
-      handleDefaultConnection(data, setIsDefaultConnected),
+    "preview-connection": (data: any) =>
+      handlePreviewConnection(data, setIsPreviewConnected),
     "youtube-connection": (data: any) =>
       handleYoutubeConnection(data, setIsYoutubeConnected),
   });
