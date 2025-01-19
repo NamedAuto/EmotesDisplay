@@ -164,7 +164,7 @@ const SettingsPage: React.FC = () => {
           }}
         >
           <Tooltip
-            title="Saves changes. Has some quirks involving saving. Read README"
+            title="Save changes. Has some quirks involving saving. Read README"
             arrow
           >
             <Button
@@ -190,29 +190,47 @@ const SettingsPage: React.FC = () => {
             </Button>
           </Tooltip>
 
-          <Button
-            variant="contained"
-            color={isDefaultConnected ? "secondary" : "primary"}
-            onClick={
-              isDefaultConnected ? handleDefaultStop : handleDefaultStart
+          <Tooltip
+            title={
+              isDefaultConnected
+                ? "Stop displaying random emotes on the screen"
+                : "Display random emotes on the screen"
             }
-            style={{ fontSize: "18px", marginTop: "20px" }}
-            sx={{ marginLeft: 2, marginRight: 2, width: "150px" }}
+            arrow
           >
-            {isDefaultConnected ? "Stop Default" : "Start Default"}
-          </Button>
+            <Button
+              variant="contained"
+              color={isDefaultConnected ? "secondary" : "primary"}
+              onClick={
+                isDefaultConnected ? handleDefaultStop : handleDefaultStart
+              }
+              style={{ fontSize: "18px", marginTop: "20px" }}
+              sx={{ marginLeft: 2, marginRight: 2, width: "200px" }}
+            >
+              {isDefaultConnected ? "Stop Preview" : "Start Preview"}
+            </Button>
+          </Tooltip>
 
-          <Button
-            variant="contained"
-            color={isYoutubeConnected ? "secondary" : "primary"}
-            onClick={
-              isYoutubeConnected ? handleYoutubeStop : handleYoutubeStart
+          <Tooltip
+            title={
+              isDefaultConnected
+                ? "Disconnect from youtube"
+                : "Connect to youtube and display emotes from chat"
             }
-            style={{ fontSize: "18px", marginTop: "20px" }}
-            sx={{ marginLeft: 2, marginRight: 2, width: "150px" }}
+            arrow
           >
-            {isYoutubeConnected ? "Stop Youtube" : "Start Youtube"}
-          </Button>
+            <Button
+              variant="contained"
+              color={isYoutubeConnected ? "secondary" : "primary"}
+              onClick={
+                isYoutubeConnected ? handleYoutubeStop : handleYoutubeStart
+              }
+              style={{ fontSize: "18px", marginTop: "20px" }}
+              sx={{ marginLeft: 2, marginRight: 2, width: "200px" }}
+            >
+              {isYoutubeConnected ? "Stop Youtube" : "Start Youtube"}
+            </Button>
+          </Tooltip>
         </Box>
       </Box>
     </ThemeProvider>

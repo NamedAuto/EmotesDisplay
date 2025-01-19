@@ -30,7 +30,7 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
       }}
     >
       <Tooltip
-        title="If checked, emotes from the same message will display together."
+        title="If checked, emotes from the same message will be displayed together"
         arrow
       >
         <FormControlLabel
@@ -46,7 +46,7 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
         />
       </Tooltip>
 
-      <Tooltip title="Choose the size to display emotes in px(pixels)." arrow>
+      <Tooltip title="Choose the size to display emotes in px(pixels)" arrow>
         <TextField
           name="emoteWidth"
           label="Width and Height (px)"
@@ -59,12 +59,12 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
       </Tooltip>
 
       <Tooltip
-        title="Make the emote bigger randomly by up to this number."
+        title="Increase the size of the emote randomly by up to the number provided"
         arrow
       >
         <TextField
           name="randomSizeIncrease"
-          label="Increase Randomly By (px)"
+          label="Random Size Increase (px)"
           value={settings.randomSizeIncrease}
           onChange={handleInputChange}
           type="number"
@@ -74,12 +74,12 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
       </Tooltip>
 
       <Tooltip
-        title="Make the emote smalller randomly by up to this number."
+        title="Decrease the size of the emote randomly by up to the number provided"
         arrow
       >
         <TextField
           name="randomSizeDecrease"
-          label="Decrease Randomly By (px)"
+          label="Random Size Decrease (px)"
           value={settings.randomSizeDecrease}
           onChange={handleInputChange}
           type="number"
@@ -89,12 +89,12 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
       </Tooltip>
 
       <Tooltip
-        title="Max number of groups of emotes to show before oldest ones are removed."
+        title="Max group of emotes to show before replacing the oldest ones"
         arrow
       >
         <TextField
           name="maxEmoteCount"
-          label="Max Emote Count"
+          label="Max Emote Groups"
           value={settings.maxEmoteCount}
           onChange={handleInputChange}
           type="number"
@@ -104,7 +104,7 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
       </Tooltip>
 
       <Tooltip
-        title="Make emotes round. 0 does nothing. 50+ makes it a circle."
+        title="Make emotes round. 0 does nothing. 50+ makes it a circle"
         arrow
       >
         <TextField
@@ -119,7 +119,7 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
       </Tooltip>
 
       <Tooltip
-        title="Color the transparent part of an emote. Only change the numbers."
+        title="Color the transparent portion of an emote. Only change the numbers"
         arrow
       >
         <TextField

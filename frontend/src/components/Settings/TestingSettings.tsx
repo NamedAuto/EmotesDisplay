@@ -19,7 +19,7 @@ const TestingSettings: React.FC<TestingSettingsProps> = ({
 }) => (
   <Box>
     <Typography variant="h4" sx={{ textAlign: "center" }}>
-      Testing
+      Preview
     </Typography>
     <Box
       sx={{
@@ -29,30 +29,10 @@ const TestingSettings: React.FC<TestingSettingsProps> = ({
         flexWrap: "wrap",
       }}
     >
-      <FormControlLabel
-        control={
-          <Tooltip
-            title="Uncheck if you want to connect to youtube. Read README for more info."
-            arrow
-          >
-            <Checkbox
-              name="test"
-              checked={settings.test}
-              onChange={handleInputChange}
-            />
-          </Tooltip>
-        }
-        label="Test"
-        sx={{ marginLeft: 2, marginRight: 2 }}
-      />
-
-      <Tooltip
-        title="Only works if [test] is checked. Read README for more info."
-        arrow
-      >
+      <Tooltip title="Only works for preview. Lower is faster" arrow>
         <TextField
           name="speedOfEmotes"
-          label="Speed Of Emotes (seconds)"
+          label="Preview Emotes Delay (seconds)"
           value={settings.speedOfEmotes}
           onChange={handleInputChange}
           type="number"

@@ -38,10 +38,7 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
         flexWrap: "wrap",
       }}
     >
-      <Tooltip
-        title="Can get your own, but it can be confusing. Or use this one."
-        arrow
-      >
+      <Tooltip title="Needed to connect to youtube" arrow>
         <TextField
           type={showApiKey ? "text" : "password"}
           name="apiKey"
@@ -67,7 +64,7 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
       </Tooltip>
 
       <Tooltip
-        title="Found at the end of the youtube url. Include everything after the ?v= in the url."
+        title="Found at the end of the youtube stream url. From the url, include everything after the ?v="
         arrow
       >
         <TextField
@@ -77,7 +74,7 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
           onChange={handleInputChange}
           margin="normal"
           sx={{ marginLeft: 2, marginRight: 2 }}
-        />  
+        />
       </Tooltip>
 
       <Tooltip title="Check README if you change this number." arrow>

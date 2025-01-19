@@ -22,7 +22,10 @@ const PortSettings: React.FC<PortSettingsProps> = ({
         flexWrap: "wrap",
       }}
     >
-      <Tooltip title="Port number the app will use. If changing, read README" arrow>
+      <Tooltip
+        title="Port number the app will use. Check README if changing"
+        arrow
+      >
         <TextField
           name="port"
           label="Port"
