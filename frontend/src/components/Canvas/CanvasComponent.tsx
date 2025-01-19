@@ -1,11 +1,11 @@
-import React, { RefObject, useEffect, useRef, useState } from "react";
-import { Config } from "../Config/ConfigInterface";
-import { loadBackground } from "../Config/FetchBackground";
-import { useConfig } from "../Config/ConfigProvider";
-import useEmotes, { Position } from "./useEmotes";
-import { useWebSocketContext } from "../WebSocket/WebSocketProvider";
 import Box from "@mui/material/Box";
-import useWindowSize from "./windowSize";
+import React, { RefObject, useEffect, useRef } from "react";
+import { Config } from "../Config/ConfigInterface";
+import { useConfig } from "../Config/ConfigProvider";
+import { loadBackground } from "../Config/FetchBackground";
+import { useWebSocketContext } from "../WebSocket/WebSocketProvider";
+import { Position } from "./positionInterface";
+import { UseEmotes } from "./UseEmotes";
 
 const CanvasComponent: React.FC = () => {
   const backgroundImageRef = useRef<HTMLImageElement>(null);
@@ -29,7 +29,7 @@ const CanvasComponent: React.FC = () => {
   const { updateHandlers } = useWebSocketContext();
   const nonTransparentPositions = useRef<Position[]>([]);
 
-  const { emotesGroups, placeEmotesGroupInBackground } = useEmotes(
+  const { emotesGroups, placeEmotesGroupInBackground } = UseEmotes(
     config,
     backgroundCanvasRef
   );
@@ -126,7 +126,7 @@ const CanvasComponent: React.FC = () => {
     let width = canvasRef.current.width;
     let height = canvasRef.current.height;
     const imageData = ctx.getImageData(0, 0, width, height);
-    console.log("Initial Image Data:", imageData);
+    // console.log("Initial Image Data is:", imageData);
     const data = imageData.data;
     for (let i = 0; i < data.length; i += 4) {
       const alpha = data[i + 3]; // Get the alpha value

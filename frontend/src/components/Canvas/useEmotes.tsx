@@ -1,5 +1,6 @@
 import { RefObject, useState } from "react";
 import { Config } from "../Config/ConfigInterface";
+import { Position } from "./positionInterface";
 
 interface Emote {
   src: string;
@@ -7,12 +8,7 @@ interface Emote {
   size: number;
 }
 
-export interface Position {
-  x: number;
-  y: number;
-}
-
-const useEmotes = (
+export const UseEmotes = (
   config: Config,
   backgroundCanvasRef: React.RefObject<HTMLCanvasElement | null>
 ) => {
@@ -67,7 +63,26 @@ const useEmotes = (
   const updateEmotesGroups = (emoteGroup: Emote[]) => {
     setEmotesGroups((prevGroups) => {
       const updatedGroups = [...prevGroups, { emotes: emoteGroup }];
+      // let totalItems = updatedGroups.reduce(
+      //   (sum, group) => sum + group.emotes.length,
+      //   0
+      // );
 
+      // while (totalItems > config.Emote.MaxEmoteCount) {
+      //   let temp = updatedGroups.shift();
+      //   if (temp) {
+      //     totalItems -= temp.emotes.length;
+      //   }
+      // }
+
+      /*
+      The above code ran fine for groups ranging from 1-3 and 1000 max
+      Unable to change .reduce into a counter as setEmotesGroups is called twice
+        when calling updateEmotesGroups()
+      Using a state or ref did not allow time to update before the second call
+        to setEmotesGroups was triggered
+      Using a number caused it to be updated twice due to the second call
+      */
       if (updatedGroups.length > config.Emote.MaxEmoteCount) {
         updatedGroups.shift();
       }
@@ -105,4 +120,4 @@ const useEmotes = (
   return { emotesGroups, placeEmotesGroupInBackground };
 };
 
-export default useEmotes;
+export default UseEmotes;
