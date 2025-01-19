@@ -9,16 +9,6 @@ import (
 	"github.com/NamedAuto/EmotesDisplay/backend/config"
 )
 
-// const AppVersion = "v2.0"
-// const Owner = "NamedAuto"
-// const RepoName = "EmotesDisplay"
-
-// type Repo struct {
-// 	AppVersion string
-// 	Owner      string
-// 	RepoName   string
-// }
-
 type Release struct {
 	TagName string `json:"tag_name"`
 }

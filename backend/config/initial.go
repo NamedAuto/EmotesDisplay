@@ -25,7 +25,7 @@ var emoteMap map[string]string
 var myConfig *AppConfig
 var mu sync.RWMutex
 
-const appVersion = "v2.0"
+const appVersion = "v2.1"
 const owner = "NamedAuto"
 const repoName = "EmotesDisplay"
 
