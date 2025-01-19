@@ -11,7 +11,7 @@ import YouTubeSettings from "./YoutubeSettings";
 import { createConfigCopyWithUpdate, formatSettings } from "./settingUtils";
 import { setupHandlers } from "./settingsHandlers";
 import { MySettings } from "./settingsInterface";
-import darkTheme from "./SettingsTheme";
+import darkTheme from "./settingsTheme";
 
 const SettingsPage: React.FC = () => {
   const config = useConfig();

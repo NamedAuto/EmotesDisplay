@@ -5,7 +5,7 @@ import { useConfig } from "../Config/ConfigProvider";
 import { loadBackground } from "../Config/FetchBackground";
 import { useWebSocketContext } from "../WebSocket/WebSocketProvider";
 import { Position } from "./positionInterface";
-import { UseEmotes } from "./UseEmotes";
+import { UseEmotes } from "./useEmotes";
 
 const CanvasComponent: React.FC = () => {
   const backgroundImageRef = useRef<HTMLImageElement>(null);
