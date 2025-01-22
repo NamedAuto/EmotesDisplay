@@ -6,6 +6,7 @@ import { loadBackground } from "../Config/FetchBackground";
 import { useWebSocketContext } from "../WebSocket/WebSocketProvider";
 import { Position } from "./positionInterface";
 import { UseEmotes } from "./useEmotes";
+import "../../style.css";
 
 const CanvasComponent: React.FC = () => {
   const backgroundImageRef = useRef<HTMLImageElement>(null);
@@ -177,6 +178,16 @@ const CanvasComponent: React.FC = () => {
     }
   };
 
+  const animations = ["bounce", "rotate", "scale"];
+
+  const getRandomAnimation = () => {
+    return animations[Math.floor(Math.random() * animations.length)];
+  };
+
+  const getRandomDelay = () => {
+    return Math.random() * 10;
+  };
+
   return (
     <Box
       id="backgroundContainer"
@@ -208,26 +219,32 @@ const CanvasComponent: React.FC = () => {
               zIndex: 3,
             }}
           >
-            {group.emotes.map((emote, emoteIdx) => (
-              <img
-                key={emoteIdx}
-                src={emote.src}
-                className="emote"
-                crossOrigin="anonymous"
-                style={{
-                  position: "absolute",
-                  left: emote.pos.x,
-                  top: emote.pos.y,
-                  width: emote.size,
-                  height: emote.size,
-                  borderRadius: `${config.Emote.Roundness}%`,
-                  backgroundColor: config.Emote.BackgroundColor,
-                  // transform: "translate(0%, -50%)",
-                  zIndex: 3,
-                }}
-                alt={`emote-${emoteIdx}`}
-              />
-            ))}
+            {group.emotes.map((emote, emoteIdx) => {
+              const animationClass = getRandomAnimation();
+              const randomDelay = getRandomDelay();
+
+              return (
+                <img
+                  key={emoteIdx}
+                  src={emote.src}
+                  className={`emote ${animationClass}`}
+                  crossOrigin="anonymous"
+                  style={{
+                    position: "absolute",
+                    left: emote.pos.x,
+                    top: emote.pos.y,
+                    width: emote.size,
+                    height: emote.size,
+                    borderRadius: `${config.Emote.Roundness}%`,
+                    backgroundColor: config.Emote.BackgroundColor,
+                    // transform: "translate(0%, -50%)",
+                    animationDelay: `${randomDelay}s`,
+                    zIndex: 3,
+                  }}
+                  alt={`emote-${emoteIdx}`}
+                />
+              );
+            })}
           </Box>
         ))}
       </Box>

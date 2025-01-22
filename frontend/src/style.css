@@ -24,3 +24,45 @@ body {
     height: 100vh;
     text-align: center;
 } */
+/* styles.css */
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-40px);
+  }
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes scale {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+.bounce {
+  animation: bounce 5s infinite;
+}
+
+.rotate {
+  animation: rotate 5s infinite;
+}
+
+.scale {
+  animation: scale 5s infinite;
+}
