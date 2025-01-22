@@ -1,4 +1,11 @@
-import { Box, Button, Divider, ThemeProvider, Tooltip } from "@mui/material";
+import {
+  Box,
+  Button,
+  Divider,
+  Grid2,
+  ThemeProvider,
+  Tooltip,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useConfig } from "../Config/ConfigProvider";
 import { useWebSocketContext } from "../WebSocket/WebSocketProvider";
@@ -95,75 +102,106 @@ const SettingsPage: React.FC = () => {
         sx={{
           backgroundColor: "background.default",
           color: "text.primary",
-          // minheight: "100vh",
-          // height: "100%",
-          // width: "100%",
           height: "100vh",
           width: "100vw",
           display: "flex",
-          flexDirection: "column",
+          // flexDirection: "column",
           overflow: "auto",
-          // alignItems: "center",
-          // justifyContent: "center",
+          flexWrap: "wrap",
         }}
       >
         <HeaderSettings port={config.Port.toString()} />
-
-        <Divider sx={{ borderBottom: dividerColor, marginY: dividerMargin }} />
-
-        <YouTubeSettings
-          apiKey={settings.apiKey}
-          videoId={settings.videoId}
-          messageDelay={settings.messageDelay}
-          handleInputChange={handleInputChange}
-          showApiKey={showApiKey}
-          handleClickShowPassword={handleClickShowPassword}
-        />
-
-        <Divider sx={{ borderBottom: dividerColor, marginY: dividerMargin }} />
-
-        <Box
+        <Grid2
+          container
+          spacing={1}
           sx={{
-            display: "flex",
-            justifyContent: "space-around",
-            marginBottom: 3,
+            flexWrap: "wrap",
           }}
         >
-          <PortSettings
-            port={settings.port}
-            handleInputChange={handleInputChange}
-          />
+          {/* <Divider sx={{ borderBottom: dividerColor, marginY: dividerMargin }} /> */}
 
-          <PreviewSettings
-            settings={settings}
-            handleInputChange={handleInputChange}
-          />
-        </Box>
+          <Grid2
+            size={{ xs: 12, sm: 8, md: 6, lg: 4 }}
+            sx={{
+              flexWrap: "wrap",
+            }}
+          >
+            <YouTubeSettings
+              apiKey={settings.apiKey}
+              videoId={settings.videoId}
+              messageDelay={settings.messageDelay}
+              handleInputChange={handleInputChange}
+              showApiKey={showApiKey}
+              handleClickShowPassword={handleClickShowPassword}
+            />
+          </Grid2>
 
-        <Divider sx={{ borderBottom: dividerColor, marginY: dividerMargin }} />
+          {/* <Divider sx={{ borderBottom: dividerColor, marginY: dividerMargin }} /> */}
 
-        <AspectRatioSettings
-          forceWidthHeight={settings.forceWidthHeight}
-          width={settings.canvasWidth}
-          height={settings.canvasHeight}
-          handleInputChange={handleInputChange}
-        />
+          <Grid2
+            size={{ xs: 12, sm: 4, md: 3, lg: 2 }}
+            sx={{
+              flexWrap: "wrap",
+            }}
+          >
+            <PortSettings
+              port={settings.port}
+              handleInputChange={handleInputChange}
+            />
 
-        <Divider sx={{ borderBottom: dividerColor, marginY: dividerMargin }} />
+            <PreviewSettings
+              settings={settings}
+              handleInputChange={handleInputChange}
+            />
+          </Grid2>
 
-        <EmoteSettings
-          settings={settings}
-          handleInputChange={handleInputChange}
-        />
+          {/* <Grid2
+            size={{ xs: 6, md: 4 }}
+            sx={{
+              flexWrap: "wrap",
+            }}
+          >
+          </Grid2> */}
 
-        <Divider sx={{ borderBottom: dividerColor, marginY: dividerMargin }} />
+          {/* <Divider sx={{ borderBottom: dividerColor, marginY: dividerMargin }} /> */}
 
+          <Grid2
+            size={{ xs: 12, sm: 4, md: 3, lg: 2 }}
+            sx={{
+              flexWrap: "wrap",
+            }}
+          >
+            <AspectRatioSettings
+              forceWidthHeight={settings.forceWidthHeight}
+              width={settings.canvasWidth}
+              height={settings.canvasHeight}
+              handleInputChange={handleInputChange}
+            />
+          </Grid2>
+
+          {/* <Divider sx={{ borderBottom: dividerColor, marginY: dividerMargin }} /> */}
+
+          <Grid2
+            size={{ xs: 12, sm: 7.5, md: 5, lg: 4 }}
+            sx={{
+              flexWrap: "wrap",
+            }}
+          >
+            <EmoteSettings
+              settings={settings}
+              handleInputChange={handleInputChange}
+            />
+          </Grid2>
+
+          {/* <Divider sx={{ borderBottom: dividerColor, marginY: dividerMargin }} /> */}
+        </Grid2>
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             flexWrap: "wrap",
+            marginBottom: "10px",
           }}
         >
           <Tooltip
@@ -174,7 +212,7 @@ const SettingsPage: React.FC = () => {
               variant="contained"
               color="primary"
               onClick={handleSave}
-              style={{ fontSize: "18px", marginTop: "20px" }}
+              style={{ fontSize: "18px", marginTop: "10px" }}
               sx={{ marginLeft: 2, marginRight: 2, width: "150px" }}
             >
               Save
@@ -186,7 +224,7 @@ const SettingsPage: React.FC = () => {
               variant="contained"
               color="secondary"
               onClick={handleReset}
-              style={{ fontSize: "18px", marginTop: "20px" }}
+              style={{ fontSize: "18px", marginTop: "10px" }}
               sx={{ marginLeft: 2, marginRight: 2, width: "150px" }}
             >
               Reset
@@ -207,7 +245,7 @@ const SettingsPage: React.FC = () => {
               onClick={
                 isPreviewConnected ? handlePreviewStop : handlePreviewStart
               }
-              style={{ fontSize: "18px", marginTop: "20px" }}
+              style={{ fontSize: "18px", marginTop: "10px" }}
               sx={{ marginLeft: 2, marginRight: 2, width: "200px" }}
             >
               {isPreviewConnected ? "Stop Preview" : "Start Preview"}
@@ -228,7 +266,7 @@ const SettingsPage: React.FC = () => {
               onClick={
                 isYoutubeConnected ? handleYoutubeStop : handleYoutubeStart
               }
-              style={{ fontSize: "18px", marginTop: "20px" }}
+              style={{ fontSize: "18px", marginTop: "10px" }}
               sx={{ marginLeft: 2, marginRight: 2, width: "200px" }}
             >
               {isYoutubeConnected ? "Stop Youtube" : "Start Youtube"}

@@ -62,12 +62,12 @@ const HeaderSettings: React.FC<HeaderSettingsProps> = ({ port }) => {
         arrow
       >
         <Typography
-          variant="h6"
+          variant="h4"
           gutterBottom
           style={{ marginRight: "20px", marginLeft: "40px" }}
         >
           {versionInfo ? (
-            versionInfo.currentVersion === versionInfo.latestVersion? (
+            versionInfo.currentVersion === versionInfo.latestVersion ? (
               `${versionInfo.currentVersion}`
             ) : (
               // <Tooltip title="Download the latest version here" arrow>
@@ -91,7 +91,7 @@ const HeaderSettings: React.FC<HeaderSettingsProps> = ({ port }) => {
         arrow
       >
         <Typography
-          variant="h4"
+          variant="h3"
           gutterBottom
           style={{ marginLeft: "10px", marginRight: "10px" }}
         >

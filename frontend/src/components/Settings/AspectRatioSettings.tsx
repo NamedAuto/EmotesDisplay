@@ -27,9 +27,10 @@ const AspectRatioSettings: React.FC<AspectRatioSettingsProps> = ({
     </Typography>
     <Box
       sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        // display: "flex",
+        alignItems: "left",
+        // justifyContent: "center",
+        flexDirection: "column",
         flexWrap: "wrap",
       }}
     >
@@ -57,7 +58,17 @@ const AspectRatioSettings: React.FC<AspectRatioSettingsProps> = ({
         onChange={handleInputChange}
         type="number"
         margin="normal"
-        sx={{ marginLeft: 2, marginRight: 2 }}
+        InputLabelProps={{
+          style: { fontSize: "1.2em" },
+        }}
+        sx={{
+          marginLeft: 2,
+          marginRight: 2,
+          "& .MuiInputBase-input": {
+            fontSize: "1.5em",
+          },
+          width: "150px",
+        }}
       />
 
       <TextField
@@ -67,7 +78,17 @@ const AspectRatioSettings: React.FC<AspectRatioSettingsProps> = ({
         onChange={handleInputChange}
         type="number"
         margin="normal"
-        sx={{ marginLeft: 2, marginRight: 2 }}
+        InputLabelProps={{
+          style: { fontSize: "1.2em" },
+        }}
+        sx={{
+          marginLeft: 2,
+          marginRight: 2,
+          "& .MuiInputBase-input": {
+            fontSize: "1.5em",
+          },
+          width: "150px",
+        }}
       />
     </Box>
   </Box>

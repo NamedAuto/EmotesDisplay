@@ -24,20 +24,30 @@ const PreviewSettings: React.FC<PreviewSettingsProps> = ({
     <Box
       sx={{
         display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        alignItems: "left",
+        // justifyContent: "center",
         flexWrap: "wrap",
       }}
     >
       <Tooltip title="Only works for preview. Lower is faster" arrow>
         <TextField
           name="speedOfEmotes"
-          label="Preview Emotes Delay (seconds)"
+          label="Emotes Delay (seconds)"
           value={settings.speedOfEmotes}
           onChange={handleInputChange}
           type="number"
           margin="normal"
-          sx={{ marginLeft: 2, marginRight: 2 }}
+          InputLabelProps={{
+            style: { fontSize: "1.2em" },
+          }}
+          sx={{
+            marginLeft: 2,
+            marginRight: 2,
+            "& .MuiInputBase-input": {
+              fontSize: "1.5em",
+            },
+            width: "200px",
+          }}
         />
       </Tooltip>
     </Box>
