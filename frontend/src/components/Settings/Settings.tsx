@@ -95,10 +95,14 @@ const SettingsPage: React.FC = () => {
         sx={{
           backgroundColor: "background.default",
           color: "text.primary",
+          // minheight: "100vh",
+          // height: "100%",
+          // width: "100%",
           height: "100vh",
           width: "100vw",
           display: "flex",
           flexDirection: "column",
+          overflow: "auto",
           // alignItems: "center",
           // justifyContent: "center",
         }}
