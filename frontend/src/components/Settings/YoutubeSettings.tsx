@@ -46,19 +46,31 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
           value={apiKey}
           onChange={handleInputChange}
           margin="normal"
-          sx={{ width: "450px", marginLeft: 2, marginRight: 2 }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  edge="end"
-                >
-                  {showApiKey ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
+          sx={{
+            width: "400px",
+            marginLeft: 2,
+            marginRight: 2,
+            "& .MuiInputLabel-root": {
+              fontSize: "1.2em", // Adjust the font size as needed
+            },
+            "& .MuiInputBase-input": {
+              fontSize: "1.2em", // Adjust the font size as needed
+            },
+          }}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    edge="end"
+                  >
+                    {showApiKey ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
           }}
         />
       </Tooltip>
@@ -73,7 +85,17 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
           value={videoId}
           onChange={handleInputChange}
           margin="normal"
-          sx={{ marginLeft: 2, marginRight: 2 }}
+          sx={{
+            width: "200px",
+            marginLeft: 2,
+            marginRight: 2,
+            "& .MuiInputLabel-root": {
+              fontSize: "1.2em", // Adjust the font size as needed
+            },
+            "& .MuiInputBase-input": {
+              fontSize: "1.2em", // Adjust the font size as needed
+            },
+          }}
         />
       </Tooltip>
 
@@ -85,7 +107,17 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
           onChange={handleInputChange}
           type="number"
           margin="normal"
-          sx={{ marginLeft: 2, marginRight: 2 }}
+          sx={{
+            width: "200px",
+            marginLeft: 2,
+            marginRight: 2,
+            "& .MuiInputLabel-root": {
+              fontSize: "1.2em", // Adjust the font size as needed
+            },
+            "& .MuiInputBase-input": {
+              fontSize: "1.2em", // Adjust the font size as needed
+            },
+          }}
         />
       </Tooltip>
     </Box>

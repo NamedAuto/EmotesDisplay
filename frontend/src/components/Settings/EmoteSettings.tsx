@@ -6,6 +6,7 @@ import {
   TextField,
   Typography,
   Tooltip,
+  InputAdornment,
 } from "@mui/material";
 
 interface EmoteSettingsProps {
@@ -49,12 +50,36 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
       <Tooltip title="Choose the size to display emotes in px(pixels)" arrow>
         <TextField
           name="emoteWidth"
-          label="Width and Height (px)"
+          label="Width and Height"
           value={settings.emoteWidth}
           onChange={handleInputChange}
           type="number"
           margin="normal"
-          sx={{ marginLeft: 2, marginRight: 2 }}
+          sx={{
+            width: "150px",
+            marginLeft: 2,
+            marginRight: 2,
+            "& .MuiInputLabel-root": {
+              fontSize: "1.2em", // Adjust the font size as needed
+            },
+            "& .MuiInputBase-input": {
+              fontSize: "1.2em", // Adjust the font size as needed
+            },
+          }}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment
+                  position="end"
+                  sx={{
+                    color: "yellow", // Change text color
+                  }}
+                >
+                  px
+                </InputAdornment>
+              ),
+            },
+          }}
         />
       </Tooltip>
 
@@ -64,12 +89,27 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
       >
         <TextField
           name="randomSizeIncrease"
-          label="Random Size Increase (px)"
+          label="Random Size Increase"
           value={settings.randomSizeIncrease}
           onChange={handleInputChange}
           type="number"
           margin="normal"
-          sx={{ marginLeft: 2, marginRight: 2 }}
+          sx={{
+            width: "200px",
+            marginLeft: 2,
+            marginRight: 2,
+            "& .MuiInputLabel-root": {
+              fontSize: "1.2em", // Adjust the font size as needed
+            },
+            "& .MuiInputBase-input": {
+              fontSize: "1.2em", // Adjust the font size as needed
+            },
+          }}
+          slotProps={{
+            input: {
+              endAdornment: <InputAdornment position="end">px</InputAdornment>,
+            },
+          }}
         />
       </Tooltip>
 
@@ -79,12 +119,27 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
       >
         <TextField
           name="randomSizeDecrease"
-          label="Random Size Decrease (px)"
+          label="Random Size Decrease"
           value={settings.randomSizeDecrease}
           onChange={handleInputChange}
           type="number"
           margin="normal"
-          sx={{ marginLeft: 2, marginRight: 2 }}
+          sx={{
+            width: "200px",
+            marginLeft: 2,
+            marginRight: 2,
+            "& .MuiInputLabel-root": {
+              fontSize: "1.2em", // Adjust the font size as needed
+            },
+            "& .MuiInputBase-input": {
+              fontSize: "1.2em", // Adjust the font size as needed
+            },
+          }}
+          slotProps={{
+            input: {
+              endAdornment: <InputAdornment position="end">px</InputAdornment>,
+            },
+          }}
         />
       </Tooltip>
 
@@ -99,7 +154,17 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
           onChange={handleInputChange}
           type="number"
           margin="normal"
-          sx={{ marginLeft: 2, marginRight: 2 }}
+          sx={{
+            width: "150px",
+            marginLeft: 2,
+            marginRight: 2,
+            "& .MuiInputLabel-root": {
+              fontSize: "1.2em", // Adjust the font size as needed
+            },
+            "& .MuiInputBase-input": {
+              fontSize: "1.2em", // Adjust the font size as needed
+            },
+          }}
         />
       </Tooltip>
 
@@ -114,7 +179,17 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
           onChange={handleInputChange}
           type="number"
           margin="normal"
-          sx={{ marginLeft: 2, marginRight: 2 }}
+          sx={{
+            width: "150px",
+            marginLeft: 2,
+            marginRight: 2,
+            "& .MuiInputLabel-root": {
+              fontSize: "1.2em", // Adjust the font size as needed
+            },
+            "& .MuiInputBase-input": {
+              fontSize: "1.2em", // Adjust the font size as needed
+            },
+          }}
         />
       </Tooltip>
 
@@ -128,7 +203,17 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
           value={settings.emoteBackgroundColor}
           onChange={handleInputChange}
           margin="normal"
-          sx={{ marginLeft: 2, marginRight: 2 }}
+          sx={{
+            width: "250px",
+            marginLeft: 2,
+            marginRight: 2,
+            "& .MuiInputLabel-root": {
+              fontSize: "1.2em", // Adjust the font size as needed
+            },
+            "& .MuiInputBase-input": {
+              fontSize: "1.2em", // Adjust the font size as needed
+            },
+          }}
         />
       </Tooltip>
     </Box>

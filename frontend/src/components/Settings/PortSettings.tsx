@@ -33,6 +33,17 @@ const PortSettings: React.FC<PortSettingsProps> = ({
           onChange={handleInputChange}
           type="number"
           margin="normal"
+          sx={{
+            width: "200px",
+            marginLeft: 2,
+            marginRight: 2,
+            "& .MuiInputLabel-root": {
+              fontSize: "1.2em", // Adjust the font size as needed
+            },
+            "& .MuiInputBase-input": {
+              fontSize: "1.2em", // Adjust the font size as needed
+            },
+          }}
         />
       </Tooltip>
     </Box>

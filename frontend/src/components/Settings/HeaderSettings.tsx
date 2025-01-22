@@ -62,12 +62,12 @@ const HeaderSettings: React.FC<HeaderSettingsProps> = ({ port }) => {
         arrow
       >
         <Typography
-          variant="h6"
+          variant="h5"
           gutterBottom
-          style={{ marginRight: "20px", marginLeft: "40px" }}
+          style={{ marginRight: "60px", marginLeft: "40px" }}
         >
           {versionInfo ? (
-            versionInfo.currentVersion === versionInfo.latestVersion? (
+            versionInfo.currentVersion === versionInfo.latestVersion ? (
               `${versionInfo.currentVersion}`
             ) : (
               // <Tooltip title="Download the latest version here" arrow>
@@ -86,10 +86,7 @@ const HeaderSettings: React.FC<HeaderSettingsProps> = ({ port }) => {
         </Typography>
       </Tooltip>
 
-      <Tooltip
-        title="This is the url to open in a browser or web view/item"
-        arrow
-      >
+      <Tooltip title="This is the url you will be using" arrow>
         <Typography
           variant="h4"
           gutterBottom
@@ -99,11 +96,11 @@ const HeaderSettings: React.FC<HeaderSettingsProps> = ({ port }) => {
         </Typography>
       </Tooltip>
 
-      <Tooltip title="Open a window with the url. Can zoom in or out" arrow>
+      <Tooltip title="Open the url in a window to see it quickly" arrow>
         <Typography
           variant="h5"
           gutterBottom
-          style={{ marginLeft: "10px", marginRight: "40px" }}
+          style={{ marginLeft: "20px", marginRight: "40px" }}
         >
           <Link
             href={`http://localhost:${port}/show`}

@@ -1,8 +1,9 @@
-import { Box, Button, Divider, ThemeProvider, Tooltip } from "@mui/material";
+import { Box, Divider, ThemeProvider } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useConfig } from "../Config/ConfigProvider";
 import { useWebSocketContext } from "../WebSocket/WebSocketProvider";
 import AspectRatioSettings from "./AspectRatioSettings";
+import ButtonSettings from "./ButtonSetings";
 import EmoteSettings from "./EmoteSettings";
 import HeaderSettings from "./HeaderSettings";
 import PortSettings from "./PortSettings";
@@ -87,29 +88,30 @@ const SettingsPage: React.FC = () => {
     sendMessage(eventData);
   };
 
-  const dividerMargin = 2;
-  const dividerColor = "2px solid #6c072c";
+  const dividerMargin = 1.5;
+  const dividerWidth = 1;
+  const dividerColor = "#6c072c";
   return (
     <ThemeProvider theme={darkTheme}>
       <Box
         sx={{
           backgroundColor: "background.default",
           color: "text.primary",
-          // minheight: "100vh",
-          // height: "100%",
-          // width: "100%",
           height: "100vh",
           width: "100vw",
           display: "flex",
           flexDirection: "column",
           overflow: "auto",
-          // alignItems: "center",
-          // justifyContent: "center",
         }}
       >
         <HeaderSettings port={config.Port.toString()} />
-
-        <Divider sx={{ borderBottom: dividerColor, marginY: dividerMargin }} />
+        <Divider
+          sx={{
+            borderColor: dividerColor,
+            borderWidth: dividerWidth,
+            marginY: dividerMargin,
+          }}
+        />
 
         <YouTubeSettings
           apiKey={settings.apiKey}
@@ -119,14 +121,19 @@ const SettingsPage: React.FC = () => {
           showApiKey={showApiKey}
           handleClickShowPassword={handleClickShowPassword}
         />
-
-        <Divider sx={{ borderBottom: dividerColor, marginY: dividerMargin }} />
+        <Divider
+          sx={{
+            borderColor: dividerColor,
+            borderWidth: dividerWidth,
+            marginY: dividerMargin,
+          }}
+        />
 
         <Box
           sx={{
             display: "flex",
             justifyContent: "space-around",
-            marginBottom: 3,
+            flexWrap: "wrap",
           }}
         >
           <PortSettings
@@ -139,8 +146,13 @@ const SettingsPage: React.FC = () => {
             handleInputChange={handleInputChange}
           />
         </Box>
-
-        <Divider sx={{ borderBottom: dividerColor, marginY: dividerMargin }} />
+        <Divider
+          sx={{
+            borderColor: dividerColor,
+            borderWidth: dividerWidth,
+            marginY: dividerMargin,
+          }}
+        />
 
         <AspectRatioSettings
           forceWidthHeight={settings.forceWidthHeight}
@@ -148,93 +160,36 @@ const SettingsPage: React.FC = () => {
           height={settings.canvasHeight}
           handleInputChange={handleInputChange}
         />
-
-        <Divider sx={{ borderBottom: dividerColor, marginY: dividerMargin }} />
+        <Divider
+          sx={{
+            borderColor: dividerColor,
+            borderWidth: dividerWidth,
+            marginY: dividerMargin,
+          }}
+        />
 
         <EmoteSettings
           settings={settings}
           handleInputChange={handleInputChange}
         />
-
-        <Divider sx={{ borderBottom: dividerColor, marginY: dividerMargin }} />
-
-        <Box
+        <Divider
           sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexWrap: "wrap",
+            borderColor: dividerColor,
+            borderWidth: dividerWidth,
+            marginY: dividerMargin,
           }}
-        >
-          <Tooltip
-            title="Save changes. Has some quirks involving saving. Read README"
-            arrow
-          >
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSave}
-              style={{ fontSize: "18px", marginTop: "20px" }}
-              sx={{ marginLeft: 2, marginRight: 2, width: "150px" }}
-            >
-              Save
-            </Button>
-          </Tooltip>
+        />
 
-          <Tooltip title="Reset settings back to the last save" arrow>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleReset}
-              style={{ fontSize: "18px", marginTop: "20px" }}
-              sx={{ marginLeft: 2, marginRight: 2, width: "150px" }}
-            >
-              Reset
-            </Button>
-          </Tooltip>
-
-          <Tooltip
-            title={
-              isPreviewConnected
-                ? "Stop displaying random emotes on the screen"
-                : "Display random emotes on the screen"
-            }
-            arrow
-          >
-            <Button
-              variant="contained"
-              color={isPreviewConnected ? "secondary" : "primary"}
-              onClick={
-                isPreviewConnected ? handlePreviewStop : handlePreviewStart
-              }
-              style={{ fontSize: "18px", marginTop: "20px" }}
-              sx={{ marginLeft: 2, marginRight: 2, width: "200px" }}
-            >
-              {isPreviewConnected ? "Stop Preview" : "Start Preview"}
-            </Button>
-          </Tooltip>
-
-          <Tooltip
-            title={
-              isPreviewConnected
-                ? "Disconnect from youtube"
-                : "Connect to youtube and display emotes from chat"
-            }
-            arrow
-          >
-            <Button
-              variant="contained"
-              color={isYoutubeConnected ? "secondary" : "primary"}
-              onClick={
-                isYoutubeConnected ? handleYoutubeStop : handleYoutubeStart
-              }
-              style={{ fontSize: "18px", marginTop: "20px" }}
-              sx={{ marginLeft: 2, marginRight: 2, width: "200px" }}
-            >
-              {isYoutubeConnected ? "Stop Youtube" : "Start Youtube"}
-            </Button>
-          </Tooltip>
-        </Box>
+        <ButtonSettings
+          isPreviewConnected={isPreviewConnected}
+          isYoutubeConnected={isYoutubeConnected}
+          handlePreviewStart={handlePreviewStart}
+          handlePreviewStop={handlePreviewStop}
+          handleYoutubeStart={handleYoutubeStart}
+          handleYoutubeStop={handleYoutubeStop}
+          handleReset={handleReset}
+          handleSave={handleSave}
+        />
       </Box>
     </ThemeProvider>
   );

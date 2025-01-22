@@ -39,8 +39,8 @@ func main() {
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:  "Emotes Display",
-		Width:  1000,
-		Height: 950,
+		Width:  925,
+		Height: 900,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},

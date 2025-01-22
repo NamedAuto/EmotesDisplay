@@ -57,7 +57,17 @@ const AspectRatioSettings: React.FC<AspectRatioSettingsProps> = ({
         onChange={handleInputChange}
         type="number"
         margin="normal"
-        sx={{ marginLeft: 2, marginRight: 2 }}
+        sx={{
+          width: "150px",
+          marginLeft: 2,
+          marginRight: 2,
+          "& .MuiInputLabel-root": {
+            fontSize: "1.2em", // Adjust the font size as needed
+          },
+          "& .MuiInputBase-input": {
+            fontSize: "1.2em", // Adjust the font size as needed
+          },
+        }}
       />
 
       <TextField
@@ -67,7 +77,17 @@ const AspectRatioSettings: React.FC<AspectRatioSettingsProps> = ({
         onChange={handleInputChange}
         type="number"
         margin="normal"
-        sx={{ marginLeft: 2, marginRight: 2 }}
+        sx={{
+          width: "150px",
+          marginLeft: 2,
+          marginRight: 2,
+          "& .MuiInputLabel-root": {
+            fontSize: "1.2em", // Adjust the font size as needed
+          },
+          "& .MuiInputBase-input": {
+            fontSize: "1.2em", // Adjust the font size as needed
+          },
+        }}
       />
     </Box>
   </Box>
