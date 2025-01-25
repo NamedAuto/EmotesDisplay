@@ -178,56 +178,25 @@ const CanvasComponent: React.FC = () => {
     }
   };
 
-  const animations = ["bounce", "rotate", "scale"];
-
-  const getRandomAnimation = () => {
-    return animations[Math.floor(Math.random() * animations.length)];
-  };
-
-  const getRandomDelay = () => {
-    return Math.random() * 10;
-  };
-
   return (
-    <Box
-      id="backgroundContainer"
-      ref={backgroundContainerRef}
-      // style={{
-      //   width: `${initialWidth}px`,
-      //   height: `${initialHeight}px`,
-      //   transform: `scale(${scale})`,
-      //   // transformOrigin: 'top left',
-      //   position: 'relative',
-      // }}
-    >
+    <Box id="backgroundContainer" ref={backgroundContainerRef}>
       <img id="backgroundImage" ref={backgroundImageRef} alt="Background" />
       <canvas id="backgroundCanvas" ref={backgroundCanvasRef}></canvas>
-      <Box
-        className="emotesLayer"
-        ref={emotesLayerRef}
-        // style={{ position: "absolute", top: 0, left: 0 }}
-      >
+      <Box className="emotesLayer" ref={emotesLayerRef}>
         {emotesGroups.map((group, groupIdx) => (
           <Box
             key={groupIdx}
             className="emote-group"
             sx={{
-              // position: "absolute",
-              // top: `${groupIdx * 100}px`,
-              // left: "50%",
-              // transform: "translate(-50%, -50%)",
               zIndex: 3,
             }}
           >
             {group.emotes.map((emote, emoteIdx) => {
-              const animationClass = getRandomAnimation();
-              const randomDelay = getRandomDelay();
-
               return (
                 <img
                   key={emoteIdx}
                   src={emote.src}
-                  className={`emote ${animationClass}`}
+                  className={`emote ${emote.animation}`}
                   crossOrigin="anonymous"
                   style={{
                     position: "absolute",
@@ -237,8 +206,6 @@ const CanvasComponent: React.FC = () => {
                     height: emote.size,
                     borderRadius: `${config.Emote.Roundness}%`,
                     backgroundColor: config.Emote.BackgroundColor,
-                    // transform: "translate(0%, -50%)",
-                    animationDelay: `${randomDelay}s`,
                     zIndex: 3,
                   }}
                   alt={`emote-${emoteIdx}`}

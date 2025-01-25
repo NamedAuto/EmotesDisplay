@@ -1,11 +1,13 @@
 import { RefObject, useState } from "react";
 import { Config } from "../Config/ConfigInterface";
 import { Position } from "./positionInterface";
+import "../../style.css";
 
 interface Emote {
   src: string;
   pos: Position;
   size: number;
+  animation: string;
 }
 
 export const UseEmotes = (
@@ -17,7 +19,8 @@ export const UseEmotes = (
   const createEmoteGroup = (
     emoteUrls: string[],
     emoteSize: number,
-    posToCenterOn: Position
+    posToCenterOn: Position,
+    animation: string
   ): Emote[] => {
     let newX = 0;
     const emoteGroup: Emote[] = [];
@@ -41,6 +44,7 @@ export const UseEmotes = (
           y: posToCenterOn.y - emoteSize / 2,
         },
         size: emoteSize,
+        animation: animation,
       });
       newX += emoteSize;
     }
@@ -91,17 +95,34 @@ export const UseEmotes = (
     });
   };
 
+  const animations = ["bounce", "rotate", "scale"];
+
+  const getRandomAnimation = () => {
+    return animations[Math.floor(Math.random() * animations.length)];
+  };
+
+  const getRandomDelay = () => {
+    return Math.random() * 10;
+  };
+
   const placeEmotesGroupInBackground = (
     emoteUrls: string[],
     nonTransparentPositions: RefObject<Position[]>
   ) => {
+    const randomAnimation = getRandomAnimation();
+
     if (config.Emote.GroupEmotes) {
       const emoteSize = getRandomEmoteSizeChange(
         config.Emote.RandomSizeIncrease,
         config.Emote.RandomSizeDecrease * -1
       );
       const randomPos = getRandomPosition(nonTransparentPositions.current);
-      const newEmoteGroup = createEmoteGroup(emoteUrls, emoteSize, randomPos);
+      const newEmoteGroup = createEmoteGroup(
+        emoteUrls,
+        emoteSize,
+        randomPos,
+        randomAnimation
+      );
       updateEmotesGroups(newEmoteGroup);
     } else {
       for (let emote of emoteUrls) {
@@ -111,7 +132,12 @@ export const UseEmotes = (
           config.Emote.RandomSizeDecrease * -1
         );
         const randomPos = getRandomPosition(nonTransparentPositions.current);
-        const newEmoteGroup = createEmoteGroup(tempArray, emoteSize, randomPos);
+        const newEmoteGroup = createEmoteGroup(
+          tempArray,
+          emoteSize,
+          randomPos,
+          randomAnimation
+        );
         updateEmotesGroups(newEmoteGroup);
       }
     }
