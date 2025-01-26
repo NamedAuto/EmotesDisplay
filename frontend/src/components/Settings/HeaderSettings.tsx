@@ -26,20 +26,20 @@ const getVersionInfo = async (port: string) => {
 };
 
 const HeaderSettings: React.FC<HeaderSettingsProps> = ({ port }) => {
-  const [versionInfo, setVersionInfo] = useState<{
-    owner: string;
-    repoName: string;
-    currentVersion: string;
-    latestVersion: string;
-  } | null>(null);
+  // const [versionInfo, setVersionInfo] = useState<{
+  //   owner: string;
+  //   repoName: string;
+  //   currentVersion: string;
+  //   latestVersion: string;
+  // } | null>(null);
 
-  useEffect(() => {
-    const fetchVersionInfo = async () => {
-      const data = await getVersionInfo(port);
-      setVersionInfo(data);
-    };
-    fetchVersionInfo();
-  }, [port]);
+  // useEffect(() => {
+  //   const fetchVersionInfo = async () => {
+  //     const data = await getVersionInfo(port);
+  //     setVersionInfo(data);
+  //   };
+  //   fetchVersionInfo();
+  // }, [port]);
 
   return (
     <Box
@@ -51,7 +51,7 @@ const HeaderSettings: React.FC<HeaderSettingsProps> = ({ port }) => {
         flexWrap: "wrap",
       }}
     >
-      <Tooltip
+      {/* <Tooltip
         title={
           versionInfo
             ? versionInfo.currentVersion === versionInfo.latestVersion
@@ -84,7 +84,7 @@ const HeaderSettings: React.FC<HeaderSettingsProps> = ({ port }) => {
             "erm..."
           )}
         </Typography>
-      </Tooltip>
+      </Tooltip> */}
 
       <Tooltip title="This is the url you will be using" arrow>
         <Typography
