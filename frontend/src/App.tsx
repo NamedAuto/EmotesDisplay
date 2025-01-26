@@ -4,7 +4,7 @@ import MyRoutes from "./components/Routes/Routes";
 function App() {
   return (
     <div id="App">
-        <MyRoutes />
+      <MyRoutes />
     </div>
   );
 }

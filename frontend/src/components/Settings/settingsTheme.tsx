@@ -21,6 +21,13 @@ const darkTheme = createTheme({
     },
   },
   components: {
+    MuiDivider: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#6c072c",
+        },
+      },
+    },
     MuiTextField: {
       styleOverrides: {
         root: {

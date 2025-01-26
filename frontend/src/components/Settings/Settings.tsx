@@ -90,7 +90,6 @@ const SettingsPage: React.FC = () => {
 
   const dividerMargin = 1.5;
   const dividerWidth = 1;
-  const dividerColor = "#6c072c";
   return (
     <ThemeProvider theme={darkTheme}>
       <Box
@@ -107,7 +106,7 @@ const SettingsPage: React.FC = () => {
         <HeaderSettings port={config.Port.toString()} />
         <Divider
           sx={{
-            borderColor: dividerColor,
+            // borderColor: dividerColor,
             borderWidth: dividerWidth,
             marginY: dividerMargin,
           }}
@@ -123,7 +122,7 @@ const SettingsPage: React.FC = () => {
         />
         <Divider
           sx={{
-            borderColor: dividerColor,
+            // borderColor: dividerColor,
             borderWidth: dividerWidth,
             marginY: dividerMargin,
           }}
@@ -148,7 +147,7 @@ const SettingsPage: React.FC = () => {
         </Box>
         <Divider
           sx={{
-            borderColor: dividerColor,
+            // borderColor: dividerColor,
             borderWidth: dividerWidth,
             marginY: dividerMargin,
           }}
@@ -162,7 +161,7 @@ const SettingsPage: React.FC = () => {
         />
         <Divider
           sx={{
-            borderColor: dividerColor,
+            // borderColor: dividerColor,
             borderWidth: dividerWidth,
             marginY: dividerMargin,
           }}
@@ -174,7 +173,7 @@ const SettingsPage: React.FC = () => {
         />
         <Divider
           sx={{
-            borderColor: dividerColor,
+            // borderColor: dividerColor,
             borderWidth: dividerWidth,
             marginY: dividerMargin,
           }}
