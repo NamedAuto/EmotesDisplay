@@ -30,6 +30,7 @@ interface DrawerComponentProps {
   open: boolean;
   handleDrawerOpen: () => void;
   handleDrawerClose: () => void;
+  onItemClick: (component: string) => void;
 }
 
 const drawerWidth = 200;
@@ -103,6 +104,7 @@ const DrawerComponent: React.FC<DrawerComponentProps> = ({
   open,
   handleDrawerOpen,
   handleDrawerClose,
+  onItemClick,
 }) => {
   const theme = useTheme();
 
@@ -117,6 +119,9 @@ const DrawerComponent: React.FC<DrawerComponentProps> = ({
           throw new Error("Function not implemented.");
         }}
         handleDrawerClose={function (): void {
+          throw new Error("Function not implemented.");
+        }}
+        onItemClick={function (component: string): void {
           throw new Error("Function not implemented.");
         }}
       >
@@ -148,7 +153,25 @@ const DrawerComponent: React.FC<DrawerComponentProps> = ({
         </DrawerHeader>
         <Divider />
         <List>
-          {["YouTube", "Twitch", "App Settings", "Drafts"].map(
+          <ListItemButton onClick={() => onItemClick("YoutubeComponent")}>
+            <ListItemIcon>
+              <InboxIcon />
+            </ListItemIcon>
+            <ListItemText primary="Youtube" />
+          </ListItemButton>
+          <ListItemButton onClick={() => onItemClick("AspectRatioComponent")}>
+            <ListItemIcon>
+              <InboxIcon />
+            </ListItemIcon>
+            <ListItemText primary="Aspect Ratio" />
+          </ListItemButton>
+          <ListItemButton onClick={() => onItemClick("EmoteComponent")}>
+            <ListItemIcon>
+              <InboxIcon />
+            </ListItemIcon>
+            <ListItemText primary="Emote" />
+          </ListItemButton>
+          {/* {["YouTube", "Twitch", "App Settings", "Drafts"].map(
             (text, index) => (
               <ListItem key={text} disablePadding sx={{ display: "block" }}>
                 <ListItemButton
@@ -196,7 +219,7 @@ const DrawerComponent: React.FC<DrawerComponentProps> = ({
                 <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
-          ))}
+          ))} */}
         </List>
       </Drawer>
     </>

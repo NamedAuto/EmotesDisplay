@@ -1,17 +1,13 @@
 import {
-  AppBar,
   Box,
-  CssBaseline,
-  Divider,
   Drawer,
+  IconButton,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
   ThemeProvider,
-  Toolbar,
-  Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useConfig } from "../Config/ConfigProvider";
@@ -19,17 +15,14 @@ import { useWebSocketContext } from "../WebSocket/WebSocketProvider";
 import AspectRatioSettings from "./AspectRatioSettings";
 import ButtonSettings from "./ButtonSetings";
 import EmoteSettings from "./EmoteSettings";
-import HeaderSettings from "./HeaderSettings";
 import PortSettings from "./PortSettings";
 import PreviewSettings from "./PreviewSettings";
 import YouTubeSettings from "./YoutubeSettings";
 import { createConfigCopyWithUpdate, formatSettings } from "./settingUtils";
 import { setupHandlers } from "./settingsHandlers";
 import { MySettings } from "./settingsInterface";
+import MenuIcon from "@mui/icons-material/Menu";
 import darkTheme from "./settingsTheme";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
-import DrawerComponent from "./Drawer";
 
 const SettingsPage: React.FC = () => {
   const config = useConfig();
@@ -106,6 +99,29 @@ const SettingsPage: React.FC = () => {
   };
 
   const [open, setOpen] = useState(true);
+  const [selectedComponent, setSelectedComponent] = useState<string>("");
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false); // State for toggling drawer mode
+  const YoutubeComponent = () => (
+    <YouTubeSettings
+      apiKey={settings.apiKey}
+      videoId={settings.videoId}
+      messageDelay={settings.messageDelay}
+      handleInputChange={handleInputChange}
+      showApiKey={showApiKey}
+      handleClickShowPassword={handleClickShowPassword}
+    />
+  );
+  const AspectRatioComponent = () => (
+    <AspectRatioSettings
+      forceWidthHeight={settings.forceWidthHeight}
+      width={settings.canvasWidth}
+      height={settings.canvasHeight}
+      handleInputChange={handleInputChange}
+    />
+  );
+  const EmoteComponent = () => (
+    <EmoteSettings settings={settings} handleInputChange={handleInputChange} />
+  );
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -115,101 +131,14 @@ const SettingsPage: React.FC = () => {
     setOpen(false);
   };
 
-  const dividerMargin = 1.5;
-  const dividerWidth = 1;
-  return (
-    <ThemeProvider theme={darkTheme}>
-      <Box sx={{ display: "flex" }}>
-        <CssBaseline />
-        <AppBar
-          position="fixed"
-          sx={{
-            width: `calc(100% - ${240}px)`,
-            ml: `${240}px`,
-          }}
-        >
-          {/* <HeaderSettings port={config.Port.toString()} /> */}
-          {/* <Toolbar>
-            <Typography variant="h6" noWrap component="div">
-              Permanent drawer
-            </Typography>
-          </Toolbar> */}
-        </AppBar>
-        {/* <Drawer
-          sx={{
-            width: 240,
-            flexShrink: 0,
-            "& .MuiDrawer-paper": {
-              width: 240,
-              boxSizing: "border-box",
-            },
-          }}
-          variant="permanent"
-          anchor="left"
-        >
-          <Toolbar />
-          <Divider />
-          <List>
-            {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-              <ListItem key={text} disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
-          <Divider />
-          <List>
-            {["All mail", "Trash", "Spam"].map((text, index) => (
-              <ListItem key={text} disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
-        </Drawer> */}
-        <DrawerComponent
-          port={config.Port.toString()}
-          open={open}
-          handleDrawerOpen={handleDrawerOpen}
-          handleDrawerClose={handleDrawerClose}
-        />
-        {/* <Box
-          sx={{
-            backgroundColor: "background.default",
-            color: "text.primary",
-            height: "100vh",
-            width: "100vw",
-            display: "flex",
-            flexDirection: "column",
-            overflow: "auto",
-          }}
-        > */}
-        <Box
-          component="main"
-          sx={{
-            flexGrow: 1,
-            p: 3,
-            transition: (theme) => theme.transitions.create("margin-left"),
-            // marginLeft: open ? `${240}px` : `${64}px`,
-          }}
-        >
-          <HeaderSettings port={config.Port.toString()} />
-          <Divider
-            sx={{
-              // borderColor: dividerColor,
-              borderWidth: dividerWidth,
-              marginY: dividerMargin,
-            }}
-          />
+  const handleItemClick = (component: string) => {
+    setSelectedComponent(component);
+  };
 
+  const renderSelectedComponent = () => {
+    switch (selectedComponent) {
+      case "YouTube":
+        return (
           <YouTubeSettings
             apiKey={settings.apiKey}
             videoId={settings.videoId}
@@ -218,65 +147,18 @@ const SettingsPage: React.FC = () => {
             showApiKey={showApiKey}
             handleClickShowPassword={handleClickShowPassword}
           />
-          <Divider
-            sx={{
-              // borderColor: dividerColor,
-              borderWidth: dividerWidth,
-              marginY: dividerMargin,
-            }}
-          />
-
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-around",
-              flexWrap: "wrap",
-            }}
-          >
-            <PortSettings
-              port={settings.port}
-              handleInputChange={handleInputChange}
-            />
-
-            <PreviewSettings
-              settings={settings}
-              handleInputChange={handleInputChange}
-            />
-          </Box>
-          <Divider
-            sx={{
-              // borderColor: dividerColor,
-              borderWidth: dividerWidth,
-              marginY: dividerMargin,
-            }}
-          />
-
+        );
+      case "AspectRatio":
+        return (
           <AspectRatioSettings
             forceWidthHeight={settings.forceWidthHeight}
             width={settings.canvasWidth}
             height={settings.canvasHeight}
             handleInputChange={handleInputChange}
           />
-          <Divider
-            sx={{
-              // borderColor: dividerColor,
-              borderWidth: dividerWidth,
-              marginY: dividerMargin,
-            }}
-          />
-
-          <EmoteSettings
-            settings={settings}
-            handleInputChange={handleInputChange}
-          />
-          <Divider
-            sx={{
-              // borderColor: dividerColor,
-              borderWidth: dividerWidth,
-              marginY: dividerMargin,
-            }}
-          />
-
+        );
+      case "Button":
+        return (
           <ButtonSettings
             isPreviewConnected={isPreviewConnected}
             isYoutubeConnected={isYoutubeConnected}
@@ -287,6 +169,124 @@ const SettingsPage: React.FC = () => {
             handleReset={handleReset}
             handleSave={handleSave}
           />
+        );
+      case "Port":
+        return (
+          <PortSettings
+            port={settings.port}
+            handleInputChange={handleInputChange}
+          />
+        );
+      case "Preview":
+        return (
+          <PreviewSettings
+            settings={settings}
+            handleInputChange={handleInputChange}
+          />
+        );
+      case "Emote":
+        return (
+          <EmoteSettings
+            settings={settings}
+            handleInputChange={handleInputChange}
+          />
+        );
+      default:
+        return <div>Select a settings option from the drawer.</div>;
+    }
+  };
+
+  const dividerMargin = 1.5;
+  const dividerWidth = 1;
+  return (
+    <ThemeProvider theme={darkTheme}>
+      <Box
+        sx={{
+          backgroundColor: "background.default",
+          color: "text.primary",
+          height: "100vh",
+          width: "100vw",
+          display: "flex",
+          flexDirection: "column",
+          overflow: "auto",
+        }}
+      >
+        {/* Drawer Navigation */}
+        <Drawer
+          sx={{
+            width: isDrawerOpen ? 240 : 60, // Toggle width based on state
+            flexShrink: 0,
+            "& .MuiDrawer-paper": {
+              width: isDrawerOpen ? 240 : 60, // Same here
+              boxSizing: "border-box",
+              overflow: "hidden",
+            },
+          }}
+          variant="permanent"
+          anchor="left"
+        >
+          <List>
+            <ListItemButton onClick={() => handleItemClick("YouTube")}>
+              <ListItemIcon>
+                {/* Add an icon for the "mini" drawer */}
+                <MenuIcon />
+              </ListItemIcon>
+              {isDrawerOpen && <ListItemText primary="YouTube Settings" />}
+            </ListItemButton>
+            <ListItemButton onClick={() => handleItemClick("AspectRatio")}>
+              <ListItemIcon>
+                <MenuIcon />
+              </ListItemIcon>
+              {isDrawerOpen && <ListItemText primary="Aspect Ratio Settings" />}
+            </ListItemButton>
+            <ListItemButton onClick={() => handleItemClick("Button")}>
+              <ListItemIcon>
+                <MenuIcon />
+              </ListItemIcon>
+              {isDrawerOpen && <ListItemText primary="Button Settings" />}
+            </ListItemButton>
+            <ListItemButton onClick={() => handleItemClick("Port")}>
+              <ListItemIcon>
+                <MenuIcon />
+              </ListItemIcon>
+              {isDrawerOpen && <ListItemText primary="Port Settings" />}
+            </ListItemButton>
+            <ListItemButton onClick={() => handleItemClick("Preview")}>
+              <ListItemIcon>
+                <MenuIcon />
+              </ListItemIcon>
+              {isDrawerOpen && <ListItemText primary="Preview Settings" />}
+            </ListItemButton>
+            <ListItem onClick={() => handleItemClick("Emote")}>
+              <ListItemIcon>
+                <MenuIcon />
+              </ListItemIcon>
+              {isDrawerOpen && <ListItemText primary="Emote Settings" />}
+            </ListItem>
+          </List>
+        </Drawer>
+
+        <IconButton
+          onClick={() => setIsDrawerOpen((prev) => !prev)}
+          sx={{
+            position: "absolute",
+            top: 20,
+            left: isDrawerOpen ? "240px" : "60px", // Adjust based on the drawer size
+            zIndex: 10,
+          }}
+        >
+          <MenuIcon />
+        </IconButton>
+
+        {/* Main Content */}
+        <Box
+          sx={{
+            flexGrow: 1,
+            padding: 2,
+            marginLeft: isDrawerOpen ? "240px" : "60px", // Adjust for mini drawer
+          }}
+        >
+          {renderSelectedComponent()}
         </Box>
       </Box>
     </ThemeProvider>
