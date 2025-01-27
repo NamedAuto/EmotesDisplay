@@ -3,6 +3,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import {
   Box,
   CSSObject,
+  Divider,
   Drawer,
   IconButton,
   List,
@@ -103,7 +104,7 @@ const SettingsPage: React.FC = () => {
     sendMessage(eventData);
   };
 
-  const drawerWidth = 200;
+  const drawerWidth = 150;
   const drawerWidthMini = 60;
   const [selectedComponent, setSelectedComponent] = useState<string>("");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -211,7 +212,7 @@ const SettingsPage: React.FC = () => {
     ...theme.mixins.toolbar,
   }));
 
-  const dividerMargin = 1.5;
+  const dividerMargin = 1;
   const dividerWidth = 1;
 
   return (
@@ -251,46 +252,80 @@ const SettingsPage: React.FC = () => {
               <ListItemIcon>
                 <MenuIcon />
               </ListItemIcon>
-              {isDrawerOpen && <ListItemText primary="YouTube Settings" />}
+              {isDrawerOpen && <ListItemText primary="YouTube" />}
             </ListItemButton>
             <ListItemButton onClick={() => handleItemClick("AspectRatio")}>
               <ListItemIcon>
                 <MenuIcon />
               </ListItemIcon>
-              {isDrawerOpen && <ListItemText primary="Aspect Ratio Settings" />}
+              {isDrawerOpen && <ListItemText primary="Aspect Ratio" />}
             </ListItemButton>
             <ListItemButton onClick={() => handleItemClick("Port")}>
               <ListItemIcon>
                 <MenuIcon />
               </ListItemIcon>
-              {isDrawerOpen && <ListItemText primary="Port Settings" />}
+              {isDrawerOpen && <ListItemText primary="Port" />}
             </ListItemButton>
             <ListItemButton onClick={() => handleItemClick("Preview")}>
               <ListItemIcon>
                 <MenuIcon />
               </ListItemIcon>
-              {isDrawerOpen && <ListItemText primary="Preview Settings" />}
+              {isDrawerOpen && <ListItemText primary="Preview" />}
             </ListItemButton>
             <ListItem onClick={() => handleItemClick("Emote")}>
               <ListItemIcon>
                 <MenuIcon />
               </ListItemIcon>
-              {isDrawerOpen && <ListItemText primary="Emote Settings" />}
+              {isDrawerOpen && <ListItemText primary="Emote" />}
             </ListItem>
           </List>
         </Drawer>
+        <Box
+          sx={{
+            flexGrow: 0,
+            padding: 1,
+            marginLeft: isDrawerOpen
+              ? `${drawerWidth}px`
+              : `${drawerWidthMini}px`,
+          }}
+        >
+          <HeaderSettings port={config.Port.toString()} />
+          <Divider
+            sx={{
+              borderWidth: dividerWidth,
+              marginY: dividerMargin,
+            }}
+          />
+        </Box>
 
         <Box
           sx={{
             flexGrow: 1,
-            padding: 2,
+            // padding: 1,
             marginLeft: isDrawerOpen
               ? `${drawerWidth}px`
-              : `${drawerWidthMini}px`, // Adjust for mini drawer
+              : `${drawerWidthMini}px`,
           }}
         >
-          <HeaderSettings port={config.Port.toString()} />
+          {/* <HeaderSettings port={config.Port.toString()} /> */}
+
           {renderSelectedComponent()}
+        </Box>
+        <Box
+          sx={{
+            flexGrow: 0,
+            // padding: 1,
+            marginLeft: isDrawerOpen
+              ? `${drawerWidth}px`
+              : `${drawerWidthMini}px`,
+          }}
+        >
+          <Divider
+            sx={{
+              borderWidth: dividerWidth,
+              marginY: dividerMargin,
+            }}
+          />
           <ButtonSettings
             isPreviewConnected={isPreviewConnected}
             isYoutubeConnected={isYoutubeConnected}

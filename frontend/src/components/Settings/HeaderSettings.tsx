@@ -26,12 +26,12 @@ const getVersionInfo = async (port: string) => {
 };
 
 const HeaderSettings: React.FC<HeaderSettingsProps> = ({ port }) => {
-  // const [versionInfo, setVersionInfo] = useState<{
-  //   owner: string;
-  //   repoName: string;
-  //   currentVersion: string;
-  //   latestVersion: string;
-  // } | null>(null);
+  const [versionInfo, setVersionInfo] = useState<{
+    owner: string;
+    repoName: string;
+    currentVersion: string;
+    latestVersion: string;
+  } | null>(null);
 
   // useEffect(() => {
   //   const fetchVersionInfo = async () => {
@@ -42,75 +42,141 @@ const HeaderSettings: React.FC<HeaderSettingsProps> = ({ port }) => {
   // }, [port]);
 
   return (
-    <Box
-      sx={{
-        pt: 2,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        flexWrap: "wrap",
-      }}
-    >
-      {/* <Tooltip
-        title={
-          versionInfo
-            ? versionInfo.currentVersion === versionInfo.latestVersion
-              ? "Current version"
-              : "Download the latest version here"
-            : "erm..."
-        }
-        arrow
+    <Box>
+      <Box
+        sx={{
+          pt: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+        }}
       >
-        <Typography
-          variant="h5"
-          gutterBottom
-          style={{ marginRight: "60px", marginLeft: "40px" }}
+        <Tooltip
+          title={
+            versionInfo
+              ? versionInfo.currentVersion === versionInfo.latestVersion
+                ? "Current version"
+                : "Download the latest version here"
+              : "Couldn't connect"
+          }
+          arrow
         >
-          {versionInfo ? (
-            versionInfo.currentVersion === versionInfo.latestVersion ? (
-              `${versionInfo.currentVersion}`
-            ) : (
-              // <Tooltip title="Download the latest version here" arrow>
-              <Link
-                href={`https://github.com/${versionInfo.owner}/${versionInfo.repoName}/releases/latest`}
-                target="_blank"
-                rel="noopener"
-              >
-                New version
-              </Link>
-              // </Tooltip>
-            )
-          ) : (
-            "erm..."
-          )}
-        </Typography>
-      </Tooltip> */}
-
-      <Tooltip title="This is the url you will be using" arrow>
-        <Typography
-          variant="h4"
-          gutterBottom
-          style={{ marginLeft: "10px", marginRight: "10px" }}
-        >
-          {`http://localhost:${port}/show`}
-        </Typography>
-      </Tooltip>
-
-      <Tooltip title="Open the url in a window to see it quickly" arrow>
-        <Typography
-          variant="h5"
-          gutterBottom
-          style={{ marginLeft: "20px", marginRight: "40px" }}
-        >
-          <Link
-            href={`http://localhost:${port}/show`}
-            target="_blank"
-            rel="noopener"
+          <Typography
+            // fontSize={"1.5rem"}
+            // variant="h5"
+            gutterBottom
+            style={{ marginRight: "10px", marginLeft: "10px" }}
+            sx={{
+              fontSize: {
+                xs: "1rem",
+                sm: "1.4rem",
+                md: "1.5rem",
+                lg: "1.5rem",
+              },
+            }}
           >
-            or click here
-          </Link>
-        </Typography>
-      </Tooltip>
+            {versionInfo ? (
+              versionInfo.currentVersion === versionInfo.latestVersion ? (
+                `${versionInfo.currentVersion}`
+              ) : (
+                <Link
+                  href={`https://github.com/${versionInfo.owner}/${versionInfo.repoName}/releases/latest`}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  New version
+                </Link>
+              )
+            ) : (
+              "erm..."
+            )}
+          </Typography>
+        </Tooltip>
+
+        <Tooltip title="This is the url you will be using" arrow>
+          <Typography
+            // fontSize={"2rem"}
+            // variant="h4"
+            gutterBottom
+            style={{
+              marginLeft: "10px",
+              marginRight: "10px",
+              wordBreak: "break-word",
+              whiteSpace: "normal",
+            }}
+            sx={{
+              fontSize: {
+                xs: "1.2rem",
+                sm: "1.3rem",
+                md: "2rem",
+                lg: "2rem",
+              },
+            }}
+          >
+            {`http://localhost:${port}/show`}
+          </Typography>
+        </Tooltip>
+
+        <Tooltip title="Open the url in a window to see it quickly" arrow>
+          <Typography
+            fontSize={"1.5rem"}
+            // variant="h5"
+            gutterBottom
+            style={{ marginLeft: "10px", marginRight: "10px" }}
+            sx={{
+              fontSize: {
+                xs: "1rem",
+                sm: "1.4rem",
+                md: "1.5rem",
+                lg: "1.5rem",
+              },
+            }}
+          >
+            <Link
+              href={`http://localhost:${port}/show`}
+              target="_blank"
+              rel="noopener"
+            >
+              or click here
+            </Link>
+          </Typography>
+        </Tooltip>
+      </Box>
+      <Box
+        sx={{
+          pt: 1,
+          display: "flex",
+          alignItems: "center",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+        }}
+      >
+        {/* <Tooltip title="This is the url you will be using" arrow>
+          <Typography
+            // fontSize={"2rem"}
+            // variant="h4"
+            gutterBottom
+            style={{
+              marginLeft: "10px",
+              marginRight: "10px",
+              wordBreak: "break-word",
+              whiteSpace: "normal",
+            }}
+            sx={{
+              fontSize: {
+                xs: "1.5rem",
+                sm: "2rem",
+                md: "2rem",
+                lg: "2rem",
+              },
+            }}
+          >
+            {`http://localhost:${port}/show`}
+          </Typography>
+        </Tooltip> */}
+      </Box>
     </Box>
   );
 };
