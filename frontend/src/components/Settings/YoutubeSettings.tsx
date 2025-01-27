@@ -1,13 +1,13 @@
-import React from "react";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   Box,
-  TextField,
-  InputAdornment,
   IconButton,
-  Typography,
+  InputAdornment,
+  TextField,
   Tooltip,
+  Typography,
 } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import React from "react";
 
 interface YouTubeSettingsProps {
   apiKey: string;
@@ -17,6 +17,11 @@ interface YouTubeSettingsProps {
   showApiKey: boolean;
   handleClickShowPassword: () => void;
 }
+
+const labelFontSize = "1.2em";
+const inputFontSize = "1.1em";
+const marginLeft = "10px";
+const marginRight = "10px";
 
 const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
   apiKey,
@@ -47,14 +52,14 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
           onChange={handleInputChange}
           margin="normal"
           sx={{
-            width: "400px",
-            marginLeft: 2,
-            marginRight: 2,
+            width: "300px",
+            marginLeft: marginLeft,
+            marginRight: marginRight,
             "& .MuiInputLabel-root": {
-              fontSize: "1.2em", // Adjust the font size as needed
+              fontSize: labelFontSize,
             },
             "& .MuiInputBase-input": {
-              fontSize: "1.2em", // Adjust the font size as needed
+              fontSize: inputFontSize,
             },
           }}
           slotProps={{
@@ -81,19 +86,19 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
       >
         <TextField
           name="videoId"
-          label="Youtube Video Id"
+          label="Video Id"
           value={videoId}
           onChange={handleInputChange}
           margin="normal"
           sx={{
-            width: "200px",
-            marginLeft: 2,
-            marginRight: 2,
+            width: "160px",
+            marginLeft: marginLeft,
+            marginRight: marginRight,
             "& .MuiInputLabel-root": {
-              fontSize: "1.2em", // Adjust the font size as needed
+              fontSize: labelFontSize,
             },
             "& .MuiInputBase-input": {
-              fontSize: "1.2em", // Adjust the font size as needed
+              fontSize: inputFontSize,
             },
           }}
         />
@@ -102,20 +107,25 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
       <Tooltip title="Check README if you change this number." arrow>
         <TextField
           name="messageDelay"
-          label="Message Delay (seconds)"
+          label="Message Delay"
           value={messageDelay}
           onChange={handleInputChange}
           type="number"
           margin="normal"
           sx={{
-            width: "200px",
-            marginLeft: 2,
-            marginRight: 2,
+            width: "150px",
+            marginLeft: marginLeft,
+            marginRight: marginRight,
             "& .MuiInputLabel-root": {
-              fontSize: "1.2em", // Adjust the font size as needed
+              fontSize: labelFontSize,
             },
             "& .MuiInputBase-input": {
-              fontSize: "1.2em", // Adjust the font size as needed
+              fontSize: inputFontSize,
+            },
+          }}
+          slotProps={{
+            input: {
+              endAdornment: <InputAdornment position="end">sec</InputAdornment>,
             },
           }}
         />

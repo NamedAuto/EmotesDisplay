@@ -15,6 +15,11 @@ interface AspectRatioSettingsProps {
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+const labelFontSize = "1.2em";
+const inputFontSize = "1.1em";
+const marginLeft = "10px";
+const marginRight = "10px";
+
 const AspectRatioSettings: React.FC<AspectRatioSettingsProps> = ({
   forceWidthHeight,
   width,
@@ -46,7 +51,7 @@ const AspectRatioSettings: React.FC<AspectRatioSettingsProps> = ({
             />
           }
           label="Force Width Height"
-          sx={{ marginLeft: 2, marginRight: 2 }}
+          sx={{ marginLeft: marginLeft, marginRight: marginRight }}
         />
       </Tooltip>
 
@@ -59,13 +64,13 @@ const AspectRatioSettings: React.FC<AspectRatioSettingsProps> = ({
         margin="normal"
         sx={{
           width: "150px",
-          marginLeft: 2,
-          marginRight: 2,
+          marginLeft: marginLeft,
+          marginRight: marginRight,
           "& .MuiInputLabel-root": {
-            fontSize: "1.2em", // Adjust the font size as needed
+            fontSize: labelFontSize,
           },
           "& .MuiInputBase-input": {
-            fontSize: "1.2em", // Adjust the font size as needed
+            fontSize: inputFontSize,
           },
         }}
       />
@@ -79,13 +84,13 @@ const AspectRatioSettings: React.FC<AspectRatioSettingsProps> = ({
         margin="normal"
         sx={{
           width: "150px",
-          marginLeft: 2,
-          marginRight: 2,
+          marginLeft: marginLeft,
+          marginRight: marginRight,
           "& .MuiInputLabel-root": {
-            fontSize: "1.2em", // Adjust the font size as needed
+            fontSize: labelFontSize,
           },
           "& .MuiInputBase-input": {
-            fontSize: "1.2em", // Adjust the font size as needed
+            fontSize: inputFontSize,
           },
         }}
       />

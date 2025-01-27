@@ -11,6 +11,12 @@ interface ButonSettingsProps {
   handleSave: () => void;
 }
 
+const fontSize = "16px";
+const marginTop = "10px";
+const marginBottom = "10px";
+const marginLeft = "10px";
+const marginRight = "10px";
+
 const ButtonSettings: React.FC<ButonSettingsProps> = ({
   isPreviewConnected,
   isYoutubeConnected,
@@ -38,11 +44,15 @@ const ButtonSettings: React.FC<ButonSettingsProps> = ({
         color="primary"
         onClick={handleSave}
         style={{
-          fontSize: "18px",
-          marginTop: "10px",
-          marginBottom: "10px",
+          fontSize: fontSize,
+          marginTop: marginTop,
+          marginBottom: marginBottom,
         }}
-        sx={{ marginLeft: 2, marginRight: 2, width: "150px" }}
+        sx={{
+          marginLeft: marginLeft,
+          marginRight: marginRight,
+          width: "100px",
+        }}
       >
         Save
       </Button>
@@ -54,11 +64,15 @@ const ButtonSettings: React.FC<ButonSettingsProps> = ({
         color="secondary"
         onClick={handleReset}
         style={{
-          fontSize: "18px",
-          marginTop: "10px",
-          marginBottom: "10px",
+          fontSize: fontSize,
+          marginTop: marginTop,
+          marginBottom: marginBottom,
         }}
-        sx={{ marginLeft: 2, marginRight: 2, width: "150px" }}
+        sx={{
+          marginLeft: marginLeft,
+          marginRight: marginRight,
+          width: "100px",
+        }}
       >
         Reset
       </Button>
@@ -77,11 +91,15 @@ const ButtonSettings: React.FC<ButonSettingsProps> = ({
         color={isPreviewConnected ? "secondary" : "primary"}
         onClick={isPreviewConnected ? handlePreviewStop : handlePreviewStart}
         style={{
-          fontSize: "18px",
-          marginTop: "10px",
-          marginBottom: "10px",
+          fontSize: fontSize,
+          marginTop: marginTop,
+          marginBottom: marginBottom,
         }}
-        sx={{ marginLeft: 2, marginRight: 2, width: "200px" }}
+        sx={{
+          marginLeft: marginLeft,
+          marginRight: marginRight,
+          width: "160px",
+        }}
       >
         {isPreviewConnected ? "Stop Preview" : "Start Preview"}
       </Button>
@@ -100,11 +118,15 @@ const ButtonSettings: React.FC<ButonSettingsProps> = ({
         color={isYoutubeConnected ? "secondary" : "primary"}
         onClick={isYoutubeConnected ? handleYoutubeStop : handleYoutubeStart}
         style={{
-          fontSize: "18px",
-          marginTop: "10px",
-          marginBottom: "10px",
+          fontSize: fontSize,
+          marginTop: marginTop,
+          marginBottom: marginBottom,
         }}
-        sx={{ marginLeft: 2, marginRight: 2, width: "200px" }}
+        sx={{
+          marginLeft: marginLeft,
+          marginRight: marginRight,
+          width: "160px",
+        }}
       >
         {isYoutubeConnected ? "Stop Youtube" : "Start Youtube"}
       </Button>

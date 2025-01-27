@@ -1,17 +1,21 @@
-import React from "react";
 import {
   Box,
-  FormControlLabel,
-  Checkbox,
+  InputAdornment,
   TextField,
-  Typography,
   Tooltip,
+  Typography,
 } from "@mui/material";
+import React from "react";
 
 interface PreviewSettingsProps {
   settings: any;
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
+
+const labelFontSize = "1.2em";
+const inputFontSize = "1.1em";
+const marginLeft = "10px";
+const marginRight = "10px";
 
 const PreviewSettings: React.FC<PreviewSettingsProps> = ({
   settings,
@@ -32,20 +36,25 @@ const PreviewSettings: React.FC<PreviewSettingsProps> = ({
       <Tooltip title="Only works for preview. Lower is faster" arrow>
         <TextField
           name="speedOfEmotes"
-          label="Emotes Delay (seconds)"
+          label="Emotes Delay"
           value={settings.speedOfEmotes}
           onChange={handleInputChange}
           type="number"
           margin="normal"
           sx={{
-            width: "200px",
-            marginLeft: 2,
-            marginRight: 2,
+            width: "150px",
+            marginLeft: marginLeft,
+            marginRight: marginRight,
             "& .MuiInputLabel-root": {
-              fontSize: "1.2em", // Adjust the font size as needed
+              fontSize: labelFontSize,
             },
             "& .MuiInputBase-input": {
-              fontSize: "1.2em", // Adjust the font size as needed
+              fontSize: inputFontSize,
+            },
+          }}
+          slotProps={{
+            input: {
+              endAdornment: <InputAdornment position="end">sec</InputAdornment>,
             },
           }}
         />

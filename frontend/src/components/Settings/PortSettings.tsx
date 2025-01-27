@@ -6,6 +6,11 @@ interface PortSettingsProps {
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+const labelFontSize = "1.2em";
+const inputFontSize = "1.1em";
+const marginLeft = "10px";
+const marginRight = "10px";
+
 const PortSettings: React.FC<PortSettingsProps> = ({
   port,
   handleInputChange,
@@ -34,14 +39,14 @@ const PortSettings: React.FC<PortSettingsProps> = ({
           type="number"
           margin="normal"
           sx={{
-            width: "200px",
-            marginLeft: 2,
-            marginRight: 2,
+            width: "150px",
+            marginLeft: marginLeft,
+            marginRight: marginRight,
             "& .MuiInputLabel-root": {
-              fontSize: "1.2em", // Adjust the font size as needed
+              fontSize: labelFontSize,
             },
             "& .MuiInputBase-input": {
-              fontSize: "1.2em", // Adjust the font size as needed
+              fontSize: inputFontSize,
             },
           }}
         />

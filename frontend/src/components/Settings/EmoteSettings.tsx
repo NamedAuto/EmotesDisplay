@@ -1,18 +1,23 @@
-import React from "react";
 import {
   Box,
-  FormControlLabel,
   Checkbox,
-  TextField,
-  Typography,
-  Tooltip,
+  FormControlLabel,
   InputAdornment,
+  TextField,
+  Tooltip,
+  Typography,
 } from "@mui/material";
+import React from "react";
 
 interface EmoteSettingsProps {
   settings: any;
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
+
+const labelFontSize = "1.2em";
+const inputFontSize = "1.1em";
+const marginLeft = "10px";
+const marginRight = "10px";
 
 const EmoteSettings: React.FC<EmoteSettingsProps> = ({
   settings,
@@ -43,7 +48,7 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
             />
           }
           label="Group Emotes"
-          sx={{ marginLeft: 2, marginRight: 2 }}
+          sx={{ marginLeft: marginLeft, marginRight: marginRight }}
         />
       </Tooltip>
 
@@ -57,13 +62,13 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
           margin="normal"
           sx={{
             width: "150px",
-            marginLeft: 2,
-            marginRight: 2,
+            marginLeft: marginLeft,
+            marginRight: marginRight,
             "& .MuiInputLabel-root": {
-              fontSize: "1.2em", // Adjust the font size as needed
+              fontSize: labelFontSize,
             },
             "& .MuiInputBase-input": {
-              fontSize: "1.2em", // Adjust the font size as needed
+              fontSize: inputFontSize,
             },
           }}
           slotProps={{
@@ -96,13 +101,13 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
           margin="normal"
           sx={{
             width: "200px",
-            marginLeft: 2,
-            marginRight: 2,
+            marginLeft: marginLeft,
+            marginRight: marginRight,
             "& .MuiInputLabel-root": {
-              fontSize: "1.2em", // Adjust the font size as needed
+              fontSize: labelFontSize,
             },
             "& .MuiInputBase-input": {
-              fontSize: "1.2em", // Adjust the font size as needed
+              fontSize: inputFontSize,
             },
           }}
           slotProps={{
@@ -126,13 +131,13 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
           margin="normal"
           sx={{
             width: "200px",
-            marginLeft: 2,
-            marginRight: 2,
+            marginLeft: marginLeft,
+            marginRight: marginRight,
             "& .MuiInputLabel-root": {
-              fontSize: "1.2em", // Adjust the font size as needed
+              fontSize: labelFontSize,
             },
             "& .MuiInputBase-input": {
-              fontSize: "1.2em", // Adjust the font size as needed
+              fontSize: inputFontSize,
             },
           }}
           slotProps={{
@@ -156,13 +161,13 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
           margin="normal"
           sx={{
             width: "150px",
-            marginLeft: 2,
-            marginRight: 2,
+            marginLeft: marginLeft,
+            marginRight: marginRight,
             "& .MuiInputLabel-root": {
-              fontSize: "1.2em", // Adjust the font size as needed
+              fontSize: labelFontSize,
             },
             "& .MuiInputBase-input": {
-              fontSize: "1.2em", // Adjust the font size as needed
+              fontSize: inputFontSize,
             },
           }}
         />
@@ -181,13 +186,13 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
           margin="normal"
           sx={{
             width: "150px",
-            marginLeft: 2,
-            marginRight: 2,
+            marginLeft: marginLeft,
+            marginRight: marginRight,
             "& .MuiInputLabel-root": {
-              fontSize: "1.2em", // Adjust the font size as needed
+              fontSize: labelFontSize,
             },
             "& .MuiInputBase-input": {
-              fontSize: "1.2em", // Adjust the font size as needed
+              fontSize: inputFontSize,
             },
           }}
         />
@@ -205,13 +210,13 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
           margin="normal"
           sx={{
             width: "250px",
-            marginLeft: 2,
-            marginRight: 2,
+            marginLeft: marginLeft,
+            marginRight: marginRight,
             "& .MuiInputLabel-root": {
-              fontSize: "1.2em", // Adjust the font size as needed
+              fontSize: labelFontSize,
             },
             "& .MuiInputBase-input": {
-              fontSize: "1.2em", // Adjust the font size as needed
+              fontSize: inputFontSize,
             },
           }}
         />
