@@ -150,18 +150,10 @@ const SettingsPage: React.FC = () => {
         );
       case "Port":
         return (
-          <Box flexDirection="column-reverse">
-            <PortSettings
-              port={settings.port}
-              handleInputChange={handleInputChange}
-            />
-            <AspectRatioSettings
-              forceWidthHeight={settings.forceWidthHeight}
-              width={settings.canvasHeight}
-              height={settings.canvasHeight}
-              handleInputChange={handleInputChange}
-            />
-          </Box>
+          <PortSettings
+            port={settings.port}
+            handleInputChange={handleInputChange}
+          />
         );
       case "Preview":
         return (
@@ -170,6 +162,7 @@ const SettingsPage: React.FC = () => {
             handleInputChange={handleInputChange}
           />
         );
+      default:
       case "Emote":
         return (
           <EmoteSettings
@@ -177,8 +170,8 @@ const SettingsPage: React.FC = () => {
             handleInputChange={handleInputChange}
           />
         );
-      default:
-        return <div>Select a settings option from the drawer.</div>;
+      // default:
+      //   return <div>Select a settings option from the drawer.</div>;
     }
   };
   const openedMixin = (theme: Theme): CSSObject => ({

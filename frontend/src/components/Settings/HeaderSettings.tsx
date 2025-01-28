@@ -33,13 +33,13 @@ const HeaderSettings: React.FC<HeaderSettingsProps> = ({ port }) => {
     latestVersion: string;
   } | null>(null);
 
-  // useEffect(() => {
-  //   const fetchVersionInfo = async () => {
-  //     const data = await getVersionInfo(port);
-  //     setVersionInfo(data);
-  //   };
-  //   fetchVersionInfo();
-  // }, [port]);
+  useEffect(() => {
+    const fetchVersionInfo = async () => {
+      const data = await getVersionInfo(port);
+      setVersionInfo(data);
+    };
+    fetchVersionInfo();
+  }, [port]);
 
   return (
     <Box>

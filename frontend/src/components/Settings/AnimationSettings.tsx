@@ -1,14 +1,30 @@
-import { Box, styled } from "@mui/material";
-import { keyframes } from "@emotion/react";
+import { Keyframes, keyframes } from "@emotion/react";
 
-export const bounce = keyframes`
+const bounce = keyframes`
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-40px); }
 `;
 
-export const rotate = keyframes`
+/*
+value to rotate clockwise or counterclockwise
+multiple of 360 for smooth
+*/
+const rotate = keyframes`
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+`;
+
+const rotateAndReverse = keyframes`
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(360deg); }
+`;
+
+/*
+value to slide left and slide right
+*/
+const slide = keyframes`
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(40px); }
 `;
 
 const scale = keyframes`
@@ -16,10 +32,11 @@ const scale = keyframes`
   50% { transform: scale(1.2); }
 `;
 
-export const animationMap: Record<string, any> = {
+export const animationMap: Record<string, Keyframes> = {
   bounce: bounce,
   rotate: rotate,
   scale: scale,
+  slide: slide,
 };
 
 interface AnimatedBoxProps {

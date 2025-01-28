@@ -95,7 +95,7 @@ export const UseEmotes = (
     });
   };
 
-  const animations = ["bounce", "rotate", "scale"];
+  const animations = ["bounce", "rotate", "scale", "slide"];
 
   const getRandomAnimation = () => {
     return animations[Math.floor(Math.random() * animations.length)];

@@ -1,14 +1,14 @@
+import { styled } from "@mui/material";
 import Box from "@mui/material/Box";
 import React, { RefObject, useEffect, useRef } from "react";
+import "../../style.css";
 import { Config } from "../Config/ConfigInterface";
 import { useConfig } from "../Config/ConfigProvider";
 import { loadBackground } from "../Config/FetchBackground";
+import { animationMap } from "../Settings/AnimationSettings";
 import { useWebSocketContext } from "../WebSocket/WebSocketProvider";
 import { Position } from "./positionInterface";
 import { UseEmotes } from "./useEmotes";
-import "../../style.css";
-import { keyframes, styled } from "@mui/material";
-import { rotate } from "../Settings/AnimationSettings";
 
 const CanvasComponent: React.FC = () => {
   const backgroundImageRef = useRef<HTMLImageElement>(null);
@@ -180,17 +180,6 @@ const CanvasComponent: React.FC = () => {
     }
   };
 
-  //   const bounce = keyframes`
-  //   0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-  //   40% { transform: translateY(-30px); }
-  //   60% { transform: translateY(-15px); }
-  // `;
-
-  //   const rotate = keyframes`
-  // 0% { transform: rotate(0deg); }
-  // 100% { transform: rotate(360deg); }
-  // `;
-
   const StyledImage = styled("img")<{ borderRadius?: string; filter?: string }>`
     width: 200px;
     height: 200px;
@@ -219,8 +208,9 @@ const CanvasComponent: React.FC = () => {
                     top: emote.pos.y,
                     width: emote.size,
                     height: emote.size,
-                    // animation: `${bounce} 2s cubic-bezier(0.25, 0.25, 0.75, 0.75) infinite`,
-                    animation: `${rotate} 5s linear infinite`,
+                    // animation: `${
+                    //   animationMap[emote.animation]
+                    // } 5s linear infinite`,
                   }}
                 >
                   <StyledImage
@@ -236,7 +226,6 @@ const CanvasComponent: React.FC = () => {
                       height: emote.size,
                       borderRadius: `${config.Emote.Roundness}%`,
                       backgroundColor: config.Emote.BackgroundColor,
-                      zIndex: 3,
                     }}
                     alt={`emote-${emoteIdx}`}
                   />
