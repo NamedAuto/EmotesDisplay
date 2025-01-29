@@ -1,8 +1,6 @@
 module github.com/NamedAuto/EmotesDisplay
 
-go 1.21
-
-toolchain go1.23.4
+go 1.23.4
 
 require (
 	github.com/gorilla/websocket v1.5.3
@@ -18,6 +16,7 @@ require (
 	cloud.google.com/go/auth v0.13.0 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.6 // indirect
 	cloud.google.com/go/compute/metadata v0.6.0 // indirect
+	github.com/NamedAuto/goemoji v0.1.0 // indirect
 	github.com/bep/debounce v1.2.1 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
