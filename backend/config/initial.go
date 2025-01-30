@@ -22,7 +22,8 @@ type MyPaths struct {
 var repo Repo
 var myPaths MyPaths
 var emoteMap map[string]string
-var myConfig *AppConfig
+
+// var myConfig *AppConfig
 var mu sync.RWMutex
 
 const appVersion = "v2.1"
@@ -36,11 +37,11 @@ func init() {
 	repo = Repo{AppVersion: appVersion, Owner: owner, RepoName: repoName}
 	myPaths = SetupFilePaths()
 
-	var err error
-	myConfig, err = LoadYamlConfig(myPaths.YamlPath)
-	if err != nil {
-		log.Fatalf("Error loading config.yaml")
-	}
+	// var err error
+	// myConfig, err = LoadYamlConfig(myPaths.YamlPath)
+	// if err != nil {
+	// 	log.Fatalf("Error loading config.yaml")
+	// }
 
 	emoteMap = GenerateEmoteMap(myPaths.EmotePath)
 	// fmt.Println("Formatted Emote Map:")
@@ -61,14 +62,14 @@ func GetEmoteMap() map[string]string {
 	return emoteMap
 }
 
-func GetMyConfig() *AppConfig {
-	mu.RLock()
-	defer mu.RUnlock()
-	return myConfig
-}
+// func GetMyConfig() *AppConfig {
+// 	mu.RLock()
+// 	defer mu.RUnlock()
+// 	return myConfig
+// }
 
-func SetMyConfig(newConfig *AppConfig) {
-	mu.Lock()
-	defer mu.Unlock()
-	*myConfig = *newConfig
-}
+// func SetMyConfig(newConfig *AppConfig) {
+// 	mu.Lock()
+// 	defer mu.Unlock()
+// 	*myConfig = *newConfig
+// }

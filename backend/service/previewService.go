@@ -1,10 +1,10 @@
 package service
 
 import (
-	"github.com/NamedAuto/EmotesDisplay/backend/config"
+	"github.com/NamedAuto/EmotesDisplay/backend/database"
 )
 
 type PreviewService struct {
-	Config   *config.AppConfig
+	Config   *database.AppConfig
 	EmoteMap map[string]string
 }

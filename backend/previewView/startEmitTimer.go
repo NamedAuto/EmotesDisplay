@@ -16,7 +16,7 @@ func startEmitTimer(handler common.HandlerInterface,
 
 	defer wg.Done()
 
-	lastSpeedOfEmotes := previewService.Config.Testing.SpeedOfEmotes
+	lastSpeedOfEmotes := previewService.Config.Preview.SpeedOfEmotes
 	duration := time.Duration(lastSpeedOfEmotes) * time.Millisecond
 	ticker = time.NewTicker(duration)
 	defer ticker.Stop()
@@ -24,9 +24,9 @@ func startEmitTimer(handler common.HandlerInterface,
 	for {
 		select {
 		case <-ticker.C:
-			handler.EmitToAllRandom(previewService.Config.Port, previewService.EmoteMap)
+			handler.EmitToAllRandom(previewService.Config.Port.Port, previewService.EmoteMap)
 
-			currentSpeedOfEmotes := previewService.Config.Testing.SpeedOfEmotes
+			currentSpeedOfEmotes := previewService.Config.Preview.SpeedOfEmotes
 			if currentSpeedOfEmotes != lastSpeedOfEmotes {
 				lastSpeedOfEmotes = currentSpeedOfEmotes
 				duration = time.Duration(currentSpeedOfEmotes) * time.Millisecond

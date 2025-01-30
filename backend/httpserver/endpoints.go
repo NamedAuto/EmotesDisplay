@@ -141,7 +141,8 @@ func configureConfigEndpoint(mux *http.ServeMux, yamlPath string) {
 				return
 			}
 
-			config.SetMyConfig(&newConfig)
+			// config.SetMyConfig(&newConfig)
+			// TODO: Update to use database
 			w.WriteHeader(http.StatusOK)
 			w.Write([]byte("Config saved successfully"))
 		} else {
