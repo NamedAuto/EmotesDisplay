@@ -23,15 +23,18 @@ interface AspectRatioConfig {
   ScaleImage: number;
 }
 
-interface TestingConfig {
+interface PreviewConfig {
   Test: boolean;
   SpeedOfEmotes: number;
+}
+interface PortConfig {
+  Port: number;
 }
 
 export interface Config {
   Emote: EmoteConfig;
   Youtube: YoutubeConfig;
   AspectRatio: AspectRatioConfig;
-  Testing: TestingConfig;
-  Port: number;
+  Preview: PreviewConfig;
+  Port: PortConfig;
 }

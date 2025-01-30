@@ -5,7 +5,7 @@ export const formatSettings = (config: Config) => ({
   apiKey: config.Youtube.ApiKey,
   videoId: config.Youtube.VideoId,
   messageDelay: (config.Youtube.MessageDelay / 1000).toString(),
-  port: config.Port.toString(),
+  port: config.Port.Port.toString(),
   forceWidthHeight: config.AspectRatio.ForceWidthHeight,
   canvasWidth: config.AspectRatio.Width.toString(),
   canvasHeight: config.AspectRatio.Height.toString(),
@@ -18,8 +18,8 @@ export const formatSettings = (config: Config) => ({
   groupEmotes: config.Emote.GroupEmotes,
   emoteRoundness: config.Emote.Roundness.toString(),
   emoteBackgroundColor: config.Emote.BackgroundColor,
-  test: config.Testing.Test,
-  speedOfEmotes: (config.Testing.SpeedOfEmotes / 1000).toString(),
+  test: config.Preview.Test,
+  speedOfEmotes: (config.Preview.SpeedOfEmotes / 1000).toString(),
 });
 
 export const createConfigCopyWithUpdate = (
@@ -34,7 +34,10 @@ export const createConfigCopyWithUpdate = (
       VideoId: settings.videoId,
       MessageDelay: Math.round(parseFloat(settings.messageDelay) * 1000),
     },
-    Port: parseInt(settings.port, 10),
+    Port: {
+      ...config.Port,
+      Port: parseInt(settings.port, 10),
+    },
     AspectRatio: {
       ...config.AspectRatio,
       ForceWidthHeight: settings.forceWidthHeight,
@@ -53,8 +56,8 @@ export const createConfigCopyWithUpdate = (
       Roundness: parseInt(settings.emoteRoundness, 10),
       BackgroundColor: settings.emoteBackgroundColor,
     },
-    Testing: {
-      ...config.Testing,
+    Preview: {
+      ...config.Preview,
       Test: settings.test,
       SpeedOfEmotes: Math.round(parseFloat(settings.speedOfEmotes) * 1000),
     },

@@ -4,13 +4,13 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/NamedAuto/EmotesDisplay/backend/config"
+	"github.com/NamedAuto/EmotesDisplay/backend/database"
 	"github.com/NamedAuto/EmotesDisplay/backend/github"
 
 	"gopkg.in/yaml.v2"
@@ -80,36 +80,39 @@ func configureConfigEndpoint(mux *http.ServeMux, yamlPath string) {
 		configPath := filepath.Join(yamlPath, "config.yaml")
 		if r.Method == http.MethodGet {
 
-			if _, err := os.Stat(configPath); os.IsNotExist(err) {
-				http.Error(w, "Config file not found", http.StatusNotFound)
-				return
-			}
+			// if _, err := os.Stat(configPath); os.IsNotExist(err) {
+			// 	http.Error(w, "Config file not found", http.StatusNotFound)
+			// 	return
+			// }
 
-			file, err := os.Open(configPath)
-			if err != nil {
-				http.Error(w, fmt.Sprintf("Error reading config file: %v", err),
-					http.StatusInternalServerError)
-				return
-			}
-			defer file.Close()
+			// file, err := os.Open(configPath)
+			// if err != nil {
+			// 	http.Error(w, fmt.Sprintf("Error reading config file: %v", err),
+			// 		http.StatusInternalServerError)
+			// 	return
+			// }
+			// defer file.Close()
 
-			fileContent, err := io.ReadAll(file)
-			if err != nil {
-				http.Error(w, fmt.Sprintf("Error reading config file: %v", err),
-					http.StatusInternalServerError)
-				return
-			}
+			// fileContent, err := io.ReadAll(file)
+			// if err != nil {
+			// 	http.Error(w, fmt.Sprintf("Error reading config file: %v", err),
+			// 		http.StatusInternalServerError)
+			// 	return
+			// }
 
-			var config config.AppConfig
-			err = yaml.Unmarshal(fileContent, &config)
-			if err != nil {
-				http.Error(w, fmt.Sprintf("Error parsing config file: %v", err),
-					http.StatusInternalServerError)
-				return
-			}
+			// var config config.AppConfig
+			// err = yaml.Unmarshal(fileContent, &config)
+			// if err != nil {
+			// 	http.Error(w, fmt.Sprintf("Error parsing config file: %v", err),
+			// 		http.StatusInternalServerError)
+			// 	return
+			// }
+
+			// w.Header().Set("Content-Type", "application/json")
+			// json.NewEncoder(w).Encode(config)
 
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(config)
+			json.NewEncoder(w).Encode(database.GetConfig())
 
 		} else if r.Method == http.MethodPost {
 			var newConfig config.AppConfig

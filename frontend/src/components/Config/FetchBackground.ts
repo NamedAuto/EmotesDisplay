@@ -2,7 +2,9 @@ import { Config } from "./ConfigInterface";
 
 export async function loadBackground(config: Config): Promise<string | null> {
   try {
-    const response = await fetch(`http://localhost:${config.Port}/background`);
+    const response = await fetch(
+      `http://localhost:${config.Port.Port}/background`
+    );
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

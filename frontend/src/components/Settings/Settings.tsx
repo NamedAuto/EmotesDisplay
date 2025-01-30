@@ -60,7 +60,7 @@ const SettingsPage: React.FC = () => {
     try {
       const tempConfig = createConfigCopyWithUpdate(config, settings);
       // Force to ignore wails.localhost
-      const url = `http://localhost:${config.Port}/config`;
+      const url = `http://localhost:${config.Port.Port}/config`;
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -282,7 +282,7 @@ const SettingsPage: React.FC = () => {
               : `${drawerWidthMini}px`,
           }}
         >
-          <HeaderSettings port={config.Port.toString()} />
+          <HeaderSettings port={config.Port.Port.toString()} />
           <Divider
             sx={{
               borderWidth: dividerWidth,

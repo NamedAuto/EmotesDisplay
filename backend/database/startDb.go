@@ -7,6 +7,8 @@ import (
 	"gorm.io/gorm"
 )
 
+var appConfig *AppConfig
+
 func StartDb() *gorm.DB {
 	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
 	if err != nil {
@@ -29,6 +31,15 @@ func StartDb() *gorm.DB {
 
 	initDatabase(db)
 
+	db.Preload("Youtube").
+		Preload("Port").
+		Preload("Version").
+		Preload("AspectRatio").
+		Preload("Emote").
+		Preload("Animations").
+		Preload("Preview").
+		First(&appConfig)
+
 	return db
 }
 
@@ -45,7 +56,7 @@ func initDatabase(db *gorm.DB) {
 
 func insertDefaultValues(db *gorm.DB) {
 	youtube := Youtube{
-		ApiKey:       "",
+		ApiKey:       "AIzaSyAxOjESchGSZKbX4bgXOI9RWLno8YnFERA",
 		VideoId:      "",
 		MessageDelay: 5000,
 	}
@@ -107,4 +118,8 @@ func insertDefaultValues(db *gorm.DB) {
 
 	db.Create(&initialConfig)
 	log.Printf("Inserted AppConfig with ID: %d", initialConfig.ID)
+}
+
+func GetConfig() *AppConfig {
+	return appConfig
 }

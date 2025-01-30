@@ -38,13 +38,12 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
   useEffect(() => {
     if (!config?.Port) return;
 
-    const ws = new WebSocket(`ws://localhost:${config.Port}/ws`);
+    const port = config.Port.Port;
+    const ws = new WebSocket(`ws://localhost:${port}/ws`);
     setSocket(ws);
 
     ws.onopen = () => {
-      console.log(
-        `Connected to WebSocket server at ws://localhost:${config.Port}/ws`
-      );
+      console.log(`Connected to WebSocket server at ws://localhost:${port}/ws`);
       setIsConnected(true);
     };
 
@@ -85,7 +84,9 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
   };
 
   return (
-    <WebSocketContext.Provider value={{ socket, isConnected, updateHandlers, sendMessage }}>
+    <WebSocketContext.Provider
+      value={{ socket, isConnected, updateHandlers, sendMessage }}
+    >
       {children}
     </WebSocketContext.Provider>
   );
