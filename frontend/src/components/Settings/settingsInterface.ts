@@ -1,13 +1,24 @@
-export interface MySettings {
+import { AspectRatio } from "@mui/icons-material";
+
+export interface SettingsYoutube {
   apiKey: string;
   videoId: string;
   messageDelay: string;
+}
+
+export interface SettingsPort {
   port: string;
+}
+
+export interface SettingsAspectRatio {
   forceWidthHeight: boolean;
   canvasWidth: string;
   canvasHeight: string;
   scaleCanvas: string;
   scaleImage: string;
+}
+
+export interface SettingsEmote {
   emoteWidth: string;
   randomSizeIncrease: string;
   randomSizeDecrease: string;
@@ -15,6 +26,8 @@ export interface MySettings {
   groupEmotes: boolean;
   emoteRoundness: string;
   emoteBackgroundColor: string;
-  test: boolean;
+}
+
+export interface SettingsPreview {
   speedOfEmotes: string;
 }

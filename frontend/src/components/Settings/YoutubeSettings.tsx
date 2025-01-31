@@ -8,11 +8,10 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
+import { SettingsYoutube } from "./settingsInterface";
 
 interface YouTubeSettingsProps {
-  apiKey: string;
-  videoId: string;
-  messageDelay: string;
+  settings: SettingsYoutube;
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   showApiKey: boolean;
   handleClickShowPassword: () => void;
@@ -24,9 +23,7 @@ const marginLeft = "10px";
 const marginRight = "10px";
 
 const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
-  apiKey,
-  videoId,
-  messageDelay,
+  settings,
   handleInputChange,
   showApiKey,
   handleClickShowPassword,
@@ -48,7 +45,7 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
           type={showApiKey ? "text" : "password"}
           name="apiKey"
           label="Api Key"
-          value={apiKey}
+          value={settings.apiKey}
           onChange={handleInputChange}
           margin="normal"
           sx={{
@@ -87,7 +84,7 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
         <TextField
           name="videoId"
           label="Video Id"
-          value={videoId}
+          value={settings.videoId}
           onChange={handleInputChange}
           margin="normal"
           sx={{
@@ -108,7 +105,7 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
         <TextField
           name="messageDelay"
           label="Message Delay"
-          value={messageDelay}
+          value={settings.messageDelay}
           onChange={handleInputChange}
           type="number"
           margin="normal"

@@ -61,7 +61,7 @@ export const UseEmotes = (
 
   const getRandomEmoteSizeChange = (max: number, min: number): number => {
     const sizeChange = Math.floor(Math.random() * (max - min + 1)) + min;
-    return config.Emote.Width + sizeChange;
+    return config.emote.width + sizeChange;
   };
 
   const updateEmotesGroups = (emoteGroup: Emote[]) => {
@@ -87,7 +87,7 @@ export const UseEmotes = (
         to setEmotesGroups was triggered
       Using a number caused it to be updated twice due to the second call
       */
-      if (updatedGroups.length > config.Emote.MaxEmoteCount) {
+      if (updatedGroups.length > config.emote.maxEmoteCount) {
         updatedGroups.shift();
       }
 
@@ -111,10 +111,10 @@ export const UseEmotes = (
   ) => {
     const randomAnimation = getRandomAnimation();
 
-    if (config.Emote.GroupEmotes) {
+    if (config.emote.groupEmotes) {
       const emoteSize = getRandomEmoteSizeChange(
-        config.Emote.RandomSizeIncrease,
-        config.Emote.RandomSizeDecrease * -1
+        config.emote.randomSizeIncrease,
+        config.emote.randomSizeDecrease * -1
       );
       const randomPos = getRandomPosition(nonTransparentPositions.current);
       const newEmoteGroup = createEmoteGroup(
@@ -128,8 +128,8 @@ export const UseEmotes = (
       for (let emote of emoteUrls) {
         const tempArray = [emote];
         const emoteSize = getRandomEmoteSizeChange(
-          config.Emote.RandomSizeIncrease,
-          config.Emote.RandomSizeDecrease * -1
+          config.emote.randomSizeIncrease,
+          config.emote.randomSizeDecrease * -1
         );
         const randomPos = getRandomPosition(nonTransparentPositions.current);
         const newEmoteGroup = createEmoteGroup(

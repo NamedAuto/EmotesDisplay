@@ -1,40 +1,40 @@
-interface EmoteConfig {
-  Width: number;
-  Height: number;
-  RandomSizeIncrease: number;
-  RandomSizeDecrease: number;
-  MaxEmoteCount: number;
-  GroupEmotes: boolean;
-  Roundness: number;
-  BackgroundColor: string;
+export interface Youtube {
+  apiKey: string;
+  videoId: string;
+  messageDelay: number;
 }
 
-interface YoutubeConfig {
-  ApiKey: string;
-  VideoId: string;
-  MessageDelay: number;
+export interface Port {
+  port: number;
 }
 
-interface AspectRatioConfig {
-  ForceWidthHeight: boolean;
-  Width: number;
-  Height: number;
-  ScaleCanvas: number;
-  ScaleImage: number;
+export interface AspectRatio {
+  forceWidthHeight: boolean;
+  width: number;
+  height: number;
+  scaleCanvas: number;
+  scaleImage: number;
 }
 
-interface PreviewConfig {
-  Test: boolean;
-  SpeedOfEmotes: number;
+export interface Emote {
+  width: number;
+  height: number;
+  randomSizeIncrease: number;
+  randomSizeDecrease: number;
+  maxEmoteCount: number;
+  groupEmotes: boolean;
+  roundness: number;
+  backgroundColor: string;
 }
-interface PortConfig {
-  Port: number;
+
+export interface Preview {
+  speedOfEmotes: number;
 }
 
 export interface Config {
-  Emote: EmoteConfig;
-  Youtube: YoutubeConfig;
-  AspectRatio: AspectRatioConfig;
-  Preview: PreviewConfig;
-  Port: PortConfig;
+  youtube: Youtube;
+  port: Port;
+  aspectRatio: AspectRatio;
+  emote: Emote;
+  preview: Preview;
 }

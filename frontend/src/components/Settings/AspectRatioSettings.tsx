@@ -7,11 +7,10 @@ import {
   Typography,
   Tooltip,
 } from "@mui/material";
+import { SettingsAspectRatio } from "./settingsInterface";
 
 interface AspectRatioSettingsProps {
-  forceWidthHeight: boolean;
-  width: string;
-  height: string;
+  settings: SettingsAspectRatio;
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -21,9 +20,7 @@ const marginLeft = "10px";
 const marginRight = "10px";
 
 const AspectRatioSettings: React.FC<AspectRatioSettingsProps> = ({
-  forceWidthHeight,
-  width,
-  height,
+  settings,
   handleInputChange,
 }) => (
   <Box>
@@ -46,7 +43,7 @@ const AspectRatioSettings: React.FC<AspectRatioSettingsProps> = ({
           control={
             <Checkbox
               name="forceWidthHeight"
-              checked={forceWidthHeight}
+              checked={settings.forceWidthHeight}
               onChange={handleInputChange}
             />
           }
@@ -58,7 +55,7 @@ const AspectRatioSettings: React.FC<AspectRatioSettingsProps> = ({
       <TextField
         name="canvasWidth"
         label="Width"
-        value={width}
+        value={settings.canvasWidth}
         onChange={handleInputChange}
         type="number"
         margin="normal"
@@ -78,7 +75,7 @@ const AspectRatioSettings: React.FC<AspectRatioSettingsProps> = ({
       <TextField
         name="canvasHeight"
         label="Height"
-        value={height}
+        value={settings.canvasHeight}
         onChange={handleInputChange}
         type="number"
         margin="normal"

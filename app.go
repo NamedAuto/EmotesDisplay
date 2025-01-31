@@ -31,5 +31,5 @@ func (a *App) Greet(name string) string {
 }
 
 func (a *App) GetPort() int {
-	return database.GetConfig().Port.Port
+	return database.GetAppConfig().Port.Port
 }

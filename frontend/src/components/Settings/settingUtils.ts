@@ -1,65 +1,94 @@
-import { Config } from "../Config/ConfigInterface";
-import { MySettings } from "./settingsInterface";
+import {
+  AspectRatio,
+  Config,
+  Emote,
+  Port,
+  Preview,
+  Youtube,
+} from "../Config/ConfigInterface";
+import {
+  SettingsAspectRatio,
+  SettingsEmote,
+  SettingsPort,
+  SettingsPreview,
+  SettingsYoutube,
+} from "./settingsInterface";
 
-export const formatSettings = (config: Config) => ({
-  apiKey: config.Youtube.ApiKey,
-  videoId: config.Youtube.VideoId,
-  messageDelay: (config.Youtube.MessageDelay / 1000).toString(),
-  port: config.Port.Port.toString(),
-  forceWidthHeight: config.AspectRatio.ForceWidthHeight,
-  canvasWidth: config.AspectRatio.Width.toString(),
-  canvasHeight: config.AspectRatio.Height.toString(),
-  scaleCanvas: config.AspectRatio.ScaleCanvas.toString(),
-  scaleImage: config.AspectRatio.ScaleImage.toString(),
-  emoteWidth: config.Emote.Width.toString(),
-  randomSizeIncrease: config.Emote.RandomSizeIncrease.toString(),
-  randomSizeDecrease: config.Emote.RandomSizeDecrease.toString(),
-  maxEmoteCount: config.Emote.MaxEmoteCount.toString(),
-  groupEmotes: config.Emote.GroupEmotes,
-  emoteRoundness: config.Emote.Roundness.toString(),
-  emoteBackgroundColor: config.Emote.BackgroundColor,
-  test: config.Preview.Test,
-  speedOfEmotes: (config.Preview.SpeedOfEmotes / 1000).toString(),
+export const formatYoutubeSettings = (youtube: Youtube) => ({
+  apiKey: youtube.apiKey,
+  videoId: youtube.videoId,
+  messageDelay: (youtube.messageDelay / 1000).toString(),
+});
+
+export const formatPortSettings = (port: Port) => ({
+  port: port.port.toString(),
+});
+
+export const formatAspectRatioSettings = (aspectRatio: AspectRatio) => ({
+  forceWidthHeight: aspectRatio.forceWidthHeight,
+  canvasWidth: aspectRatio.width.toString(),
+  canvasHeight: aspectRatio.height.toString(),
+  scaleCanvas: aspectRatio.scaleCanvas.toString(),
+  scaleImage: aspectRatio.scaleImage.toString(),
+});
+
+export const formatEmoteSettings = (emote: Emote) => ({
+  emoteWidth: emote.width.toString(),
+  randomSizeIncrease: emote.randomSizeIncrease.toString(),
+  randomSizeDecrease: emote.randomSizeDecrease.toString(),
+  maxEmoteCount: emote.maxEmoteCount.toString(),
+  groupEmotes: emote.groupEmotes,
+  emoteRoundness: emote.roundness.toString(),
+  emoteBackgroundColor: emote.backgroundColor,
+});
+
+export const formatPreviewSettings = (preview: Preview) => ({
+  speedOfEmotes: (preview.speedOfEmotes / 1000).toString(),
 });
 
 export const createConfigCopyWithUpdate = (
   config: Config,
-  settings: MySettings
+  settingsYoutube: SettingsYoutube,
+  settingsPort: SettingsPort,
+  settingsAspectRatio: SettingsAspectRatio,
+  settingsEmote: SettingsEmote,
+  settingsPreview: SettingsPreview
 ) => {
   return {
     ...config,
-    Youtube: {
-      ...config.Youtube,
-      ApiKey: settings.apiKey,
-      VideoId: settings.videoId,
-      MessageDelay: Math.round(parseFloat(settings.messageDelay) * 1000),
+    youtube: {
+      ...config.youtube,
+      apiKey: settingsYoutube.apiKey,
+      videoId: settingsYoutube.videoId,
+      messageDelay: Math.round(parseFloat(settingsYoutube.messageDelay) * 1000),
     },
-    Port: {
-      ...config.Port,
-      Port: parseInt(settings.port, 10),
+    port: {
+      ...config.port,
+      port: parseInt(settingsPort.port, 10),
     },
-    AspectRatio: {
-      ...config.AspectRatio,
-      ForceWidthHeight: settings.forceWidthHeight,
-      Width: parseInt(settings.canvasWidth, 10),
-      Height: parseInt(settings.canvasHeight, 10),
-      ScaleCanvas: parseFloat(settings.scaleCanvas),
-      ScaleImage: parseFloat(settings.scaleImage),
+    aspectRatio: {
+      ...config.aspectRatio,
+      forceWidthHeight: settingsAspectRatio.forceWidthHeight,
+      width: parseInt(settingsAspectRatio.canvasWidth, 10),
+      height: parseInt(settingsAspectRatio.canvasHeight, 10),
+      scaleCanvas: parseFloat(settingsAspectRatio.scaleCanvas),
+      scaleImage: parseFloat(settingsAspectRatio.scaleImage),
     },
-    Emote: {
-      ...config.Emote,
-      Width: parseInt(settings.emoteWidth, 10),
-      RandomSizeIncrease: parseInt(settings.randomSizeIncrease, 10),
-      RandomSizeDecrease: parseInt(settings.randomSizeDecrease, 10),
-      MaxEmoteCount: parseInt(settings.maxEmoteCount, 10),
-      GroupEmotes: settings.groupEmotes,
-      Roundness: parseInt(settings.emoteRoundness, 10),
-      BackgroundColor: settings.emoteBackgroundColor,
+    emote: {
+      ...config.emote,
+      width: parseInt(settingsEmote.emoteWidth, 10),
+      randomSizeIncrease: parseInt(settingsEmote.randomSizeIncrease, 10),
+      randomSizeDecrease: parseInt(settingsEmote.randomSizeDecrease, 10),
+      maxEmoteCount: parseInt(settingsEmote.maxEmoteCount, 10),
+      groupEmotes: settingsEmote.groupEmotes,
+      roundness: parseInt(settingsEmote.emoteRoundness, 10),
+      backgroundColor: settingsEmote.emoteBackgroundColor,
     },
-    Preview: {
-      ...config.Preview,
-      Test: settings.test,
-      SpeedOfEmotes: Math.round(parseFloat(settings.speedOfEmotes) * 1000),
+    preview: {
+      ...config.preview,
+      speedOfEmotes: Math.round(
+        parseFloat(settingsPreview.speedOfEmotes) * 1000
+      ),
     },
   };
 };

@@ -6,9 +6,10 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
+import { SettingsPreview } from "./settingsInterface";
 
 interface PreviewSettingsProps {
-  settings: any;
+  settings: SettingsPreview;
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 

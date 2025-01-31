@@ -4,6 +4,7 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -12,8 +13,7 @@ import (
 	"github.com/NamedAuto/EmotesDisplay/backend/config"
 	"github.com/NamedAuto/EmotesDisplay/backend/database"
 	"github.com/NamedAuto/EmotesDisplay/backend/github"
-
-	"gopkg.in/yaml.v2"
+	"gorm.io/gorm"
 )
 
 var assets embed.FS
@@ -75,9 +75,9 @@ func contains(slice []string, item string) bool {
 	return false
 }
 
-func configureConfigEndpoint(mux *http.ServeMux, yamlPath string) {
+func configureConfigEndpoint(mux *http.ServeMux, db *gorm.DB) {
 	mux.HandleFunc("/config", func(w http.ResponseWriter, r *http.Request) {
-		configPath := filepath.Join(yamlPath, "config.yaml")
+		// configPath := filepath.Join(yamlPath, "config.yaml")
 		if r.Method == http.MethodGet {
 
 			// if _, err := os.Stat(configPath); os.IsNotExist(err) {
@@ -112,37 +112,67 @@ func configureConfigEndpoint(mux *http.ServeMux, yamlPath string) {
 			// json.NewEncoder(w).Encode(config)
 
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(database.GetConfig())
+
+			json.NewEncoder(w).Encode(database.ToAppConfigDTO(*database.GetAppConfig()))
 
 		} else if r.Method == http.MethodPost {
-			var newConfig config.AppConfig
+			// var newConfig database.AppConfig
+			var incomingConfigDTO database.AppConfigDTO
 
-			err := json.NewDecoder(r.Body).Decode(&newConfig)
+			err := json.NewDecoder(r.Body).Decode(&incomingConfigDTO)
 			if err != nil {
 				http.Error(w, fmt.Sprintf("Error decoding JSON: %v", err),
 					http.StatusBadRequest)
 				return
 			}
 
-			// log.Println("This is what I received: ")
-			// log.Println(config)
+			// newConfig := database.ToAppConfigModel(incomingConfigDTO)
 
-			fileContent, err := yaml.Marshal(&newConfig)
-			if err != nil {
-				http.Error(w, fmt.Sprintf("Error converting to YAML: %v", err),
-					http.StatusInternalServerError)
-				return
+			log.Println("This is what I received: ")
+			log.Println(incomingConfigDTO)
+
+			existingConfig := database.GetAppConfig()
+			// db.Model(&database.AppConfig{}).Where("id = ?", config.ID).Updates(newConfig)
+
+			// Update only the changed fields
+			if incomingConfigDTO.Youtube != database.ToYoutubeDTO(existingConfig.Youtube) {
+				db.Model(&existingConfig.Youtube).Updates(database.ToYoutubeModel(incomingConfigDTO.Youtube))
+			}
+			if incomingConfigDTO.Port != database.ToPortDTO(existingConfig.Port) {
+				db.Model(&existingConfig.Port).Updates(database.ToPortModel(incomingConfigDTO.Port))
+			}
+			if incomingConfigDTO.Version != database.ToVersionDTO(existingConfig.Version) {
+				db.Model(&existingConfig.Version).Updates(database.ToVersionModel(incomingConfigDTO.Version))
+			}
+			if incomingConfigDTO.AspectRatio != database.ToAspectRatioDTO(existingConfig.AspectRatio) {
+				db.Model(&existingConfig.AspectRatio).Updates(database.ToAspectRatioModel(incomingConfigDTO.AspectRatio))
+			}
+			if incomingConfigDTO.Emote != database.ToEmoteDTO(existingConfig.Emote) {
+				db.Model(&existingConfig.Emote).Updates(database.ToEmoteModel(incomingConfigDTO.Emote))
+			}
+			if incomingConfigDTO.Animations != database.ToAnimationsDTO(existingConfig.Animations) {
+				db.Model(&existingConfig.Animations).Updates(database.ToAnimationsModel(incomingConfigDTO.Animations))
+			}
+			if incomingConfigDTO.Preview != database.ToPreviewDTO(existingConfig.Preview) {
+				db.Model(&existingConfig.Preview).Updates(database.ToPreviewModel(incomingConfigDTO.Preview))
 			}
 
-			// log.Println("This is my yaml")
-			// log.Println(string(fileContent))
+			// fileContent, err := yaml.Marshal(&newConfig)
+			// if err != nil {
+			// 	http.Error(w, fmt.Sprintf("Error converting to YAML: %v", err),
+			// 		http.StatusInternalServerError)
+			// 	return
+			// }
 
-			err = os.WriteFile(configPath, fileContent, 0644)
-			if err != nil {
-				http.Error(w, fmt.Sprintf("Error writing config file: %v", err),
-					http.StatusInternalServerError)
-				return
-			}
+			// // log.Println("This is my yaml")
+			// // log.Println(string(fileContent))
+
+			// err = os.WriteFile(configPath, fileContent, 0644)
+			// if err != nil {
+			// 	http.Error(w, fmt.Sprintf("Error writing config file: %v", err),
+			// 		http.StatusInternalServerError)
+			// 	return
+			// }
 
 			// config.SetMyConfig(&newConfig)
 			// TODO: Update to use database
@@ -224,10 +254,10 @@ func configureDefaultEndpoint(mux *http.ServeMux) {
 	})
 }
 
-func ConfigureEndpoints(mux *http.ServeMux, myPaths config.MyPaths, repo config.Repo) {
+func ConfigureEndpoints(mux *http.ServeMux, db *gorm.DB, myPaths config.MyPaths, repo config.Repo) {
 
 	configureEmotesEndpoint(mux, myPaths.EmotePath)
-	configureConfigEndpoint(mux, myPaths.YamlPath)
+	configureConfigEndpoint(mux, db)
 	configureBackgroundImageEndpoint(mux, myPaths.BackgroundPath)
 	configureVersionEndpoint(mux, repo)
 	configureDefaultEndpoint(mux)

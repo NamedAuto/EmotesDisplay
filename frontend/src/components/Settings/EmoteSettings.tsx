@@ -8,9 +8,10 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
+import { SettingsEmote } from "./settingsInterface";
 
 interface EmoteSettingsProps {
-  settings: any;
+  settings: SettingsEmote;
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 

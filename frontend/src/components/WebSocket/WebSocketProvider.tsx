@@ -36,9 +36,9 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
   const handlersRef = useRef<MessageHandlers>({});
 
   useEffect(() => {
-    if (!config?.Port) return;
+    if (!config?.port) return;
 
-    const port = config.Port.Port;
+    const port = config.port.port;
     const ws = new WebSocket(`ws://localhost:${port}/ws`);
     setSocket(ws);
 
@@ -69,7 +69,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
       ws.close();
       setSocket(null);
     };
-  }, [config?.Port]);
+  }, [config?.port]);
 
   const updateHandlers = (handlers: MessageHandlers) => {
     handlersRef.current = handlers;

@@ -153,9 +153,9 @@ const CanvasComponent: React.FC = () => {
       const imageWidth = backgroundImageRef.current.naturalWidth;
       const imageHeight = backgroundImageRef.current.naturalHeight;
 
-      if (config.AspectRatio.ForceWidthHeight) {
-        const maxWidth = config.AspectRatio.Width;
-        const maxHeight = config.AspectRatio.Height;
+      if (config.aspectRatio.forceWidthHeight) {
+        const maxWidth = config.aspectRatio.width;
+        const maxHeight = config.aspectRatio.height;
         let newWidth = imageWidth;
         let newHeight = imageHeight;
 
@@ -224,8 +224,8 @@ const CanvasComponent: React.FC = () => {
                       // top: emote.pos.y,
                       width: emote.size,
                       height: emote.size,
-                      borderRadius: `${config.Emote.Roundness}%`,
-                      backgroundColor: config.Emote.BackgroundColor,
+                      borderRadius: `${config.emote.roundness}%`,
+                      backgroundColor: config.emote.backgroundColor,
                     }}
                     alt={`emote-${emoteIdx}`}
                   />

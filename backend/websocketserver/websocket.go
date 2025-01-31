@@ -14,6 +14,7 @@ import (
 	"github.com/NamedAuto/EmotesDisplay/backend/service"
 	"github.com/gorilla/websocket"
 	"golang.org/x/exp/rand"
+	"gorm.io/gorm"
 )
 
 type WebSocketHandler struct {
@@ -67,6 +68,7 @@ func (handler *WebSocketHandler) ConfigureUpgrader(allowedOrigin string) websock
 
 func (handler *WebSocketHandler) HandleConnections(
 	allowedOrigin string,
+	db *gorm.DB,
 	youtubeService *service.YoutubeService) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -92,7 +94,7 @@ func (handler *WebSocketHandler) HandleConnections(
 					break
 				}
 				log.Printf("Received: %s\n", msg)
-				handler.HandleMessage(ws, msg, youtubeService)
+				handler.HandleMessage(ws, msg, db, youtubeService)
 			}
 		}()
 
@@ -106,6 +108,7 @@ func (handler *WebSocketHandler) HandleConnections(
 func (handler *WebSocketHandler) HandleMessage(
 	ws *websocket.Conn,
 	message []byte,
+	db *gorm.DB,
 	youtubeService *service.YoutubeService) {
 
 	var event map[string]interface{}
@@ -131,7 +134,7 @@ func (handler *WebSocketHandler) HandleMessage(
 		log.Printf("Received customEvent with data: %v", data)
 
 	case "connectYoutube":
-		myyoutube.ConnectToYoutube(handler, youtubeService)
+		myyoutube.ConnectToYoutube(handler, db, youtubeService)
 	case "disconnectYoutube":
 		myyoutube.DisconnectFromYoutube()
 	case "startPreview":

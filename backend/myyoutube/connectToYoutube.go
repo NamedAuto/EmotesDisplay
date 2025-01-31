@@ -7,8 +7,10 @@ import (
 	"time"
 
 	"github.com/NamedAuto/EmotesDisplay/backend/common"
+	"github.com/NamedAuto/EmotesDisplay/backend/database"
 	"github.com/NamedAuto/EmotesDisplay/backend/parse"
 	"github.com/NamedAuto/EmotesDisplay/backend/service"
+	"gorm.io/gorm"
 
 	"google.golang.org/api/youtube/v3"
 )
@@ -21,7 +23,7 @@ var (
 )
 var apiCallCounter = 0
 
-func ConnectToYoutube(handler common.HandlerInterface, myYoutubeService *service.YoutubeService) {
+func ConnectToYoutube(handler common.HandlerInterface, db *gorm.DB, myYoutubeService *service.YoutubeService) {
 	log.Println("Connecting to youtube")
 	mu.Lock()
 	defer mu.Unlock()
@@ -34,7 +36,7 @@ func ConnectToYoutube(handler common.HandlerInterface, myYoutubeService *service
 	stopChan = make(chan bool)
 	wg.Add(1)
 
-	go GetYoutubeMessages(handler, youtubeService, myYoutubeService)
+	go GetYoutubeMessages(handler, db, youtubeService, myYoutubeService)
 }
 
 func DisconnectFromYoutube() {
@@ -59,11 +61,15 @@ var ticker *time.Ticker
 
 func GetYoutubeMessages(
 	handler common.HandlerInterface,
+	db *gorm.DB,
 	youtubeService *youtube.Service,
 	myYoutubeService *service.YoutubeService,
 ) {
 
 	defer wg.Done()
+
+	var youtube database.Youtube
+	db.First(&youtube)
 
 	apiCallCounter++
 	liveChatId, err := GetLiveChatID(youtubeService,
@@ -120,7 +126,7 @@ func GetYoutubeMessages(
 					// log.Printf("%s: %s", displayName, msg)
 
 					baseUrl := fmt.Sprintf("http://localhost:%d/emotes/",
-						myYoutubeService.PreviewService.Config.Port)
+						myYoutubeService.PreviewService.Config.Port.Port)
 					emoteUrls := parse.ParseMessageForEmotes(
 						msg,
 						baseUrl,

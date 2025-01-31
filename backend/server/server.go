@@ -25,7 +25,7 @@ func StartServer(ctx context.Context) {
 	log.Println("Server starting")
 	db = database.StartDb()
 
-	appConfig := database.GetConfig()
+	appConfig := database.GetAppConfig()
 	myPaths := config.GetMyPaths()
 	repo := config.GetRepo()
 	emoteMap := config.GetEmoteMap()
@@ -41,6 +41,6 @@ func StartServer(ctx context.Context) {
 	}
 
 	go myyoutube.ConfigureYoutube(ctx, appConfig.Youtube.ApiKey)
-	go websocketserver.StartWebSocketServer(mux, handler, youtubeService)
-	go httpserver.StartHttpServer(mux, myPaths, repo, appConfig.Port.Port)
+	go websocketserver.StartWebSocketServer(mux, handler, db, youtubeService)
+	go httpserver.StartHttpServer(mux, db, myPaths, repo, appConfig.Port.Port)
 }

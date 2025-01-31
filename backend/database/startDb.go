@@ -120,6 +120,9 @@ func insertDefaultValues(db *gorm.DB) {
 	log.Printf("Inserted AppConfig with ID: %d", initialConfig.ID)
 }
 
-func GetConfig() *AppConfig {
+func GetAppConfig() *AppConfig {
 	return appConfig
+}
+
+func SetAppConfig() {
 }

@@ -1,8 +1,9 @@
 import { Box, TextField, Tooltip, Typography } from "@mui/material";
 import React from "react";
+import { SettingsPort } from "./settingsInterface";
 
 interface PortSettingsProps {
-  port: string;
+  settings: SettingsPort;
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -12,7 +13,7 @@ const marginLeft = "10px";
 const marginRight = "10px";
 
 const PortSettings: React.FC<PortSettingsProps> = ({
-  port,
+  settings,
   handleInputChange,
 }) => (
   <Box>
@@ -34,7 +35,7 @@ const PortSettings: React.FC<PortSettingsProps> = ({
         <TextField
           name="port"
           label="Port"
-          value={port}
+          value={settings.port}
           onChange={handleInputChange}
           type="number"
           margin="normal"

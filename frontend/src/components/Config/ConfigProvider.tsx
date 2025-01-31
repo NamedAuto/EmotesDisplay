@@ -1,9 +1,9 @@
 import {
-    createContext,
-    ReactNode,
-    useContext,
-    useEffect,
-    useState,
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
 } from "react";
 import { GetPort } from "../../../wailsjs/go/main/App";
 import { Config } from "./ConfigInterface";
@@ -38,7 +38,7 @@ export async function loadConfigFront(): Promise<Config | null> {
       console.error("Error fetching config:", error);
     }
   }
-
+  console.log(JSON.stringify(config, null, 2));
   return config;
 }
 

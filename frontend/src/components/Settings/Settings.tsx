@@ -25,9 +25,22 @@ import HeaderSettings from "./HeaderSettings";
 import PortSettings from "./PortSettings";
 import PreviewSettings from "./PreviewSettings";
 import YouTubeSettings from "./YoutubeSettings";
-import { createConfigCopyWithUpdate, formatSettings } from "./settingUtils";
+import {
+  createConfigCopyWithUpdate,
+  formatAspectRatioSettings,
+  formatEmoteSettings,
+  formatPortSettings,
+  formatPreviewSettings,
+  formatYoutubeSettings,
+} from "./settingUtils";
 import { setupHandlers } from "./settingsHandlers";
-import { MySettings } from "./settingsInterface";
+import {
+  SettingsAspectRatio,
+  SettingsEmote,
+  SettingsPort,
+  SettingsPreview,
+  SettingsYoutube,
+} from "./settingsInterface";
 import darkTheme from "./settingsTheme";
 
 const SettingsPage: React.FC = () => {
@@ -41,26 +54,80 @@ const SettingsPage: React.FC = () => {
   }, [updateHandlers]);
 
   const [showApiKey, setShowApiKey] = useState(false);
-  const [settings, setSettings] = useState<MySettings>(formatSettings(config));
+
+  const [settingsYoutube, setSettingsYoutube] = useState<SettingsYoutube>(
+    formatYoutubeSettings(config.youtube)
+  );
+  const [settingsPort, setSettingsPort] = useState<SettingsPort>(
+    formatPortSettings(config.port)
+  );
+  const [settingsAspectRatio, setSettingsAspectRatio] =
+    useState<SettingsAspectRatio>(
+      formatAspectRatioSettings(config.aspectRatio)
+    );
+
+  const [settingsEmote, setSettingsEmote] = useState<SettingsEmote>(
+    formatEmoteSettings(config.emote)
+  );
+
+  const [settingsPreview, setSettingsPreview] = useState<SettingsPreview>(
+    formatPreviewSettings(config.preview)
+  );
 
   const handleReset = () => {
-    setSettings(formatSettings(config));
+    setSettingsYoutube(formatYoutubeSettings(config.youtube));
+    setSettingsPort(formatPortSettings(config.port));
+    setSettingsAspectRatio(formatAspectRatioSettings(config.aspectRatio));
+    setSettingsEmote(formatEmoteSettings(config.emote));
+    setSettingsPreview(formatPreviewSettings(config.preview));
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = event.target;
-    setSettings((prevValues) => ({
-      ...prevValues,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+
+    if (name in settingsYoutube) {
+      setSettingsYoutube((prevValues) => ({
+        ...prevValues,
+        [name]: type === "checkbox" ? checked : value,
+      }));
+    } else if (name in settingsPort) {
+      setSettingsPort((prevValues) => ({
+        ...prevValues,
+        [name]: type === "checkbox" ? checked : value,
+      }));
+    } else if (name in settingsAspectRatio) {
+      setSettingsAspectRatio((prevValues) => ({
+        ...prevValues,
+        [name]: type === "checkbox" ? checked : value,
+      }));
+    } else if (name in settingsEmote) {
+      setSettingsEmote((prevValues) => ({
+        ...prevValues,
+        [name]: type === "checkbox" ? checked : value,
+      }));
+    } else if (name in settingsPreview) {
+      setSettingsPreview((prevValues) => ({
+        ...prevValues,
+        [name]: type === "checkbox" ? checked : value,
+      }));
+    }
   };
 
   const handleSave = async () => {
     console.log("Saving Settings");
+    console.log("Config: " + JSON.stringify(config, null, 2));
     try {
-      const tempConfig = createConfigCopyWithUpdate(config, settings);
+      const tempConfig = createConfigCopyWithUpdate(
+        config,
+        settingsYoutube,
+        settingsPort,
+        settingsAspectRatio,
+        settingsEmote,
+        settingsPreview
+      );
+
       // Force to ignore wails.localhost
-      const url = `http://localhost:${config.Port.Port}/config`;
+      const url = `http://localhost:${config.port.port}/config`;
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -74,6 +141,11 @@ const SettingsPage: React.FC = () => {
       }
 
       Object.assign(config, tempConfig);
+
+      console.log("TempConfig: " + JSON.stringify(tempConfig, null, 2));
+
+      console.log("Config: " + JSON.stringify(config, null, 2));
+
       console.log("Config Saved");
     } catch (error) {
       console.error("Error saving config: " + error);
@@ -118,47 +190,30 @@ const SettingsPage: React.FC = () => {
       case "YouTube":
         return (
           <YouTubeSettings
-            apiKey={settings.apiKey}
-            videoId={settings.videoId}
-            messageDelay={settings.messageDelay}
+            settings={settingsYoutube}
             handleInputChange={handleInputChange}
             showApiKey={showApiKey}
             handleClickShowPassword={handleClickShowPassword}
           />
         );
-      case "AspectRatio":
-        return (
-          <AspectRatioSettings
-            forceWidthHeight={settings.forceWidthHeight}
-            width={settings.canvasWidth}
-            height={settings.canvasHeight}
-            handleInputChange={handleInputChange}
-          />
-        );
-      case "Button":
-        return (
-          <ButtonSettings
-            isPreviewConnected={isPreviewConnected}
-            isYoutubeConnected={isYoutubeConnected}
-            handlePreviewStart={handlePreviewStart}
-            handlePreviewStop={handlePreviewStop}
-            handleYoutubeStart={handleYoutubeStart}
-            handleYoutubeStop={handleYoutubeStop}
-            handleReset={handleReset}
-            handleSave={handleSave}
-          />
-        );
       case "Port":
         return (
           <PortSettings
-            port={settings.port}
+            settings={settingsPort}
+            handleInputChange={handleInputChange}
+          />
+        );
+      case "AspectRatio":
+        return (
+          <AspectRatioSettings
+            settings={settingsAspectRatio}
             handleInputChange={handleInputChange}
           />
         );
       case "Preview":
         return (
           <PreviewSettings
-            settings={settings}
+            settings={settingsPreview}
             handleInputChange={handleInputChange}
           />
         );
@@ -166,14 +221,13 @@ const SettingsPage: React.FC = () => {
       case "Emote":
         return (
           <EmoteSettings
-            settings={settings}
+            settings={settingsEmote}
             handleInputChange={handleInputChange}
           />
         );
-      // default:
-      //   return <div>Select a settings option from the drawer.</div>;
     }
   };
+
   const openedMixin = (theme: Theme): CSSObject => ({
     width: drawerWidth,
     transition: theme.transitions.create("width", {
@@ -282,7 +336,7 @@ const SettingsPage: React.FC = () => {
               : `${drawerWidthMini}px`,
           }}
         >
-          <HeaderSettings port={config.Port.Port.toString()} />
+          <HeaderSettings port={config.port.port.toString()} />
           <Divider
             sx={{
               borderWidth: dividerWidth,

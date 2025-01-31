@@ -7,11 +7,18 @@ import (
 
 	"github.com/NamedAuto/EmotesDisplay/backend/config"
 	"github.com/NamedAuto/EmotesDisplay/backend/middleware"
+	"gorm.io/gorm"
 )
 
-func StartHttpServer(mux *http.ServeMux, myPaths config.MyPaths, repo config.Repo, port int) {
+func StartHttpServer(mux *http.ServeMux,
+	db *gorm.DB,
+	myPaths config.MyPaths,
+	repo config.Repo,
+	port int) {
+
 	ConfigureEndpoints(
 		mux,
+		db,
 		myPaths,
 		repo)
 
