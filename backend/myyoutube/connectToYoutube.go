@@ -9,7 +9,6 @@ import (
 	"github.com/NamedAuto/EmotesDisplay/backend/common"
 	"github.com/NamedAuto/EmotesDisplay/backend/database"
 	"github.com/NamedAuto/EmotesDisplay/backend/parse"
-	"github.com/NamedAuto/EmotesDisplay/backend/service"
 	"gorm.io/gorm"
 
 	"google.golang.org/api/youtube/v3"
@@ -23,7 +22,7 @@ var (
 )
 var apiCallCounter = 0
 
-func ConnectToYoutube(handler common.HandlerInterface, db *gorm.DB, myYoutubeService *service.YoutubeService) {
+func ConnectToYoutube(handler common.HandlerInterface, db *gorm.DB, emoteMap map[string]string) {
 	log.Println("Connecting to youtube")
 	mu.Lock()
 	defer mu.Unlock()
@@ -36,7 +35,7 @@ func ConnectToYoutube(handler common.HandlerInterface, db *gorm.DB, myYoutubeSer
 	stopChan = make(chan bool)
 	wg.Add(1)
 
-	go GetYoutubeMessages(handler, db, youtubeService, myYoutubeService)
+	go GetYoutubeMessages(handler, db, youtubeService, emoteMap)
 }
 
 func DisconnectFromYoutube() {
@@ -63,17 +62,19 @@ func GetYoutubeMessages(
 	handler common.HandlerInterface,
 	db *gorm.DB,
 	youtubeService *youtube.Service,
-	myYoutubeService *service.YoutubeService,
+	emoteMap map[string]string,
 ) {
 
 	defer wg.Done()
 
 	var youtube database.Youtube
+	var port database.Port
 	db.First(&youtube)
+	db.First(&port)
 
 	apiCallCounter++
-	liveChatId, err := GetLiveChatID(youtubeService,
-		myYoutubeService.PreviewService.Config.Youtube.VideoId)
+
+	liveChatId, err := GetLiveChatID(youtubeService, youtube.VideoId)
 	if err != nil {
 		log.Printf("Error getting live chat ID: %v\n", err)
 		if stopChan != nil {
@@ -86,7 +87,7 @@ func GetYoutubeMessages(
 	nextPageToken := ""
 
 	handler.EmitYoutubeConnection(true)
-	lastMessageDelay := myYoutubeService.PreviewService.Config.Youtube.MessageDelay
+	lastMessageDelay := youtube.MessageDelay
 	duration := time.Duration(lastMessageDelay) * time.Millisecond
 	ticker = time.NewTicker(duration)
 	defer ticker.Stop()
@@ -125,12 +126,11 @@ func GetYoutubeMessages(
 					msg := message.Snippet.DisplayMessage
 					// log.Printf("%s: %s", displayName, msg)
 
-					baseUrl := fmt.Sprintf("http://localhost:%d/emotes/",
-						myYoutubeService.PreviewService.Config.Port.Port)
+					baseUrl := fmt.Sprintf("http://localhost:%d/emotes/", port.Port)
 					emoteUrls := parse.ParseMessageForEmotes(
 						msg,
 						baseUrl,
-						myYoutubeService.PreviewService.EmoteMap)
+						emoteMap)
 
 					if len(emoteUrls) > 0 {
 						time.Sleep(100 * time.Millisecond)
@@ -146,7 +146,12 @@ func GetYoutubeMessages(
 			nextPageToken = newNextPageToken
 
 			mu.Lock()
-			currentMessageDelay := myYoutubeService.PreviewService.Config.Youtube.MessageDelay
+
+			var currentMessageDelay int
+			db.Model(&database.Youtube{}).
+				Where("id = ?", youtube.ID).
+				Select("message_delay").
+				Scan(&currentMessageDelay)
 
 			if currentMessageDelay != lastMessageDelay ||
 				pollingIntervalMillis > int64(currentMessageDelay) {

@@ -5,18 +5,25 @@ import (
 	"time"
 
 	"github.com/NamedAuto/EmotesDisplay/backend/common"
-	"github.com/NamedAuto/EmotesDisplay/backend/service"
+	"github.com/NamedAuto/EmotesDisplay/backend/database"
+	"gorm.io/gorm"
 )
 
 var ticker *time.Ticker
 
 func startEmitTimer(handler common.HandlerInterface,
-	previewService *service.PreviewService,
+	db *gorm.DB,
+	emoteMap map[string]string,
 	stopChan chan bool) {
 
 	defer wg.Done()
 
-	lastSpeedOfEmotes := previewService.Config.Preview.SpeedOfEmotes
+	var preview database.Preview
+	var port database.Port
+	db.First(&preview)
+	db.First(&port)
+
+	lastSpeedOfEmotes := preview.SpeedOfEmotes
 	duration := time.Duration(lastSpeedOfEmotes) * time.Millisecond
 	ticker = time.NewTicker(duration)
 	defer ticker.Stop()
@@ -24,9 +31,14 @@ func startEmitTimer(handler common.HandlerInterface,
 	for {
 		select {
 		case <-ticker.C:
-			handler.EmitToAllRandom(previewService.Config.Port.Port, previewService.EmoteMap)
+			handler.EmitToAllRandom(port.Port, emoteMap)
 
-			currentSpeedOfEmotes := previewService.Config.Preview.SpeedOfEmotes
+			var currentSpeedOfEmotes int
+			db.Model(&database.Preview{}).
+				Where("id = ?", preview.ID).
+				Select("speed_of_emotes").
+				Scan(&currentSpeedOfEmotes)
+
 			if currentSpeedOfEmotes != lastSpeedOfEmotes {
 				lastSpeedOfEmotes = currentSpeedOfEmotes
 				duration = time.Duration(currentSpeedOfEmotes) * time.Millisecond

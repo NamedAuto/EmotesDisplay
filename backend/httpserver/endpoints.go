@@ -4,7 +4,6 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -77,46 +76,12 @@ func contains(slice []string, item string) bool {
 
 func configureConfigEndpoint(mux *http.ServeMux, db *gorm.DB) {
 	mux.HandleFunc("/config", func(w http.ResponseWriter, r *http.Request) {
-		// configPath := filepath.Join(yamlPath, "config.yaml")
 		if r.Method == http.MethodGet {
-
-			// if _, err := os.Stat(configPath); os.IsNotExist(err) {
-			// 	http.Error(w, "Config file not found", http.StatusNotFound)
-			// 	return
-			// }
-
-			// file, err := os.Open(configPath)
-			// if err != nil {
-			// 	http.Error(w, fmt.Sprintf("Error reading config file: %v", err),
-			// 		http.StatusInternalServerError)
-			// 	return
-			// }
-			// defer file.Close()
-
-			// fileContent, err := io.ReadAll(file)
-			// if err != nil {
-			// 	http.Error(w, fmt.Sprintf("Error reading config file: %v", err),
-			// 		http.StatusInternalServerError)
-			// 	return
-			// }
-
-			// var config config.AppConfig
-			// err = yaml.Unmarshal(fileContent, &config)
-			// if err != nil {
-			// 	http.Error(w, fmt.Sprintf("Error parsing config file: %v", err),
-			// 		http.StatusInternalServerError)
-			// 	return
-			// }
-
-			// w.Header().Set("Content-Type", "application/json")
-			// json.NewEncoder(w).Encode(config)
-
 			w.Header().Set("Content-Type", "application/json")
 
 			json.NewEncoder(w).Encode(database.ToAppConfigDTO(*database.GetAppConfig()))
 
 		} else if r.Method == http.MethodPost {
-			// var newConfig database.AppConfig
 			var incomingConfigDTO database.AppConfigDTO
 
 			err := json.NewDecoder(r.Body).Decode(&incomingConfigDTO)
@@ -126,13 +91,7 @@ func configureConfigEndpoint(mux *http.ServeMux, db *gorm.DB) {
 				return
 			}
 
-			// newConfig := database.ToAppConfigModel(incomingConfigDTO)
-
-			log.Println("This is what I received: ")
-			log.Println(incomingConfigDTO)
-
 			existingConfig := database.GetAppConfig()
-			// db.Model(&database.AppConfig{}).Where("id = ?", config.ID).Updates(newConfig)
 
 			// Update only the changed fields
 			if incomingConfigDTO.Youtube != database.ToYoutubeDTO(existingConfig.Youtube) {
@@ -157,25 +116,6 @@ func configureConfigEndpoint(mux *http.ServeMux, db *gorm.DB) {
 				db.Model(&existingConfig.Preview).Updates(database.ToPreviewModel(incomingConfigDTO.Preview))
 			}
 
-			// fileContent, err := yaml.Marshal(&newConfig)
-			// if err != nil {
-			// 	http.Error(w, fmt.Sprintf("Error converting to YAML: %v", err),
-			// 		http.StatusInternalServerError)
-			// 	return
-			// }
-
-			// // log.Println("This is my yaml")
-			// // log.Println(string(fileContent))
-
-			// err = os.WriteFile(configPath, fileContent, 0644)
-			// if err != nil {
-			// 	http.Error(w, fmt.Sprintf("Error writing config file: %v", err),
-			// 		http.StatusInternalServerError)
-			// 	return
-			// }
-
-			// config.SetMyConfig(&newConfig)
-			// TODO: Update to use database
 			w.WriteHeader(http.StatusOK)
 			w.Write([]byte("Config saved successfully"))
 		} else {

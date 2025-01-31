@@ -61,15 +61,3 @@ func GetMyPaths() MyPaths {
 func GetEmoteMap() map[string]string {
 	return emoteMap
 }
-
-// func GetMyConfig() *AppConfig {
-// 	mu.RLock()
-// 	defer mu.RUnlock()
-// 	return myConfig
-// }
-
-// func SetMyConfig(newConfig *AppConfig) {
-// 	mu.Lock()
-// 	defer mu.Unlock()
-// 	*myConfig = *newConfig
-// }
