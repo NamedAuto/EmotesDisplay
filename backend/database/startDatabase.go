@@ -72,8 +72,9 @@ func insertDefaultValues(db *gorm.DB) {
 	}
 	db.Create(&version)
 
+	forceWidthHeight := true
 	aspectRatio := AspectRatio{
-		ForceWidthHeight: true,
+		ForceWidthHeight: &forceWidthHeight,
 		Width:            1920,
 		Height:           1080,
 		ScaleCanvas:      1,
@@ -81,13 +82,14 @@ func insertDefaultValues(db *gorm.DB) {
 	}
 	db.Create(&aspectRatio)
 
+	groupEmotes := true
 	emote := Emote{
 		Width:              50,
 		Height:             50,
 		RandomSizeIncrease: 10,
 		RandomSizeDecrease: 20,
 		MaxEmoteCount:      200,
-		GroupEmotes:        true,
+		GroupEmotes:        &groupEmotes,
 		Roundness:          50,
 		BackgroundColor:    "rgba(255, 255, 255, 0)",
 	}

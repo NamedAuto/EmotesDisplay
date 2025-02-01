@@ -23,7 +23,7 @@ type Version struct {
 
 type AspectRatio struct {
 	gorm.Model
-	ForceWidthHeight bool
+	ForceWidthHeight *bool
 	Width            int
 	Height           int
 	ScaleCanvas      float32
@@ -37,7 +37,7 @@ type Emote struct {
 	RandomSizeIncrease int
 	RandomSizeDecrease int
 	MaxEmoteCount      int
-	GroupEmotes        bool
+	GroupEmotes        *bool
 	Roundness          int
 	BackgroundColor    string
 }
@@ -49,6 +49,12 @@ type Animations struct {
 type Preview struct {
 	gorm.Model
 	SpeedOfEmotes int
+}
+
+type Authentication struct {
+	gorm.Model
+	YoutubeApiKey string
+	Twitch        string
 }
 
 type AppConfig struct {

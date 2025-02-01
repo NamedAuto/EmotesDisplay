@@ -77,7 +77,7 @@ func ToVersionDTO(v Version) VersionDTO {
 
 func ToAspectRatioDTO(a AspectRatio) AspectRatioDTO {
 	return AspectRatioDTO{
-		ForceWidthHeight: a.ForceWidthHeight,
+		ForceWidthHeight: *a.ForceWidthHeight,
 		Width:            a.Width,
 		Height:           a.Height,
 		ScaleCanvas:      a.ScaleCanvas,
@@ -92,7 +92,7 @@ func ToEmoteDTO(e Emote) EmoteDTO {
 		RandomSizeIncrease: e.RandomSizeIncrease,
 		RandomSizeDecrease: e.RandomSizeDecrease,
 		MaxEmoteCount:      e.MaxEmoteCount,
-		GroupEmotes:        e.GroupEmotes,
+		GroupEmotes:        *e.GroupEmotes,
 		Roundness:          e.Roundness,
 		BackgroundColor:    e.BackgroundColor,
 	}
@@ -158,7 +158,7 @@ func ToVersionModel(dto VersionDTO) Version {
 
 func ToAspectRatioModel(dto AspectRatioDTO) AspectRatio {
 	return AspectRatio{
-		ForceWidthHeight: dto.ForceWidthHeight,
+		ForceWidthHeight: &dto.ForceWidthHeight,
 		Width:            dto.Width,
 		Height:           dto.Height,
 		ScaleCanvas:      dto.ScaleCanvas,
@@ -173,7 +173,7 @@ func ToEmoteModel(dto EmoteDTO) Emote {
 		RandomSizeIncrease: dto.RandomSizeIncrease,
 		RandomSizeDecrease: dto.RandomSizeDecrease,
 		MaxEmoteCount:      dto.MaxEmoteCount,
-		GroupEmotes:        dto.GroupEmotes,
+		GroupEmotes:        &dto.GroupEmotes,
 		Roundness:          dto.Roundness,
 		BackgroundColor:    dto.BackgroundColor,
 	}
