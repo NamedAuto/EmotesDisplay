@@ -116,7 +116,7 @@ func (handler *WebSocketHandler) HandleMessage(
 		return
 	}
 
-	eventType, ok := event["type"].(string)
+	eventType, ok := event["eventType"].(string)
 	if !ok {
 		log.Printf("Invalid event type")
 		return
@@ -152,8 +152,8 @@ func (handler *WebSocketHandler) EmitToAllRandom(port int, emoteMap map[string]s
 	message := generateRandomUrls(port, emoteMap)
 
 	msg := map[string]interface{}{
-		"type": "new-emote",
-		"data": message,
+		"eventType": "new-emote",
+		"data":      message,
 	}
 
 	emit(msg, handler)
@@ -177,8 +177,8 @@ func (handler *WebSocketHandler) EmitToAll(emoteUrls []string) {
 	defer handler.mu.Unlock()
 
 	msg := map[string]interface{}{
-		"type": "new-emote",
-		"data": emoteUrls,
+		"eventType": "new-emote",
+		"data":      emoteUrls,
 	}
 	// fmt.Printf("Emit: %s\n", emoteUrls)
 
@@ -192,13 +192,13 @@ func (handler *WebSocketHandler) EmitPreviewConnection(connected bool) {
 	var msg map[string]interface{}
 	if connected {
 		msg = map[string]interface{}{
-			"type": "preview-connection",
-			"data": "connected",
+			"eventType":  "preview-connection",
+			"connection": "connected",
 		}
 	} else {
 		msg = map[string]interface{}{
-			"type": "preview-connection",
-			"data": "disconnected",
+			"eventType":  "preview-connection",
+			"connection": "disconnected",
 		}
 	}
 
@@ -212,13 +212,13 @@ func (handler *WebSocketHandler) EmitYoutubeConnection(connected bool) {
 	var msg map[string]interface{}
 	if connected {
 		msg = map[string]interface{}{
-			"type": "youtube-connection",
-			"data": "connected",
+			"eventType":  "youtube-connection",
+			"connection": "connected",
 		}
 	} else {
 		msg = map[string]interface{}{
-			"type": "youtube-connection",
-			"data": "disconnected",
+			"eventType":  "youtube-connection",
+			"connection": "disconnected",
 		}
 	}
 

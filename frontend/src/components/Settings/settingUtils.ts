@@ -1,5 +1,6 @@
 import {
   AspectRatio,
+  Authentication,
   Config,
   Emote,
   Port,
@@ -44,6 +45,13 @@ export const formatEmoteSettings = (emote: Emote) => ({
 
 export const formatPreviewSettings = (preview: Preview) => ({
   speedOfEmotes: (preview.speedOfEmotes / 1000).toString(),
+});
+
+export const formatAuthenticationSettings = () => ({
+  isYoutubeApiKeyPresent: false,
+  isTwitchPresent: false,
+  youtubeApiKey: "",
+  twitch: "",
 });
 
 export const createConfigCopyWithUpdate = (

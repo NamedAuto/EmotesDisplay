@@ -1,5 +1,3 @@
-import { AspectRatio } from "@mui/icons-material";
-
 export interface SettingsYoutube {
   apiKey: string;
   videoId: string;
@@ -30,4 +28,11 @@ export interface SettingsEmote {
 
 export interface SettingsPreview {
   speedOfEmotes: string;
+}
+
+export interface SettingsAuthentication {
+  isYoutubeApiKeyPresent: boolean;
+  isTwitchPresent: boolean;
+  youtubeApiKey: string;
+  twitch: string;
 }

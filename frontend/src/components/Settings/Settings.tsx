@@ -28,6 +28,7 @@ import YouTubeSettings from "./YoutubeSettings";
 import {
   createConfigCopyWithUpdate,
   formatAspectRatioSettings,
+  formatAuthenticationSettings,
   formatEmoteSettings,
   formatPortSettings,
   formatPreviewSettings,
@@ -36,12 +37,14 @@ import {
 import { setupHandlers } from "./settingsHandlers";
 import {
   SettingsAspectRatio,
+  SettingsAuthentication,
   SettingsEmote,
   SettingsPort,
   SettingsPreview,
   SettingsYoutube,
 } from "./settingsInterface";
 import darkTheme from "./settingsTheme";
+import AuthenticationSettings from "./AuthenticationSettings";
 
 const SettingsPage: React.FC = () => {
   const config = useConfig();
@@ -50,7 +53,13 @@ const SettingsPage: React.FC = () => {
   const [isPreviewConnected, setIsPreviewConnected] = useState(false);
   const [isYoutubeConnected, setIsYoutubeConnected] = useState(false);
   useEffect(() => {
-    setupHandlers(updateHandlers, setIsPreviewConnected, setIsYoutubeConnected);
+    setupHandlers(
+      updateHandlers,
+      setIsPreviewConnected,
+      setIsYoutubeConnected,
+      settingsAuthentication,
+      setSettingsAuthentication
+    );
   }, [updateHandlers]);
 
   const [showApiKey, setShowApiKey] = useState(false);
@@ -73,6 +82,27 @@ const SettingsPage: React.FC = () => {
   const [settingsPreview, setSettingsPreview] = useState<SettingsPreview>(
     formatPreviewSettings(config.preview)
   );
+
+  const [settingsAuthentication, setSettingsAuthentication] =
+    useState<SettingsAuthentication>(formatAuthenticationSettings());
+
+  const saveAuthentication = () => {
+    const eventData = {
+      type: "authentication",
+      youtubeApiKey: settingsAuthentication.youtubeApiKey,
+      twitch: settingsAuthentication.twitch,
+    };
+    sendMessage(eventData);
+    /*
+    Send to the backend
+    Wait for backend response on save
+    Update flags
+    Clear texfield
+
+    TODO: If a youtube service or twitch connection fails, send this error
+    to the frontend so the user can update their keys
+     */
+  };
 
   const handleReset = () => {
     setSettingsYoutube(formatYoutubeSettings(config.youtube));
@@ -110,12 +140,17 @@ const SettingsPage: React.FC = () => {
         ...prevValues,
         [name]: type === "checkbox" ? checked : value,
       }));
+    } else if (name in settingsAuthentication) {
+      setSettingsAuthentication((prevValues) => ({
+        ...prevValues,
+        [name]: type === "checkbox" ? checked : value,
+      }));
     }
   };
 
   const handleSave = async () => {
     console.log("Saving Settings");
-    console.log("Config: " + JSON.stringify(config, null, 2));
+
     try {
       const tempConfig = createConfigCopyWithUpdate(
         config,
@@ -142,10 +177,6 @@ const SettingsPage: React.FC = () => {
 
       Object.assign(config, tempConfig);
 
-      console.log("TempConfig: " + JSON.stringify(tempConfig, null, 2));
-
-      console.log("Config: " + JSON.stringify(config, null, 2));
-
       console.log("Config Saved");
     } catch (error) {
       console.error("Error saving config: " + error);
@@ -157,22 +188,22 @@ const SettingsPage: React.FC = () => {
   };
 
   const handleYoutubeStart = () => {
-    const eventData = { type: "connectYoutube", data: { key: "" } };
+    const eventData = { eventType: "connectYoutube", data: { key: "" } };
     sendMessage(eventData);
   };
 
   const handleYoutubeStop = () => {
-    const eventData = { type: "disconnectYoutube", data: { key: "" } };
+    const eventData = { eventType: "disconnectYoutube", data: { key: "" } };
     sendMessage(eventData);
   };
 
   const handlePreviewStart = () => {
-    const eventData = { type: "startPreview", data: { key: "" } };
+    const eventData = { eventType: "startPreview", data: { key: "" } };
     sendMessage(eventData);
   };
 
   const handlePreviewStop = () => {
-    const eventData = { type: "stopPreview", data: { key: "" } };
+    const eventData = { eventType: "stopPreview", data: { key: "" } };
     sendMessage(eventData);
   };
 
@@ -196,6 +227,7 @@ const SettingsPage: React.FC = () => {
             handleClickShowPassword={handleClickShowPassword}
           />
         );
+
       case "Port":
         return (
           <PortSettings
@@ -203,6 +235,7 @@ const SettingsPage: React.FC = () => {
             handleInputChange={handleInputChange}
           />
         );
+
       case "AspectRatio":
         return (
           <AspectRatioSettings
@@ -210,6 +243,7 @@ const SettingsPage: React.FC = () => {
             handleInputChange={handleInputChange}
           />
         );
+
       case "Preview":
         return (
           <PreviewSettings
@@ -217,6 +251,16 @@ const SettingsPage: React.FC = () => {
             handleInputChange={handleInputChange}
           />
         );
+
+      case "Authentication":
+        return (
+          <AuthenticationSettings
+            settings={settingsAuthentication}
+            handleInputChange={handleInputChange}
+            saveAuthentication={saveAuthentication}
+          />
+        );
+
       default:
       case "Emote":
         return (
@@ -301,30 +345,41 @@ const SettingsPage: React.FC = () => {
               </ListItemIcon>
               {isDrawerOpen && <ListItemText primary="YouTube" />}
             </ListItemButton>
+
             <ListItemButton onClick={() => handleItemClick("AspectRatio")}>
               <ListItemIcon>
                 <MenuIcon />
               </ListItemIcon>
               {isDrawerOpen && <ListItemText primary="Aspect Ratio" />}
             </ListItemButton>
+
             <ListItemButton onClick={() => handleItemClick("Port")}>
               <ListItemIcon>
                 <MenuIcon />
               </ListItemIcon>
               {isDrawerOpen && <ListItemText primary="Port" />}
             </ListItemButton>
+
             <ListItemButton onClick={() => handleItemClick("Preview")}>
               <ListItemIcon>
                 <MenuIcon />
               </ListItemIcon>
               {isDrawerOpen && <ListItemText primary="Preview" />}
             </ListItemButton>
-            <ListItem onClick={() => handleItemClick("Emote")}>
+
+            <ListItemButton onClick={() => handleItemClick("Emote")}>
               <ListItemIcon>
                 <MenuIcon />
               </ListItemIcon>
               {isDrawerOpen && <ListItemText primary="Emote" />}
-            </ListItem>
+            </ListItemButton>
+
+            <ListItemButton onClick={() => handleItemClick("Authentication")}>
+              <ListItemIcon>
+                <MenuIcon />
+              </ListItemIcon>
+              {isDrawerOpen && <ListItemText primary="Authentication" />}
+            </ListItemButton>
           </List>
         </Drawer>
         <Box

@@ -49,10 +49,10 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
 
     ws.onmessage = (event: MessageEvent) => {
       const message = JSON.parse(event.data);
-      if (handlersRef.current[message.type]) {
-        handlersRef.current[message.type](message.data);
+      if (handlersRef.current[message.eventType]) {
+        handlersRef.current[message.eventType](message);
       } else {
-        console.warn(`No handler for message type: ${message.type}`);
+        console.warn(`No handler for message type: ${message.eventType}`);
       }
     };
 

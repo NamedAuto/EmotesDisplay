@@ -38,7 +38,8 @@ const CanvasComponent: React.FC = () => {
   );
 
   useEffect(() => {
-    const handleNewEmote = (emoteUrls: string[]) => {
+    const handleNewEmote = (message: any) => {
+      const emoteUrls = message.data;
       console.log("Received new emotes:", emoteUrls);
       placeEmotesGroupInBackground(emoteUrls, nonTransparentPositions);
     };
@@ -202,6 +203,7 @@ const CanvasComponent: React.FC = () => {
             {group.emotes.map(
               (emote, emoteIdx) => (
                 <Box
+                  key={emoteIdx + "-box"}
                   sx={{
                     position: "absolute",
                     left: emote.pos.x,

@@ -31,6 +31,11 @@ export interface Preview {
   speedOfEmotes: number;
 }
 
+export interface Authentication {
+  youtubeApiKey: string;
+  twitch: string;
+}
+
 export interface Config {
   youtube: Youtube;
   port: Port;
