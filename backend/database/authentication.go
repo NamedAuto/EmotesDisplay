@@ -1,8 +1,6 @@
 package database
 
 import (
-	"log"
-
 	"github.com/NamedAuto/EmotesDisplay/backend/common"
 	"gorm.io/gorm"
 )
@@ -11,26 +9,38 @@ func SaveAuthentication(handler common.HandlerInterface, db *gorm.DB, data map[s
 	youtubeApiKey := data["youtubeApiKey"].(string)
 	twitch := data["twitch"].(string)
 
-	log.Printf("Yt: %s, T: %s", youtubeApiKey, twitch)
+	var dbAuth Authentication
+	db.First(&dbAuth)
 
-	var t Authentication
-	db.First(&t)
-
-	auth := common.AuthenticationSuccess{YoutubeUpdated: false, TwitchUpdated: false}
+	auth := common.AuthenticationPresent{YoutubeApiKey: false, TwitchKey: false}
 
 	if youtubeApiKey != "" {
-		log.Println("Youtube")
-		t.YoutubeApiKey = youtubeApiKey
-		auth.YoutubeUpdated = true
+		dbAuth.YoutubeApiKey = youtubeApiKey
+		auth.YoutubeApiKey = true
 	}
 
 	if twitch != "" {
-		log.Println("Twitch")
-		t.Twitch = twitch
-		auth.TwitchUpdated = true
+		dbAuth.Twitch = twitch
+		auth.TwitchKey = true
 	}
 
-	db.Model(&t).Updates(t)
-	handler.EmitAuthenticationSuccess(auth)
+	db.Model(&dbAuth).Updates(dbAuth)
+	handler.EmitAuthenticationPresent(auth)
+}
 
+func IsAuthenticationPresent(handler common.HandlerInterface, db *gorm.DB) {
+	var dbAuth Authentication
+	db.First(&dbAuth)
+
+	auth := common.AuthenticationPresent{YoutubeApiKey: false, TwitchKey: false}
+
+	if dbAuth.YoutubeApiKey != "" {
+		auth.YoutubeApiKey = true
+	}
+
+	if dbAuth.Twitch != "" {
+		auth.TwitchKey = true
+	}
+
+	handler.EmitAuthenticationPresent(auth)
 }

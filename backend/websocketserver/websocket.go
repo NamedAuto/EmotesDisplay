@@ -125,6 +125,8 @@ func (handler *WebSocketHandler) HandleMessage(
 	}
 
 	switch eventType {
+
+	// Example
 	case "customEvent":
 		data, ok := event["data"].(map[string]interface{})
 		if !ok {
@@ -142,6 +144,8 @@ func (handler *WebSocketHandler) HandleMessage(
 		previewView.StartPreview(handler, db, emoteMap)
 	case "stopPreview":
 		previewView.StopPreview()
+	case "authentication-present":
+		database.IsAuthenticationPresent(handler, db)
 	case "authentication":
 
 		data, ok := event["data"].(map[string]interface{})
@@ -236,17 +240,16 @@ func (handler *WebSocketHandler) EmitYoutubeConnection(connected bool) {
 	emit(msg, handler)
 }
 
-func (handler *WebSocketHandler) EmitAuthenticationSuccess(success common.AuthenticationSuccess) {
+func (handler *WebSocketHandler) EmitAuthenticationPresent(present common.AuthenticationPresent) {
 	handler.mu.Lock()
 	defer handler.mu.Unlock()
 
 	msg := map[string]interface{}{
-		"eventType":     "authentication-success",
-		"youtubeApiKey": success.YoutubeUpdated,
-		"twitch":        success.TwitchUpdated,
+		"eventType":     "authentication-present",
+		"youtubeApiKey": present.YoutubeApiKey,
+		"twitch":        present.TwitchKey,
 	}
 
-	log.Println(msg)
 	emit(msg, handler)
 
 }

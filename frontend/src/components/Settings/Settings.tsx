@@ -49,7 +49,7 @@ import AuthenticationSettings from "./AuthenticationSettings";
 const SettingsPage: React.FC = () => {
   const config = useConfig();
 
-  const { updateHandlers, sendMessage } = useWebSocketContext();
+  const { isConnected, updateHandlers, sendMessage } = useWebSocketContext();
   const [isPreviewConnected, setIsPreviewConnected] = useState(false);
   const [isYoutubeConnected, setIsYoutubeConnected] = useState(false);
   useEffect(() => {
@@ -85,6 +85,13 @@ const SettingsPage: React.FC = () => {
 
   const [settingsAuthentication, setSettingsAuthentication] =
     useState<SettingsAuthentication>(formatAuthenticationSettings());
+
+  const checkForKeys = () => {
+    const eventData = {
+      eventType: "authentication-present",
+    };
+    sendMessage(eventData);
+  };
 
   const saveAuthentication = () => {
     settingsAuthentication.youtubeApiKey =
@@ -318,6 +325,13 @@ const SettingsPage: React.FC = () => {
 
   const dividerMargin = 1;
   const dividerWidth = 1;
+
+  useEffect(() => {
+    if (isConnected) {
+      checkForKeys();
+      console.log("Checked");
+    }
+  }, [isConnected]);
 
   return (
     <ThemeProvider theme={darkTheme}>

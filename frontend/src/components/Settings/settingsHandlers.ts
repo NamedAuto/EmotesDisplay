@@ -30,9 +30,8 @@ const handleAuthenticationSave = (
     React.SetStateAction<SettingsAuthentication>
   >
 ) => {
-  console.log("HELLO " + message);
   const copy = { ...settingsAuthentication };
-  console.log(message.youtubeApiKey);
+  console.log("Copy: " + JSON.stringify(copy));
   if (message.youtubeApiKey) {
     copy.youtubeApiKey = "";
     copy.isYoutubeApiKeyPresent = true;
@@ -45,7 +44,7 @@ const handleAuthenticationSave = (
     // show user error
   }
 
-  console.log(copy);
+  console.log("Save: " + JSON.stringify(copy));
   setSettingsAuthentication(copy);
 };
 
@@ -65,7 +64,7 @@ export const setupHandlers = (
     "youtube-connection": (message: any) =>
       handleYoutubeConnection(message, setIsYoutubeConnected),
 
-    "authentication-success": (message: any) =>
+    "authentication-present": (message: any) =>
       handleAuthenticationSave(
         message,
         settingsAuthentication,

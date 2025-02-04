@@ -1,5 +1,21 @@
 import createTheme from "@mui/material/styles/createTheme";
 
+declare module "@mui/material/styles/createPalette" {
+  interface Palette {
+    customColors: {
+      backgroundDarker: string;
+      myCustomText: string;
+    };
+  }
+
+  interface PaletteOptions {
+    customColors?: {
+      backgroundDarker?: string;
+      myCustomText?: string;
+    };
+  }
+}
+
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
@@ -18,6 +34,10 @@ const darkTheme = createTheme({
     text: {
       // #e40031
       primary: "#e40031",
+    },
+    customColors: {
+      backgroundDarker: "#13252c",
+      myCustomText: "#f4458f",
     },
   },
   components: {
