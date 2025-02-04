@@ -30,22 +30,42 @@ const handleAuthenticationSave = (
     React.SetStateAction<SettingsAuthentication>
   >
 ) => {
-  const copy = { ...settingsAuthentication };
-  console.log("Copy: " + JSON.stringify(copy));
-  if (message.youtubeApiKey) {
-    copy.youtubeApiKey = "";
-    copy.isYoutubeApiKeyPresent = true;
-  }
+  setSettingsAuthentication((prevSettings) => {
+    const copy = { ...prevSettings };
+    if (message.youtubeApiKey) {
+      console.log("HELLO");
+      copy.youtubeApiKey = "";
+      copy.isYoutubeApiKeyPresent = true;
+    }
 
-  if (message.twitch) {
-    copy.twitch = "";
-    copy.isTwitchPresent = true;
-  } else {
-    // show user error
-  }
+    if (message.twitch) {
+      console.log("THERE");
+      copy.twitch = "";
+      copy.isTwitchPresent = true;
+    }
 
-  console.log("Save: " + JSON.stringify(copy));
-  setSettingsAuthentication(copy);
+    console.log("Updated state before set: ", JSON.stringify(copy));
+    return copy;
+  });
+
+  // const copy = { ...settingsAuthentication };
+  // console.log("Copy: " + JSON.stringify(copy));
+  // if (message.youtubeApiKey) {
+  //   console.log("HELLO");
+  //   copy.youtubeApiKey = "";
+  //   copy.isYoutubeApiKeyPresent = true;
+  // }
+
+  // if (message.twitch) {
+  //   console.log("THERE");
+  //   copy.twitch = "";
+  //   copy.isTwitchPresent = true;
+  // } else {
+  //   // show user error
+  // }
+
+  // console.log("Save: " + JSON.stringify(copy));
+  // setSettingsAuthentication(copy);
 };
 
 export const setupHandlers = (
