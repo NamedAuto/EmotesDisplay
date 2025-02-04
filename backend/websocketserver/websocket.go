@@ -9,6 +9,8 @@ import (
 	"regexp"
 	"sync"
 
+	"github.com/NamedAuto/EmotesDisplay/backend/common"
+	"github.com/NamedAuto/EmotesDisplay/backend/database"
 	"github.com/NamedAuto/EmotesDisplay/backend/myyoutube"
 	"github.com/NamedAuto/EmotesDisplay/backend/previewView"
 	"github.com/gorilla/websocket"
@@ -140,6 +142,15 @@ func (handler *WebSocketHandler) HandleMessage(
 		previewView.StartPreview(handler, db, emoteMap)
 	case "stopPreview":
 		previewView.StopPreview()
+	case "authentication":
+
+		data, ok := event["data"].(map[string]interface{})
+		if !ok {
+			log.Printf("Invalid event data")
+			return
+		}
+		database.SaveAuthentication(handler, db, data)
+
 	default:
 		log.Printf("Unknown event type: %s", eventType)
 	}
@@ -223,6 +234,21 @@ func (handler *WebSocketHandler) EmitYoutubeConnection(connected bool) {
 	}
 
 	emit(msg, handler)
+}
+
+func (handler *WebSocketHandler) EmitAuthenticationSuccess(success common.AuthenticationSuccess) {
+	handler.mu.Lock()
+	defer handler.mu.Unlock()
+
+	msg := map[string]interface{}{
+		"eventType":     "authentication-success",
+		"youtubeApiKey": success.YoutubeUpdated,
+		"twitch":        success.TwitchUpdated,
+	}
+
+	log.Println(msg)
+	emit(msg, handler)
+
 }
 
 func emit(msg map[string]interface{}, handler *WebSocketHandler) {

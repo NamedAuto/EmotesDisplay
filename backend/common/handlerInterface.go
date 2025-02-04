@@ -17,4 +17,5 @@ type HandlerInterface interface {
 	EmitToAll(emoteUrls []string)
 	EmitPreviewConnection(connected bool)
 	EmitYoutubeConnection(connected bool)
+	EmitAuthenticationSuccess(success AuthenticationSuccess)
 }

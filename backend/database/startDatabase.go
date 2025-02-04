@@ -25,7 +25,8 @@ func StartDatabase() *gorm.DB {
 		&Emote{},
 		&Animations{},
 		&Preview{},
-		&AppConfig{}); err != nil {
+		&AppConfig{},
+		&Authentication{}); err != nil {
 		log.Fatal("Failed to migrate the database: ", err)
 	}
 
@@ -117,9 +118,12 @@ func insertDefaultValues(db *gorm.DB) {
 		PreviewID:     preview.ID,
 		Preview:       preview,
 	}
-
 	db.Create(&initialConfig)
-	log.Printf("Inserted AppConfig with ID: %d", initialConfig.ID)
+
+	authentication := Authentication{YoutubeApiKey: "", Twitch: ""}
+	db.Create(&authentication)
+
+	log.Println("Created database")
 }
 
 func GetAppConfig() *AppConfig {

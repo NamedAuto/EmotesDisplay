@@ -42,8 +42,8 @@ const AuthenticationSettings: React.FC<AuthenticationSettingsProps> = ({
   <Box>
     <Typography>
       {settings.isYoutubeApiKeyPresent
-        ? "Add Youtube Api Key"
-        : "Update Youtube Api Key"}
+        ? "Update Youtube Api Key"
+        : "Add Youtube Api Key"}
     </Typography>
     <TextField
       name="youtubeApiKey"
@@ -65,7 +65,7 @@ const AuthenticationSettings: React.FC<AuthenticationSettingsProps> = ({
     />
 
     <Typography>
-      {settings.isYoutubeApiKeyPresent ? "Add Twitch" : "Update Twitch"}
+      {settings.isTwitchPresent ? "Update Twitch" : "Add Twitch"}
     </Typography>
     <TextField
       name="twitch"

@@ -87,10 +87,23 @@ const SettingsPage: React.FC = () => {
     useState<SettingsAuthentication>(formatAuthenticationSettings());
 
   const saveAuthentication = () => {
+    settingsAuthentication.youtubeApiKey =
+      settingsAuthentication.youtubeApiKey.trim();
+    settingsAuthentication.twitch = settingsAuthentication.twitch.trim();
+
+    if (
+      settingsAuthentication.youtubeApiKey === "" &&
+      settingsAuthentication.twitch === ""
+    ) {
+      return;
+    }
+
     const eventData = {
-      type: "authentication",
-      youtubeApiKey: settingsAuthentication.youtubeApiKey,
-      twitch: settingsAuthentication.twitch,
+      eventType: "authentication",
+      data: {
+        youtubeApiKey: settingsAuthentication.youtubeApiKey,
+        twitch: settingsAuthentication.twitch,
+      },
     };
     sendMessage(eventData);
     /*

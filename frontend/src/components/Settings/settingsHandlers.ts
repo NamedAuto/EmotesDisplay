@@ -5,7 +5,7 @@ const handlePreviewConnection = (
   message: any,
   setIsPreviewConnected: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
-  if (message.connection == "connected") {
+  if (message.connection === "connected") {
     setIsPreviewConnected(true);
   } else {
     setIsPreviewConnected(false);
@@ -16,7 +16,7 @@ const handleYoutubeConnection = (
   message: any,
   setIsYoutubeConnected: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
-  if (message.connection == "connected") {
+  if (message.connection === "connected") {
     setIsYoutubeConnected(true);
   } else {
     setIsYoutubeConnected(false);
@@ -30,19 +30,22 @@ const handleAuthenticationSave = (
     React.SetStateAction<SettingsAuthentication>
   >
 ) => {
+  console.log("HELLO " + message);
   const copy = { ...settingsAuthentication };
-  if ((message.youtubeApiKey = "saved")) {
+  console.log(message.youtubeApiKey);
+  if (message.youtubeApiKey) {
     copy.youtubeApiKey = "";
     copy.isYoutubeApiKeyPresent = true;
   }
 
-  if ((message.twitch = "saved")) {
+  if (message.twitch) {
     copy.twitch = "";
     copy.isTwitchPresent = true;
   } else {
     // show user error
   }
 
+  console.log(copy);
   setSettingsAuthentication(copy);
 };
 
@@ -58,9 +61,11 @@ export const setupHandlers = (
   updateHandlers({
     "preview-connection": (message: any) =>
       handlePreviewConnection(message, setIsPreviewConnected),
+
     "youtube-connection": (message: any) =>
       handleYoutubeConnection(message, setIsYoutubeConnected),
-    authentication: (message: any) =>
+
+    "authentication-success": (message: any) =>
       handleAuthenticationSave(
         message,
         settingsAuthentication,
