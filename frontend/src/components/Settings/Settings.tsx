@@ -57,7 +57,6 @@ const SettingsPage: React.FC = () => {
       updateHandlers,
       setIsPreviewConnected,
       setIsYoutubeConnected,
-      settingsAuthentication,
       setSettingsAuthentication
     );
   }, [updateHandlers]);

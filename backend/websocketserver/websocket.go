@@ -147,13 +147,19 @@ func (handler *WebSocketHandler) HandleMessage(
 	case "authentication-present":
 		database.IsAuthenticationPresent(handler, db)
 	case "authentication":
-
 		data, ok := event["data"].(map[string]interface{})
 		if !ok {
 			log.Printf("Invalid event data")
 			return
 		}
 		database.SaveAuthentication(handler, db, data)
+	case "twitch-user-auth-code":
+		data, ok := event["code"].(string)
+		if !ok {
+			log.Printf("Invalid event data")
+			return
+		}
+		log.Printf("This is my code %s", data)
 
 	default:
 		log.Printf("Unknown event type: %s", eventType)

@@ -6,6 +6,7 @@ require (
 	github.com/NamedAuto/goemoji v0.1.0
 	github.com/gorilla/websocket v1.5.3
 	github.com/joho/godotenv v1.5.1
+	github.com/nicklaw5/helix/v2 v2.31.0
 	github.com/rs/cors v1.11.1
 	github.com/wailsapp/wails/v2 v2.9.2
 	golang.org/x/exp v0.0.0-20250128182459-e0ece0dbea4c
@@ -24,6 +25,7 @@ require (
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
+	github.com/golang-jwt/jwt/v4 v4.0.0 // indirect
 	github.com/google/s2a-go v0.1.9 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.4 // indirect

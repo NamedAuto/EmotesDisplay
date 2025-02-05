@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, Link, TextField, Typography } from "@mui/material";
 import { SettingsAuthentication } from "./settingsInterface";
 import { useState } from "react";
 import ConfirmDialog from "./ConfirmDialog";
@@ -113,6 +113,12 @@ const AuthenticationSettings: React.FC<AuthenticationSettingsProps> = ({
         onClose={handleCloseDialog}
         onConfirm={handleConfirmDialog}
       />
+
+      <Link
+        href={`https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=wkfk6qakro96qbrlph0wlpz92ycxr0&redirect_uri=http://localhost:5173/twitchOAuth&scope=channel%3Amanage%3Apolls+channel%3Aread%3Apolls`}
+      >
+        Temp
+      </Link>
     </Box>
   );
 };
