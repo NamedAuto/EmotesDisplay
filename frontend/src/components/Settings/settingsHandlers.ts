@@ -25,7 +25,6 @@ const handleYoutubeConnection = (
 
 const handleAuthenticationSave = (
   message: any,
-  settingsAuthentication: SettingsAuthentication,
   setSettingsAuthentication: React.Dispatch<
     React.SetStateAction<SettingsAuthentication>
   >
@@ -33,46 +32,23 @@ const handleAuthenticationSave = (
   setSettingsAuthentication((prevSettings) => {
     const copy = { ...prevSettings };
     if (message.youtubeApiKey) {
-      console.log("HELLO");
       copy.youtubeApiKey = "";
       copy.isYoutubeApiKeyPresent = true;
     }
 
     if (message.twitch) {
-      console.log("THERE");
       copy.twitch = "";
       copy.isTwitchPresent = true;
     }
 
-    console.log("Updated state before set: ", JSON.stringify(copy));
     return copy;
   });
-
-  // const copy = { ...settingsAuthentication };
-  // console.log("Copy: " + JSON.stringify(copy));
-  // if (message.youtubeApiKey) {
-  //   console.log("HELLO");
-  //   copy.youtubeApiKey = "";
-  //   copy.isYoutubeApiKeyPresent = true;
-  // }
-
-  // if (message.twitch) {
-  //   console.log("THERE");
-  //   copy.twitch = "";
-  //   copy.isTwitchPresent = true;
-  // } else {
-  //   // show user error
-  // }
-
-  // console.log("Save: " + JSON.stringify(copy));
-  // setSettingsAuthentication(copy);
 };
 
 export const setupHandlers = (
   updateHandlers: WebSocketContextType["updateHandlers"],
   setIsPreviewConnected: React.Dispatch<React.SetStateAction<boolean>>,
   setIsYoutubeConnected: React.Dispatch<React.SetStateAction<boolean>>,
-  settingsAuthentication: SettingsAuthentication,
   setSettingsAuthentication: React.Dispatch<
     React.SetStateAction<SettingsAuthentication>
   >
@@ -85,10 +61,6 @@ export const setupHandlers = (
       handleYoutubeConnection(message, setIsYoutubeConnected),
 
     "authentication-present": (message: any) =>
-      handleAuthenticationSave(
-        message,
-        settingsAuthentication,
-        setSettingsAuthentication
-      ),
+      handleAuthenticationSave(message, setSettingsAuthentication),
   });
 };

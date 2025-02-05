@@ -115,7 +115,8 @@ const AuthenticationSettings: React.FC<AuthenticationSettingsProps> = ({
       />
 
       <Link
-        href={`https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=wkfk6qakro96qbrlph0wlpz92ycxr0&redirect_uri=http://localhost:5173/twitchOAuth&scope=channel%3Amanage%3Apolls+channel%3Aread%3Apolls`}
+        // href={`https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=wkfk6qakro96qbrlph0wlpz92ycxr0&redirect_uri=http://localhost:5173/twitchOAuth&scope=channel%3Amanage%3Apolls+channel%3Aread%3Apolls`}
+        href={`https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=wkfk6qakro96qbrlph0wlpz92ycxr0&redirect_uri=http://localhost:5173/twitchOAuth&scope=channel%3Amanage%3Apolls+channel%3Aread%3Apolls&state=c3ab8aa609ea11e793ae92361f002671`}
       >
         Temp
       </Link>
