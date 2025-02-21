@@ -63,7 +63,6 @@ const AuthenticationSettings: React.FC<AuthenticationSettingsProps> = ({
           },
         }}
       />
-
       <Typography>
         {settings.isTwitchPresent
           ? "Update Twitch"
@@ -87,7 +86,6 @@ const AuthenticationSettings: React.FC<AuthenticationSettingsProps> = ({
           },
         }}
       />
-
       <Button
         variant="contained"
         color="primary"
@@ -105,7 +103,6 @@ const AuthenticationSettings: React.FC<AuthenticationSettingsProps> = ({
       >
         Save Authentication
       </Button>
-
       <ConfirmDialog
         open={open}
         title="Save non-empty values?"
@@ -113,10 +110,13 @@ const AuthenticationSettings: React.FC<AuthenticationSettingsProps> = ({
         onClose={handleCloseDialog}
         onConfirm={handleConfirmDialog}
       />
-
+      // TODO: Get from backend instead of hardcoding
       <Link
-        // href={`https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=wkfk6qakro96qbrlph0wlpz92ycxr0&redirect_uri=http://localhost:5173/twitchOAuth&scope=channel%3Amanage%3Apolls+channel%3Aread%3Apolls`}
-        href={`https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=wkfk6qakro96qbrlph0wlpz92ycxr0&redirect_uri=http://localhost:5173/twitchOAuth&scope=channel%3Amanage%3Apolls+channel%3Aread%3Apolls&state=c3ab8aa609ea11e793ae92361f002671`}
+        // Auth Code
+        href={`https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=gxc05mytd029zrywxzg4pwho17ocic&redirect_uri=http://localhost:5173/twitchOAuth&scope=chat:read`}
+
+        // Implicit
+        // href={`https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=wkfk6qakro96qbrlph0wlpz92ycxr0&redirect_uri=http://localhost:5173/twitchOAuth&scope=channel%3Amanage%3Apolls+channel%3Aread%3Apolls&state=c3ab8aa609ea11e793ae92361f002671`}
       >
         Temp
       </Link>

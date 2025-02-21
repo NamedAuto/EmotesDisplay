@@ -13,6 +13,7 @@ import (
 	"github.com/NamedAuto/EmotesDisplay/backend/database"
 	"github.com/NamedAuto/EmotesDisplay/backend/myyoutube"
 	"github.com/NamedAuto/EmotesDisplay/backend/previewView"
+	"github.com/NamedAuto/EmotesDisplay/backend/twitch"
 	"github.com/gorilla/websocket"
 	"golang.org/x/exp/rand"
 	"gorm.io/gorm"
@@ -159,7 +160,11 @@ func (handler *WebSocketHandler) HandleMessage(
 			log.Printf("Invalid event data")
 			return
 		}
+
 		log.Printf("This is my code %s", data)
+		twitch.GetUserAccessToken(data)
+		twitch.GetUser()
+		twitch.ConnectToChatIRC()
 
 	default:
 		log.Printf("Unknown event type: %s", eventType)

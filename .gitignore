@@ -7,3 +7,4 @@ public
 server.log
 config/config.yaml
 test.db
+backend/twitch/twitchDetails.go
