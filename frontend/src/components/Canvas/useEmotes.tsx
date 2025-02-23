@@ -8,6 +8,7 @@ interface Emote {
   pos: Position;
   size: number;
   animation: string;
+  roundness: string;
 }
 
 export const UseEmotes = (
@@ -20,7 +21,8 @@ export const UseEmotes = (
     emoteUrls: string[],
     emoteSize: number,
     posToCenterOn: Position,
-    animation: string
+    animation: string,
+    roundness: string
   ): Emote[] => {
     let newX = 0;
     const emoteGroup: Emote[] = [];
@@ -45,6 +47,7 @@ export const UseEmotes = (
         },
         size: emoteSize,
         animation: animation,
+        roundness: roundness,
       });
       newX += emoteSize;
     }
@@ -107,36 +110,53 @@ export const UseEmotes = (
 
   const placeEmotesGroupInBackground = (
     emoteUrls: string[],
-    nonTransparentPositions: RefObject<Position[]>
+    nonTransparentPositions: RefObject<Position[]>,
+    isYoutube: boolean
   ) => {
     const randomAnimation = getRandomAnimation();
 
     if (config.emote.groupEmotes) {
+      // var emoteSize = config.emote.width;
+      // var roundness = "0";
+
+      // if (isYoutube) {
       const emoteSize = getRandomEmoteSizeChange(
         config.emote.randomSizeIncrease,
         config.emote.randomSizeDecrease * -1
       );
+      const roundness = config.emote.roundness + "";
+      // }
+
       const randomPos = getRandomPosition(nonTransparentPositions.current);
       const newEmoteGroup = createEmoteGroup(
         emoteUrls,
         emoteSize,
         randomPos,
-        randomAnimation
+        randomAnimation,
+        roundness
       );
       updateEmotesGroups(newEmoteGroup);
     } else {
+      // var emoteSize = config.emote.width;
+      // var roundness = "0";
+
       for (let emote of emoteUrls) {
         const tempArray = [emote];
+
+        // if (isYoutube) {
         const emoteSize = getRandomEmoteSizeChange(
           config.emote.randomSizeIncrease,
           config.emote.randomSizeDecrease * -1
         );
+        const roundness = config.emote.roundness + "";
+        // }
         const randomPos = getRandomPosition(nonTransparentPositions.current);
         const newEmoteGroup = createEmoteGroup(
           tempArray,
           emoteSize,
           randomPos,
-          randomAnimation
+          randomAnimation,
+          roundness
         );
         updateEmotesGroups(newEmoteGroup);
       }

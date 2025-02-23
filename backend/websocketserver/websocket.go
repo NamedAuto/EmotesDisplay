@@ -141,6 +141,10 @@ func (handler *WebSocketHandler) HandleMessage(
 		myyoutube.ConnectToYoutube(handler, db, emoteMap)
 	case "disconnectYoutube":
 		myyoutube.DisconnectFromYoutube()
+	case "connectTwitch":
+		twitch.ConnectToIRC(handler, db)
+	case "disconnectTwitch":
+		twitch.DisconnectFromIRC()
 	case "startPreview":
 		previewView.StartPreview(handler, db, emoteMap)
 	case "stopPreview":
@@ -164,7 +168,7 @@ func (handler *WebSocketHandler) HandleMessage(
 		log.Printf("This is my code %s", data)
 		twitch.GetUserAccessToken(data)
 		twitch.GetUser()
-		twitch.ConnectToChatIRC()
+		twitch.ConnectToChatIRC(handler)
 
 	default:
 		log.Printf("Unknown event type: %s", eventType)
@@ -207,6 +211,18 @@ func (handler *WebSocketHandler) EmitToAll(emoteUrls []string) {
 		"data":      emoteUrls,
 	}
 	// fmt.Printf("Emit: %s\n", emoteUrls)
+
+	emit(msg, handler)
+}
+
+func (handler *WebSocketHandler) EmitTwitchEmotes(emoteUrls []string) {
+	handler.mu.Lock()
+	defer handler.mu.Unlock()
+
+	msg := map[string]interface{}{
+		"eventType": "twitch-emote",
+		"data":      emoteUrls,
+	}
 
 	emit(msg, handler)
 }

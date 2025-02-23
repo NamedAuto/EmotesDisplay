@@ -32,6 +32,7 @@ import {
   formatEmoteSettings,
   formatPortSettings,
   formatPreviewSettings,
+  formatTwitchSettings,
   formatYoutubeSettings,
 } from "./settingUtils";
 import { setupHandlers } from "./settingsHandlers";
@@ -41,10 +42,12 @@ import {
   SettingsEmote,
   SettingsPort,
   SettingsPreview,
+  SettingsTwitch,
   SettingsYoutube,
 } from "./settingsInterface";
 import darkTheme from "./settingsTheme";
 import AuthenticationSettings from "./AuthenticationSettings";
+import TwitchSettings from "./TwitchSettings";
 
 const SettingsPage: React.FC = () => {
   const config = useConfig();
@@ -66,9 +69,15 @@ const SettingsPage: React.FC = () => {
   const [settingsYoutube, setSettingsYoutube] = useState<SettingsYoutube>(
     formatYoutubeSettings(config.youtube)
   );
+
+  const [settingsTwitch, setSettingsTwitch] = useState<SettingsTwitch>(
+    formatTwitchSettings(config.twitch)
+  );
+
   const [settingsPort, setSettingsPort] = useState<SettingsPort>(
     formatPortSettings(config.port)
   );
+
   const [settingsAspectRatio, setSettingsAspectRatio] =
     useState<SettingsAspectRatio>(
       formatAspectRatioSettings(config.aspectRatio)
@@ -125,6 +134,7 @@ const SettingsPage: React.FC = () => {
 
   const handleReset = () => {
     setSettingsYoutube(formatYoutubeSettings(config.youtube));
+    setSettingsTwitch(formatTwitchSettings(config.twitch));
     setSettingsPort(formatPortSettings(config.port));
     setSettingsAspectRatio(formatAspectRatioSettings(config.aspectRatio));
     setSettingsEmote(formatEmoteSettings(config.emote));
@@ -136,6 +146,11 @@ const SettingsPage: React.FC = () => {
 
     if (name in settingsYoutube) {
       setSettingsYoutube((prevValues) => ({
+        ...prevValues,
+        [name]: type === "checkbox" ? checked : value,
+      }));
+    } else if (name in settingsTwitch) {
+      setSettingsTwitch((prevValues) => ({
         ...prevValues,
         [name]: type === "checkbox" ? checked : value,
       }));
@@ -174,6 +189,7 @@ const SettingsPage: React.FC = () => {
       const tempConfig = createConfigCopyWithUpdate(
         config,
         settingsYoutube,
+        settingsTwitch,
         settingsPort,
         settingsAspectRatio,
         settingsEmote,
@@ -216,6 +232,16 @@ const SettingsPage: React.FC = () => {
     sendMessage(eventData);
   };
 
+  const handleTwitchStart = () => {
+    const eventData = { eventType: "connectTwitch", data: { key: "" } };
+    sendMessage(eventData);
+  };
+
+  const handleTwitchStop = () => {
+    const eventData = { eventType: "disconnectTwitch", data: { key: "" } };
+    sendMessage(eventData);
+  };
+
   const handlePreviewStart = () => {
     const eventData = { eventType: "startPreview", data: { key: "" } };
     sendMessage(eventData);
@@ -244,6 +270,14 @@ const SettingsPage: React.FC = () => {
             handleInputChange={handleInputChange}
             showApiKey={showApiKey}
             handleClickShowPassword={handleClickShowPassword}
+          />
+        );
+
+      case "Twitch":
+        return (
+          <TwitchSettings
+            settings={settingsTwitch}
+            handleInputChange={handleInputChange}
           />
         );
 
@@ -370,6 +404,13 @@ const SettingsPage: React.FC = () => {
                 <MenuIcon />
               </ListItemIcon>
               {isDrawerOpen && <ListItemText primary="YouTube" />}
+            </ListItemButton>
+
+            <ListItemButton onClick={() => handleItemClick("Twitch")}>
+              <ListItemIcon>
+                <MenuIcon />
+              </ListItemIcon>
+              {isDrawerOpen && <ListItemText primary="Twitch" />}
             </ListItemButton>
 
             <ListItemButton onClick={() => handleItemClick("AspectRatio")}>

@@ -4,6 +4,10 @@ export interface Youtube {
   messageDelay: number;
 }
 
+export interface Twitch {
+  channelName: string;
+}
+
 export interface Port {
   port: number;
 }
@@ -38,6 +42,7 @@ export interface Authentication {
 
 export interface Config {
   youtube: Youtube;
+  twitch: Twitch;
   port: Port;
   aspectRatio: AspectRatio;
   emote: Emote;

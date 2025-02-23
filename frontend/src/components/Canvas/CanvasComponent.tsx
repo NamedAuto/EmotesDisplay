@@ -41,11 +41,18 @@ const CanvasComponent: React.FC = () => {
     const handleNewEmote = (message: any) => {
       const emoteUrls = message.data;
       console.log("Received new emotes:", emoteUrls);
-      placeEmotesGroupInBackground(emoteUrls, nonTransparentPositions);
+      placeEmotesGroupInBackground(emoteUrls, nonTransparentPositions, true);
+    };
+
+    const handleTwitchEmotes = (message: any) => {
+      const emoteUrls = message.data;
+      console.log("Received twitch emotes:", emoteUrls);
+      placeEmotesGroupInBackground(emoteUrls, nonTransparentPositions, false);
     };
 
     updateHandlers({
       "new-emote": handleNewEmote,
+      "twitch-emote": handleTwitchEmotes,
     });
   }, [updateHandlers]);
 
@@ -226,7 +233,7 @@ const CanvasComponent: React.FC = () => {
                       // top: emote.pos.y,
                       width: emote.size,
                       height: emote.size,
-                      borderRadius: `${config.emote.roundness}%`,
+                      borderRadius: `${emote.roundness}%`,
                       backgroundColor: config.emote.backgroundColor,
                     }}
                     alt={`emote-${emoteIdx}`}

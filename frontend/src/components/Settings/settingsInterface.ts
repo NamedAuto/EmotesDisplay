@@ -4,6 +4,10 @@ export interface SettingsYoutube {
   messageDelay: string;
 }
 
+export interface SettingsTwitch {
+  channelName: string;
+}
+
 export interface SettingsPort {
   port: string;
 }

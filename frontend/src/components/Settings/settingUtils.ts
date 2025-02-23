@@ -1,3 +1,4 @@
+import { channel } from "diagnostics_channel";
 import {
   AspectRatio,
   Authentication,
@@ -5,6 +6,7 @@ import {
   Emote,
   Port,
   Preview,
+  Twitch,
   Youtube,
 } from "../Config/ConfigInterface";
 import {
@@ -12,6 +14,7 @@ import {
   SettingsEmote,
   SettingsPort,
   SettingsPreview,
+  SettingsTwitch,
   SettingsYoutube,
 } from "./settingsInterface";
 
@@ -19,6 +22,10 @@ export const formatYoutubeSettings = (youtube: Youtube) => ({
   apiKey: youtube.apiKey,
   videoId: youtube.videoId,
   messageDelay: (youtube.messageDelay / 1000).toString(),
+});
+
+export const formatTwitchSettings = (twitch: Twitch) => ({
+  channelName: twitch.channelName,
 });
 
 export const formatPortSettings = (port: Port) => ({
@@ -57,6 +64,7 @@ export const formatAuthenticationSettings = () => ({
 export const createConfigCopyWithUpdate = (
   config: Config,
   settingsYoutube: SettingsYoutube,
+  settingsTwitch: SettingsTwitch,
   settingsPort: SettingsPort,
   settingsAspectRatio: SettingsAspectRatio,
   settingsEmote: SettingsEmote,
@@ -69,6 +77,10 @@ export const createConfigCopyWithUpdate = (
       apiKey: settingsYoutube.apiKey,
       videoId: settingsYoutube.videoId,
       messageDelay: Math.round(parseFloat(settingsYoutube.messageDelay) * 1000),
+    },
+    twitch: {
+      ...config.twitch,
+      channelName: settingsTwitch.channelName,
     },
     port: {
       ...config.port,

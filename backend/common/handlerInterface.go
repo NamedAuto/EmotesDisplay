@@ -15,6 +15,7 @@ type HandlerInterface interface {
 	HandleMessage(ws *websocket.Conn, message []byte, db *gorm.DB, emoteMap map[string]string)
 	EmitToAllRandom(port int, emoteMap map[string]string)
 	EmitToAll(emoteUrls []string)
+	EmitTwitchEmotes(emoteUrls []string)
 	EmitPreviewConnection(connected bool)
 	EmitYoutubeConnection(connected bool)
 	EmitAuthenticationPresent(success AuthenticationPresent)
