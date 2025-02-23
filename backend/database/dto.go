@@ -6,6 +6,10 @@ type YoutubeDTO struct {
 	MessageDelay int    `json:"messageDelay"`
 }
 
+type TwitchDTO struct {
+	ChannelName string `json:"channelName"`
+}
+
 type PortDTO struct {
 	Port int `json:"port"`
 }
@@ -45,6 +49,7 @@ type PreviewDTO struct {
 
 type AppConfigDTO struct {
 	Youtube     YoutubeDTO     `json:"youtube"`
+	Twitch      TwitchDTO      `json:"twitch"`
 	Port        PortDTO        `json:"port"`
 	Version     VersionDTO     `json:"version"`
 	AspectRatio AspectRatioDTO `json:"aspectRatio"`
@@ -55,9 +60,15 @@ type AppConfigDTO struct {
 
 func ToYoutubeDTO(y Youtube) YoutubeDTO {
 	return YoutubeDTO{
-		ApiKey:       y.ApiKey,
-		VideoId:      y.VideoId,
+		ApiKey:       *y.ApiKey,
+		VideoId:      *y.VideoId,
 		MessageDelay: y.MessageDelay,
+	}
+}
+
+func ToTwitchDTO(t Twitch) TwitchDTO {
+	return TwitchDTO{
+		ChannelName: *t.ChannelName,
 	}
 }
 
@@ -89,11 +100,11 @@ func ToEmoteDTO(e Emote) EmoteDTO {
 	return EmoteDTO{
 		Width:              e.Width,
 		Height:             e.Height,
-		RandomSizeIncrease: e.RandomSizeIncrease,
-		RandomSizeDecrease: e.RandomSizeDecrease,
+		RandomSizeIncrease: *e.RandomSizeIncrease,
+		RandomSizeDecrease: *e.RandomSizeDecrease,
 		MaxEmoteCount:      e.MaxEmoteCount,
 		GroupEmotes:        *e.GroupEmotes,
-		Roundness:          e.Roundness,
+		Roundness:          *e.Roundness,
 		BackgroundColor:    e.BackgroundColor,
 	}
 }
@@ -113,6 +124,7 @@ func ToPreviewDTO(p Preview) PreviewDTO {
 func ToAppConfigDTO(config AppConfig) AppConfigDTO {
 	return AppConfigDTO{
 		Youtube:     ToYoutubeDTO(config.Youtube),
+		Twitch:      ToTwitchDTO(config.Twitch),
 		Port:        ToPortDTO(config.Port),
 		Version:     ToVersionDTO(config.Version),
 		AspectRatio: ToAspectRatioDTO(config.AspectRatio),
@@ -125,6 +137,7 @@ func ToAppConfigDTO(config AppConfig) AppConfigDTO {
 func ToAppConfigModel(dto AppConfigDTO) AppConfig {
 	return AppConfig{
 		Youtube:     ToYoutubeModel(dto.Youtube),
+		Twitch:      ToTwitchModel(dto.Twitch),
 		Port:        ToPortModel(dto.Port),
 		Version:     ToVersionModel(dto.Version),
 		AspectRatio: ToAspectRatioModel(dto.AspectRatio),
@@ -136,9 +149,15 @@ func ToAppConfigModel(dto AppConfigDTO) AppConfig {
 
 func ToYoutubeModel(dto YoutubeDTO) Youtube {
 	return Youtube{
-		ApiKey:       dto.ApiKey,
-		VideoId:      dto.VideoId,
+		ApiKey:       &dto.ApiKey,
+		VideoId:      &dto.VideoId,
 		MessageDelay: dto.MessageDelay,
+	}
+}
+
+func ToTwitchModel(dto TwitchDTO) Twitch {
+	return Twitch{
+		ChannelName: &dto.ChannelName,
 	}
 }
 
@@ -170,11 +189,11 @@ func ToEmoteModel(dto EmoteDTO) Emote {
 	return Emote{
 		Width:              dto.Width,
 		Height:             dto.Height,
-		RandomSizeIncrease: dto.RandomSizeIncrease,
-		RandomSizeDecrease: dto.RandomSizeDecrease,
+		RandomSizeIncrease: &dto.RandomSizeIncrease,
+		RandomSizeDecrease: &dto.RandomSizeDecrease,
 		MaxEmoteCount:      dto.MaxEmoteCount,
 		GroupEmotes:        &dto.GroupEmotes,
-		Roundness:          dto.Roundness,
+		Roundness:          &dto.Roundness,
 		BackgroundColor:    dto.BackgroundColor,
 	}
 }

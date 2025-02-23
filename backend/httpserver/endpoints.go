@@ -97,6 +97,9 @@ func configureConfigEndpoint(mux *http.ServeMux, db *gorm.DB) {
 			if incomingConfigDTO.Youtube != database.ToYoutubeDTO(existingConfig.Youtube) {
 				db.Model(&existingConfig.Youtube).Updates(database.ToYoutubeModel(incomingConfigDTO.Youtube))
 			}
+			if incomingConfigDTO.Twitch != database.ToTwitchDTO(existingConfig.Twitch) {
+				db.Model(&existingConfig.Twitch).Updates(database.ToTwitchModel(incomingConfigDTO.Twitch))
+			}
 			if incomingConfigDTO.Port != database.ToPortDTO(existingConfig.Port) {
 				db.Model(&existingConfig.Port).Updates(database.ToPortModel(incomingConfigDTO.Port))
 			}

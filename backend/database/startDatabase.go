@@ -19,6 +19,7 @@ func StartDatabase() *gorm.DB {
 
 	if err := db.AutoMigrate(
 		&Youtube{},
+		&Twitch{},
 		&Port{},
 		&Version{},
 		&AspectRatio{},
@@ -33,6 +34,7 @@ func StartDatabase() *gorm.DB {
 	initDatabase(db)
 
 	db.Preload("Youtube").
+		Preload("Twitch").
 		Preload("Port").
 		Preload("Version").
 		Preload("AspectRatio").
@@ -56,12 +58,18 @@ func initDatabase(db *gorm.DB) {
 }
 
 func insertDefaultValues(db *gorm.DB) {
+	apiKey := "AIzaSyAxOjESchGSZKbX4bgXOI9RWLno8YnFERA"
+	videoId := ""
 	youtube := Youtube{
-		ApiKey:       "AIzaSyAxOjESchGSZKbX4bgXOI9RWLno8YnFERA",
-		VideoId:      "",
+		ApiKey:       &apiKey,
+		VideoId:      &videoId,
 		MessageDelay: 5000,
 	}
 	db.Create(&youtube)
+
+	channelName := ""
+	twitch := Twitch{ChannelName: &channelName}
+	db.Create(&twitch)
 
 	port := Port{Port: 3124}
 	db.Create(&port)
@@ -84,14 +92,18 @@ func insertDefaultValues(db *gorm.DB) {
 	db.Create(&aspectRatio)
 
 	groupEmotes := true
+
+	randomSizeIncrease := 10
+	randomSizeDecrease := 20
+	roundness := 50
 	emote := Emote{
 		Width:              50,
 		Height:             50,
-		RandomSizeIncrease: 10,
-		RandomSizeDecrease: 20,
+		RandomSizeIncrease: &randomSizeIncrease,
+		RandomSizeDecrease: &randomSizeDecrease,
 		MaxEmoteCount:      200,
 		GroupEmotes:        &groupEmotes,
-		Roundness:          50,
+		Roundness:          &roundness,
 		BackgroundColor:    "rgba(255, 255, 255, 0)",
 	}
 	db.Create(&emote)
@@ -105,6 +117,8 @@ func insertDefaultValues(db *gorm.DB) {
 	initialConfig := AppConfig{
 		YoutubeID:     youtube.ID,
 		Youtube:       youtube,
+		TwitchID:      twitch.ID,
+		Twitch:        twitch,
 		PortID:        port.ID,
 		Port:          port,
 		VersionID:     version.ID,

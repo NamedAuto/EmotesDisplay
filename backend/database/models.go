@@ -4,9 +4,14 @@ import "gorm.io/gorm"
 
 type Youtube struct {
 	gorm.Model
-	ApiKey       string
-	VideoId      string
+	ApiKey       *string
+	VideoId      *string
 	MessageDelay int
+}
+
+type Twitch struct {
+	gorm.Model
+	ChannelName *string
 }
 
 type Port struct {
@@ -34,11 +39,11 @@ type Emote struct {
 	gorm.Model
 	Width              int
 	Height             int
-	RandomSizeIncrease int
-	RandomSizeDecrease int
+	RandomSizeIncrease *int
+	RandomSizeDecrease *int
 	MaxEmoteCount      int
 	GroupEmotes        *bool
-	Roundness          int
+	Roundness          *int
 	BackgroundColor    string
 }
 
@@ -61,6 +66,8 @@ type AppConfig struct {
 	gorm.Model
 	YoutubeID     uint
 	Youtube       Youtube
+	TwitchID      uint
+	Twitch        Twitch
 	PortID        uint
 	Port          Port
 	VersionID     uint

@@ -74,7 +74,7 @@ func GetYoutubeMessages(
 
 	apiCallCounter++
 
-	liveChatId, err := GetLiveChatID(youtubeService, youtube.VideoId)
+	liveChatId, err := GetLiveChatID(youtubeService, *youtube.VideoId)
 	if err != nil {
 		log.Printf("Error getting live chat ID: %v\n", err)
 		if stopChan != nil {
