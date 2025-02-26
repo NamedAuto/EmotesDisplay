@@ -13,10 +13,11 @@ type PortDTO struct {
 	Port int `json:"port"`
 }
 
-type VersionDTO struct {
-	Version  string `json:"version"`
-	Owner    string `json:"owner"`
-	RepoName string `json:"repoName"`
+type AppInfoDTO struct {
+	Version     string `json:"version"`
+	Owner       string `json:"owner"`
+	RepoName    string `json:"repoName"`
+	LastChecked int    `json:"lastChecked"`
 }
 
 type AspectRatioDTO struct {
@@ -50,7 +51,7 @@ type AppConfigDTO struct {
 	Youtube     YoutubeDTO     `json:"youtube"`
 	Twitch      TwitchDTO      `json:"twitch"`
 	Port        PortDTO        `json:"port"`
-	Version     VersionDTO     `json:"version"`
+	AppInfo     AppInfoDTO     `json:"app"`
 	AspectRatio AspectRatioDTO `json:"aspectRatio"`
 	Emote       EmoteDTO       `json:"emote"`
 	Animations  AnimationsDTO  `json:"animations"`
@@ -76,11 +77,12 @@ func ToPortDTO(p Port) PortDTO {
 	}
 }
 
-func ToVersionDTO(v Version) VersionDTO {
-	return VersionDTO{
-		Version:  v.Version,
-		Owner:    v.Owner,
-		RepoName: v.RepoName,
+func ToAppInfoDTO(v AppInfo) AppInfoDTO {
+	return AppInfoDTO{
+		Version:     v.Version,
+		Owner:       v.Owner,
+		RepoName:    v.RepoName,
+		LastChecked: int(v.LastChecked),
 	}
 }
 
@@ -124,7 +126,7 @@ func ToAppConfigDTO(config AppConfig) AppConfigDTO {
 		Youtube:     ToYoutubeDTO(config.Youtube),
 		Twitch:      ToTwitchDTO(config.Twitch),
 		Port:        ToPortDTO(config.Port),
-		Version:     ToVersionDTO(config.Version),
+		AppInfo:     ToAppInfoDTO(config.AppInfo),
 		AspectRatio: ToAspectRatioDTO(config.AspectRatio),
 		Emote:       ToEmoteDTO(config.Emote),
 		Animations:  ToAnimationsDTO(config.Animations),
@@ -137,7 +139,7 @@ func ToAppConfigModel(dto AppConfigDTO) AppConfig {
 		Youtube:     ToYoutubeModel(dto.Youtube),
 		Twitch:      ToTwitchModel(dto.Twitch),
 		Port:        ToPortModel(dto.Port),
-		Version:     ToVersionModel(dto.Version),
+		AppInfo:     ToAppInfoModel(dto.AppInfo),
 		AspectRatio: ToAspectRatioModel(dto.AspectRatio),
 		Emote:       ToEmoteModel(dto.Emote),
 		Animations:  ToAnimationsModel(dto.Animations),
@@ -164,11 +166,12 @@ func ToPortModel(dto PortDTO) Port {
 	}
 }
 
-func ToVersionModel(dto VersionDTO) Version {
-	return Version{
-		Version:  dto.Version,
-		Owner:    dto.Owner,
-		RepoName: dto.RepoName,
+func ToAppInfoModel(dto AppInfoDTO) AppInfo {
+	return AppInfo{
+		Version:     dto.Version,
+		Owner:       dto.Owner,
+		RepoName:    dto.RepoName,
+		LastChecked: int64(dto.LastChecked),
 	}
 }
 

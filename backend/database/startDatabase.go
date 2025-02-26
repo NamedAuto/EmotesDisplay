@@ -21,7 +21,7 @@ func StartDatabase() *gorm.DB {
 		&Youtube{},
 		&Twitch{},
 		&Port{},
-		&Version{},
+		&AppInfo{},
 		&AspectRatio{},
 		&Emote{},
 		&Animations{},
@@ -37,7 +37,7 @@ func StartDatabase() *gorm.DB {
 	db.Preload("Youtube").
 		Preload("Twitch").
 		Preload("Port").
-		Preload("Version").
+		Preload("AppInfo").
 		Preload("AspectRatio").
 		Preload("Emote").
 		Preload("Animations").
@@ -73,12 +73,13 @@ func insertDefaultValues(db *gorm.DB) {
 	port := Port{Port: 3124}
 	db.Create(&port)
 
-	version := Version{
-		Version:  "v2.1",
-		Owner:    "NamedAuto",
-		RepoName: "EmotesDisplay",
+	appInfo := AppInfo{
+		Version:     "v2.1",
+		Owner:       "NamedAuto",
+		RepoName:    "EmotesDisplay",
+		LastChecked: 0,
 	}
-	db.Create(&version)
+	db.Create(&appInfo)
 
 	forceWidthHeight := true
 	aspectRatio := AspectRatio{
@@ -120,8 +121,8 @@ func insertDefaultValues(db *gorm.DB) {
 		Twitch:        twitch,
 		PortID:        port.ID,
 		Port:          port,
-		VersionID:     version.ID,
-		Version:       version,
+		AppInfoID:     appInfo.ID,
+		AppInfo:       appInfo,
 		AspectRatioID: aspectRatio.ID,
 		AspectRatio:   aspectRatio,
 		EmoteID:       emote.ID,

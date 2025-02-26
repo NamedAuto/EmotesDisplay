@@ -18,11 +18,12 @@ type Port struct {
 	Port int
 }
 
-type Version struct {
+type AppInfo struct {
 	gorm.Model
-	Version  string
-	Owner    string
-	RepoName string
+	Version     string
+	Owner       string
+	RepoName    string
+	LastChecked int64
 }
 
 type AspectRatio struct {
@@ -69,8 +70,8 @@ type AppConfig struct {
 	Twitch        Twitch
 	PortID        uint
 	Port          Port
-	VersionID     uint
-	Version       Version
+	AppInfoID     uint
+	AppInfo       AppInfo
 	AspectRatioID uint
 	AspectRatio   AspectRatio
 	EmoteID       uint

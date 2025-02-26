@@ -4,10 +4,12 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"slices"
 
@@ -106,28 +108,36 @@ func configureConfigEndpoint(mux *http.ServeMux, db *gorm.DB) {
 			existingConfig := database.GetAppConfig()
 
 			if incomingConfigDTO.Youtube != database.ToYoutubeDTO(existingConfig.Youtube) {
-				db.Model(&existingConfig.Youtube).Updates(database.ToYoutubeModel(incomingConfigDTO.Youtube))
+				db.Model(&existingConfig.Youtube).
+					Updates(database.ToYoutubeModel(incomingConfigDTO.Youtube))
 			}
 			if incomingConfigDTO.Twitch != database.ToTwitchDTO(existingConfig.Twitch) {
-				db.Model(&existingConfig.Twitch).Updates(database.ToTwitchModel(incomingConfigDTO.Twitch))
+				db.Model(&existingConfig.Twitch).
+					Updates(database.ToTwitchModel(incomingConfigDTO.Twitch))
 			}
 			if incomingConfigDTO.Port != database.ToPortDTO(existingConfig.Port) {
-				db.Model(&existingConfig.Port).Updates(database.ToPortModel(incomingConfigDTO.Port))
+				db.Model(&existingConfig.Port).
+					Updates(database.ToPortModel(incomingConfigDTO.Port))
 			}
-			if incomingConfigDTO.Version != database.ToVersionDTO(existingConfig.Version) {
-				db.Model(&existingConfig.Version).Updates(database.ToVersionModel(incomingConfigDTO.Version))
+			if incomingConfigDTO.AppInfo != database.ToAppInfoDTO(existingConfig.AppInfo) {
+				db.Model(&existingConfig.AppInfo).
+					Updates(database.ToAppInfoModel(incomingConfigDTO.AppInfo))
 			}
 			if incomingConfigDTO.AspectRatio != database.ToAspectRatioDTO(existingConfig.AspectRatio) {
-				db.Model(&existingConfig.AspectRatio).Updates(database.ToAspectRatioModel(incomingConfigDTO.AspectRatio))
+				db.Model(&existingConfig.AspectRatio).
+					Updates(database.ToAspectRatioModel(incomingConfigDTO.AspectRatio))
 			}
 			if incomingConfigDTO.Emote != database.ToEmoteDTO(existingConfig.Emote) {
-				db.Model(&existingConfig.Emote).Updates(database.ToEmoteModel(incomingConfigDTO.Emote))
+				db.Model(&existingConfig.Emote).
+					Updates(database.ToEmoteModel(incomingConfigDTO.Emote))
 			}
 			if incomingConfigDTO.Animations != database.ToAnimationsDTO(existingConfig.Animations) {
-				db.Model(&existingConfig.Animations).Updates(database.ToAnimationsModel(incomingConfigDTO.Animations))
+				db.Model(&existingConfig.Animations).
+					Updates(database.ToAnimationsModel(incomingConfigDTO.Animations))
 			}
 			if incomingConfigDTO.Preview != database.ToPreviewDTO(existingConfig.Preview) {
-				db.Model(&existingConfig.Preview).Updates(database.ToPreviewModel(incomingConfigDTO.Preview))
+				db.Model(&existingConfig.Preview).
+					Updates(database.ToPreviewModel(incomingConfigDTO.Preview))
 			}
 
 			w.WriteHeader(http.StatusOK)
@@ -138,19 +148,39 @@ func configureConfigEndpoint(mux *http.ServeMux, db *gorm.DB) {
 	})
 }
 
-func configureVersionEndpoint(mux *http.ServeMux, repo config.Repo) {
-	mux.HandleFunc("/version", func(w http.ResponseWriter, r *http.Request) {
-		latestVersion, err := github.GetLatestReleaseVersion(repo.Owner, repo.RepoName)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+const timeInMillisToWaitBeforeChecking = 3600000
+
+// TODO: Update so that the api is only called every x hours instead of every time th  app is ran
+func configureVersionEndpoint(mux *http.ServeMux, db *gorm.DB) {
+	mux.HandleFunc("/app-info", func(w http.ResponseWriter, r *http.Request) {
+		var appInfo database.AppInfo
+		db.First(&appInfo)
+
+		var response RepoResponse
+
+		now := time.Now()
+		millis := now.UnixNano() / int64(time.Millisecond)
+
+		response = RepoResponse{
+			Owner:          appInfo.Owner,
+			RepoName:       appInfo.RepoName,
+			CurrentVersion: appInfo.Version,
+			LatestVersion:  appInfo.Version,
 		}
 
-		response := RepoResponse{
-			Owner:          repo.Owner,
-			RepoName:       repo.RepoName,
-			CurrentVersion: repo.AppVersion,
-			LatestVersion:  latestVersion,
+		if (millis - appInfo.LastChecked) > timeInMillisToWaitBeforeChecking {
+			log.Println("Getting new info")
+			latestVersion, err :=
+				github.GetLatestReleaseVersion(appInfo.Owner, appInfo.RepoName)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			db.Model(&appInfo).Update("LastChecked", millis)
+			response.LatestVersion = latestVersion
+		} else {
+			log.Println("Using old info")
 		}
 
 		jsonResponse, err := json.Marshal(response)
@@ -272,7 +302,7 @@ func ConfigureEndpoints(mux *http.ServeMux, db *gorm.DB, myPaths config.MyPaths,
 	configureEmotesEndpoint(mux, myPaths.EmotePath)
 	configureConfigEndpoint(mux, db)
 	configureBackgroundImageEndpoint(mux, myPaths.BackgroundPath)
-	configureVersionEndpoint(mux, repo)
+	configureVersionEndpoint(mux, db)
 	configureCheckForYoutubeApiKey(mux, db)
 	configureYoutubeApiKey(mux, db)
 	configureDefaultEndpoint(mux)

@@ -8,16 +8,16 @@ interface HeaderSettingsProps {
   port: string;
 }
 
-const getVersionInfo = async (port: string) => {
+const getAppInfo = async (port: string) => {
   try {
-    const url = `http://localhost:${port}/version`;
+    const url = `http://localhost:${port}/app-info`;
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const versionInfo = response.json();
-    return versionInfo;
+    const appInfo = response.json();
+    return appInfo;
   } catch (error) {
     console.error("Error fetching app version:", error);
   }
@@ -26,7 +26,7 @@ const getVersionInfo = async (port: string) => {
 };
 
 const HeaderSettings: React.FC<HeaderSettingsProps> = ({ port }) => {
-  const [versionInfo, setVersionInfo] = useState<{
+  const [appInfo, setAppInfo] = useState<{
     owner: string;
     repoName: string;
     currentVersion: string;
@@ -35,8 +35,8 @@ const HeaderSettings: React.FC<HeaderSettingsProps> = ({ port }) => {
 
   useEffect(() => {
     const fetchVersionInfo = async () => {
-      const data = await getVersionInfo(port);
-      setVersionInfo(data);
+      const data = await getAppInfo(port);
+      setAppInfo(data);
     };
     fetchVersionInfo();
   }, [port]);
@@ -54,8 +54,8 @@ const HeaderSettings: React.FC<HeaderSettingsProps> = ({ port }) => {
       >
         <Tooltip
           title={
-            versionInfo
-              ? versionInfo.currentVersion === versionInfo.latestVersion
+            appInfo
+              ? appInfo.currentVersion === appInfo.latestVersion
                 ? "Current version"
                 : "Download the latest version here"
               : "Couldn't connect"
@@ -76,12 +76,12 @@ const HeaderSettings: React.FC<HeaderSettingsProps> = ({ port }) => {
               },
             }}
           >
-            {versionInfo ? (
-              versionInfo.currentVersion === versionInfo.latestVersion ? (
-                `${versionInfo.currentVersion}`
+            {appInfo ? (
+              appInfo.currentVersion === appInfo.latestVersion ? (
+                `${appInfo.currentVersion}`
               ) : (
                 <Link
-                  href={`https://github.com/${versionInfo.owner}/${versionInfo.repoName}/releases/latest`}
+                  href={`https://github.com/${appInfo.owner}/${appInfo.repoName}/releases/latest`}
                   target="_blank"
                   rel="noopener"
                 >
