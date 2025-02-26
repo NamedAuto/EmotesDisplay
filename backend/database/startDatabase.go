@@ -27,6 +27,7 @@ func StartDatabase() *gorm.DB {
 		&Animations{},
 		&Preview{},
 		&AppConfig{},
+		&ApiKey{},
 		&Authentication{}); err != nil {
 		log.Fatal("Failed to migrate the database: ", err)
 	}
@@ -58,10 +59,8 @@ func initDatabase(db *gorm.DB) {
 }
 
 func insertDefaultValues(db *gorm.DB) {
-	apiKey := "AIzaSyAxOjESchGSZKbX4bgXOI9RWLno8YnFERA"
 	videoId := ""
 	youtube := Youtube{
-		ApiKey:       &apiKey,
 		VideoId:      &videoId,
 		MessageDelay: 5000,
 	}
@@ -132,10 +131,20 @@ func insertDefaultValues(db *gorm.DB) {
 		PreviewID:     preview.ID,
 		Preview:       preview,
 	}
+
 	db.Create(&initialConfig)
 
-	authentication := Authentication{YoutubeApiKey: "", Twitch: ""}
+	authentication := Authentication{
+		YoutubeApiKey: "",
+		Twitch:        "",
+	}
 	db.Create(&authentication)
+
+	key := ""
+	apiKey := ApiKey{
+		ApiKey: &key,
+	}
+	db.Create(&apiKey)
 
 	log.Println("Created database")
 }

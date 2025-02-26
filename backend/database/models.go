@@ -4,7 +4,6 @@ import "gorm.io/gorm"
 
 type Youtube struct {
 	gorm.Model
-	ApiKey       *string
 	VideoId      *string
 	MessageDelay int
 }
@@ -80,4 +79,9 @@ type AppConfig struct {
 	Animations    Animations
 	PreviewID     uint
 	Preview       Preview
+}
+
+type ApiKey struct {
+	gorm.Model
+	ApiKey *string
 }

@@ -1,5 +1,4 @@
 export interface SettingsYoutube {
-  apiKey: string;
   videoId: string;
   messageDelay: string;
 }
@@ -37,6 +36,14 @@ export interface SettingsPreview {
 export interface SettingsAuthentication {
   isYoutubeApiKeyPresent: boolean;
   isTwitchPresent: boolean;
-  youtubeApiKey: string;
+  youtubeApiKeyssss: string;
   twitch: string;
+}
+
+export interface SettingsApiKey {
+  apiKey: string;
+}
+
+export interface HasApiKeyResponse {
+  exists: boolean;
 }

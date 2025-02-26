@@ -1,7 +1,6 @@
 package database
 
 type YoutubeDTO struct {
-	ApiKey       string `json:"apiKey"`
 	VideoId      string `json:"videoId"`
 	MessageDelay int    `json:"messageDelay"`
 }
@@ -60,7 +59,6 @@ type AppConfigDTO struct {
 
 func ToYoutubeDTO(y Youtube) YoutubeDTO {
 	return YoutubeDTO{
-		ApiKey:       *y.ApiKey,
 		VideoId:      *y.VideoId,
 		MessageDelay: y.MessageDelay,
 	}
@@ -149,7 +147,6 @@ func ToAppConfigModel(dto AppConfigDTO) AppConfig {
 
 func ToYoutubeModel(dto YoutubeDTO) Youtube {
 	return Youtube{
-		ApiKey:       &dto.ApiKey,
 		VideoId:      &dto.VideoId,
 		MessageDelay: dto.MessageDelay,
 	}

@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Checkbox,
   FormControlLabel,
   InputAdornment,
@@ -7,14 +8,18 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { SettingsEmote } from "./settingsInterface";
+import ColorPicker from "react-best-gradient-color-picker";
 
 interface EmoteSettingsProps {
   settings: SettingsEmote;
+  color: string;
+  setColor: React.Dispatch<React.SetStateAction<string>>;
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+// const [color, setColor] = useState("rgba(255,255,255,0)");
 const labelFontSize = "1.2em";
 const inputFontSize = "1.1em";
 const marginLeft = "10px";
@@ -22,6 +27,8 @@ const marginRight = "10px";
 
 const EmoteSettings: React.FC<EmoteSettingsProps> = ({
   settings,
+  color,
+  setColor,
   handleInputChange,
 }) => (
   <Box>
@@ -199,7 +206,7 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
         />
       </Tooltip>
 
-      <Tooltip
+      {/* <Tooltip
         title="Color the transparent portion of an emote. Only change the numbers"
         arrow
       >
@@ -221,7 +228,32 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
             },
           }}
         />
-      </Tooltip>
+      </Tooltip> */}
+
+      {/* <Button
+        variant="contained"
+        color="primary"
+        onClick={handleInputChange}
+        style={{
+          // fontSize: fontSize,
+          // marginTop: marginTop,
+          // marginBottom: marginBottom,
+        }}
+        sx={{
+          marginLeft: marginLeft,
+          marginRight: marginRight,
+          width: "100px",
+        }}
+      >
+        Save
+      </Button> */}
+
+      {/* <ColorPicker
+        value={color}
+        onChange={setColor}
+        hideGradientControls={true}
+        hideControls={true}
+      /> */}
     </Box>
   </Box>
 );

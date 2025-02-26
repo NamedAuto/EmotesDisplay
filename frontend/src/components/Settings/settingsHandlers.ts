@@ -32,7 +32,7 @@ const handleAuthenticationSave = (
   setSettingsAuthentication((prevSettings) => {
     const copy = { ...prevSettings };
     if (message.youtubeApiKey) {
-      copy.youtubeApiKey = "";
+      copy.youtubeApiKeyssss = "";
       copy.isYoutubeApiKeyPresent = true;
     }
 

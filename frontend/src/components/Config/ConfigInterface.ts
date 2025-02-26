@@ -1,5 +1,4 @@
 export interface Youtube {
-  apiKey: string;
   videoId: string;
   messageDelay: number;
 }
@@ -38,6 +37,10 @@ export interface Preview {
 export interface Authentication {
   youtubeApiKey: string;
   twitch: string;
+}
+
+export interface ApiKey {
+  apiKey: string;
 }
 
 export interface Config {

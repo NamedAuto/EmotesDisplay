@@ -10,12 +10,13 @@ import { Config } from "./ConfigInterface";
 
 const ConfigContext = createContext<Config | null>(null);
 
+export let WAILS_PORT = 1234;
+
 let isWailsApp = typeof window.runtime !== "undefined";
 export async function loadConfigFront(): Promise<Config | null> {
   let config: Config | null = null;
 
   if (isWailsApp) {
-    let WAILS_PORT = 1324;
     WAILS_PORT = await GetPort();
 
     try {

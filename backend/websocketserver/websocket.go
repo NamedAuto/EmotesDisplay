@@ -2,12 +2,8 @@ package websocketserver
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"regexp"
-	"sync"
 
 	"github.com/NamedAuto/EmotesDisplay/backend/common"
 	"github.com/NamedAuto/EmotesDisplay/backend/database"
@@ -15,58 +11,8 @@ import (
 	"github.com/NamedAuto/EmotesDisplay/backend/previewView"
 	"github.com/NamedAuto/EmotesDisplay/backend/twitch"
 	"github.com/gorilla/websocket"
-	"golang.org/x/exp/rand"
 	"gorm.io/gorm"
 )
-
-type WebSocketHandler struct {
-	connections []*websocket.Conn
-	mu          sync.Mutex
-}
-
-func (handler *WebSocketHandler) AddConnection(ws *websocket.Conn) {
-	handler.mu.Lock()
-	handler.connections = append(handler.connections, ws)
-	handler.mu.Unlock()
-}
-
-func (handler *WebSocketHandler) RemoveConnection(ws *websocket.Conn) {
-	handler.mu.Lock()
-	defer handler.mu.Unlock()
-	for i, conn := range handler.connections {
-		if conn == ws {
-			handler.connections = append(handler.connections[:i], handler.connections[i+1:]...)
-			break
-		}
-	}
-}
-
-func (handler *WebSocketHandler) ConfigureUpgrader(allowedOrigin string) websocket.Upgrader {
-	return websocket.Upgrader{
-		CheckOrigin: func(r *http.Request) bool {
-			log.Println("Received connection attempt from origin:", r.Header.Get("Origin"))
-			origin := r.Header.Get("Origin")
-
-			env := os.Getenv("ENV")
-			if env == "development" {
-				log.Println("In development in ws upgrader")
-				if origin == "http://wails.localhost:34115" ||
-					origin == "http://localhost:5173" ||
-					origin == allowedOrigin {
-					return true
-				}
-			} else {
-				// Allow wails window to connect to ws
-				if origin == allowedOrigin || origin == "http://wails.localhost" {
-					return true
-				}
-			}
-
-			log.Printf("Invalid origin: %s", origin)
-			return false
-		},
-	}
-}
 
 func (handler *WebSocketHandler) HandleConnections(
 	allowedOrigin string,
@@ -113,7 +59,7 @@ func (handler *WebSocketHandler) HandleMessage(
 	db *gorm.DB,
 	emoteMap map[string]string) {
 
-	var event map[string]interface{}
+	var event map[string]any
 	if err := json.Unmarshal(message, &event); err != nil {
 		log.Printf("Unmarshal error: %v", err)
 		return
@@ -129,7 +75,7 @@ func (handler *WebSocketHandler) HandleMessage(
 
 	// Example
 	case "customEvent":
-		data, ok := event["data"].(map[string]interface{})
+		data, ok := event["data"].(map[string]any)
 		if !ok {
 			log.Printf("Invalid event data")
 			return
@@ -149,26 +95,29 @@ func (handler *WebSocketHandler) HandleMessage(
 		previewView.StartPreview(handler, db, emoteMap)
 	case "stopPreview":
 		previewView.StopPreview()
+
+	case "has-youtube-api-key":
+
 	case "authentication-present":
 		database.IsAuthenticationPresent(handler, db)
 	case "authentication":
-		data, ok := event["data"].(map[string]interface{})
+		data, ok := event["data"].(map[string]any)
 		if !ok {
 			log.Printf("Invalid event data")
 			return
 		}
 		database.SaveAuthentication(handler, db, data)
-	case "twitch-user-auth-code":
-		data, ok := event["code"].(string)
-		if !ok {
-			log.Printf("Invalid event data")
-			return
-		}
+	// case "twitch-user-auth-code":
+	// 	data, ok := event["code"].(string)
+	// 	if !ok {
+	// 		log.Printf("Invalid event data")
+	// 		return
+	// 	}
 
-		log.Printf("This is my code %s", data)
-		twitch.GetUserAccessToken(data)
-		twitch.GetUser()
-		twitch.ConnectToChatIRC(handler)
+	// 	log.Printf("This is my code %s", data)
+	// 	twitch.GetUserAccessToken(data)
+	// 	twitch.GetUser()
+	// 	twitch.ConnectToChatIRC(handler)
 
 	default:
 		log.Printf("Unknown event type: %s", eventType)
@@ -181,7 +130,7 @@ func (handler *WebSocketHandler) EmitToAllRandom(port int, emoteMap map[string]s
 
 	message := generateRandomUrls(port, emoteMap)
 
-	msg := map[string]interface{}{
+	msg := map[string]any{
 		"eventType": "new-emote",
 		"data":      message,
 	}
@@ -189,24 +138,11 @@ func (handler *WebSocketHandler) EmitToAllRandom(port int, emoteMap map[string]s
 	emit(msg, handler)
 }
 
-func generateRandomUrls(port int, emoteMap map[string]string) []string {
-	count := rand.Intn(3) + 1
-	var urls []string
-	for i := 0; i < count; i++ {
-		emote := getRandomEmoteKey(emoteMap)
-		url := generateEmotesUrl(port)
-		message := parseEmoteToURL(emote, url)
-		urls = append(urls, message)
-	}
-
-	return urls
-}
-
 func (handler *WebSocketHandler) EmitToAll(emoteUrls []string) {
 	handler.mu.Lock()
 	defer handler.mu.Unlock()
 
-	msg := map[string]interface{}{
+	msg := map[string]any{
 		"eventType": "new-emote",
 		"data":      emoteUrls,
 	}
@@ -219,7 +155,7 @@ func (handler *WebSocketHandler) EmitTwitchEmotes(emoteUrls []string) {
 	handler.mu.Lock()
 	defer handler.mu.Unlock()
 
-	msg := map[string]interface{}{
+	msg := map[string]any{
 		"eventType": "twitch-emote",
 		"data":      emoteUrls,
 	}
@@ -231,14 +167,14 @@ func (handler *WebSocketHandler) EmitPreviewConnection(connected bool) {
 	handler.mu.Lock()
 	defer handler.mu.Unlock()
 
-	var msg map[string]interface{}
+	var msg map[string]any
 	if connected {
-		msg = map[string]interface{}{
+		msg = map[string]any{
 			"eventType":  "preview-connection",
 			"connection": "connected",
 		}
 	} else {
-		msg = map[string]interface{}{
+		msg = map[string]any{
 			"eventType":  "preview-connection",
 			"connection": "disconnected",
 		}
@@ -251,14 +187,14 @@ func (handler *WebSocketHandler) EmitYoutubeConnection(connected bool) {
 	handler.mu.Lock()
 	defer handler.mu.Unlock()
 
-	var msg map[string]interface{}
+	var msg map[string]any
 	if connected {
-		msg = map[string]interface{}{
+		msg = map[string]any{
 			"eventType":  "youtube-connection",
 			"connection": "connected",
 		}
 	} else {
-		msg = map[string]interface{}{
+		msg = map[string]any{
 			"eventType":  "youtube-connection",
 			"connection": "disconnected",
 		}
@@ -271,7 +207,7 @@ func (handler *WebSocketHandler) EmitAuthenticationPresent(present common.Authen
 	handler.mu.Lock()
 	defer handler.mu.Unlock()
 
-	msg := map[string]interface{}{
+	msg := map[string]any{
 		"eventType":     "authentication-present",
 		"youtubeApiKey": present.YoutubeApiKey,
 		"twitch":        present.TwitchKey,
@@ -281,7 +217,7 @@ func (handler *WebSocketHandler) EmitAuthenticationPresent(present common.Authen
 
 }
 
-func emit(msg map[string]interface{}, handler *WebSocketHandler) {
+func emit(msg map[string]any, handler *WebSocketHandler) {
 	jsonData, err := json.Marshal(msg)
 	if err != nil {
 		log.Printf("Error marshalling message to JSON: %v", err)
@@ -296,26 +232,4 @@ func emit(msg map[string]interface{}, handler *WebSocketHandler) {
 			}
 		}
 	}
-}
-
-func generateEmotesUrl(port int) string {
-	return fmt.Sprintf("http://localhost:%d/emotes/", port)
-}
-
-func getRandomEmoteKey(emoteMap map[string]string) string {
-	keys := make([]string, 0, len(emoteMap))
-	for key := range emoteMap {
-		keys = append(keys, key)
-	}
-
-	randomKey := keys[rand.Intn(len(keys))]
-	return randomKey
-}
-
-func parseEmoteToURL(emote string, url string) string {
-	re := regexp.MustCompile(`[:_]`)
-	cleanedText := re.ReplaceAllString(emote, "")
-	emoteURL := url + cleanedText
-
-	return emoteURL
 }

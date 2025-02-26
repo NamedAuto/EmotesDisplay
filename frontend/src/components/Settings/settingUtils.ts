@@ -19,7 +19,6 @@ import {
 } from "./settingsInterface";
 
 export const formatYoutubeSettings = (youtube: Youtube) => ({
-  apiKey: youtube.apiKey,
   videoId: youtube.videoId,
   messageDelay: (youtube.messageDelay / 1000).toString(),
 });
@@ -57,8 +56,12 @@ export const formatPreviewSettings = (preview: Preview) => ({
 export const formatAuthenticationSettings = () => ({
   isYoutubeApiKeyPresent: false,
   isTwitchPresent: false,
-  youtubeApiKey: "",
+  youtubeApiKeyssss: "",
   twitch: "",
+});
+
+export const formatApiKeySettings = () => ({
+  apiKey: "",
 });
 
 export const createConfigCopyWithUpdate = (
@@ -74,7 +77,6 @@ export const createConfigCopyWithUpdate = (
     ...config,
     youtube: {
       ...config.youtube,
-      apiKey: settingsYoutube.apiKey,
       videoId: settingsYoutube.videoId,
       messageDelay: Math.round(parseFloat(settingsYoutube.messageDelay) * 1000),
     },

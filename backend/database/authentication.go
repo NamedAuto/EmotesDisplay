@@ -5,7 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func SaveAuthentication(handler common.HandlerInterface, db *gorm.DB, data map[string]interface{}) {
+func SaveAuthentication(handler common.HandlerInterface, db *gorm.DB, data map[string]any) {
 	youtubeApiKey := data["youtubeApiKey"].(string)
 	twitch := data["twitch"].(string)
 
@@ -43,4 +43,8 @@ func IsAuthenticationPresent(handler common.HandlerInterface, db *gorm.DB) {
 	}
 
 	handler.EmitAuthenticationPresent(auth)
+}
+
+func HasYoutubeApiKey(handler common.HandlerInterface, db *gorm.DB) {
+
 }

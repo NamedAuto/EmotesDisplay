@@ -27,6 +27,7 @@ import PreviewSettings from "./PreviewSettings";
 import YouTubeSettings from "./YoutubeSettings";
 import {
   createConfigCopyWithUpdate,
+  formatApiKeySettings,
   formatAspectRatioSettings,
   formatAuthenticationSettings,
   formatEmoteSettings,
@@ -37,6 +38,8 @@ import {
 } from "./settingUtils";
 import { setupHandlers } from "./settingsHandlers";
 import {
+  HasApiKeyResponse,
+  SettingsApiKey,
   SettingsAspectRatio,
   SettingsAuthentication,
   SettingsEmote,
@@ -64,7 +67,25 @@ const SettingsPage: React.FC = () => {
     );
   }, [updateHandlers]);
 
+  /**
+   * WS initial setup calls
+   */
+  useEffect(() => {
+    if (isConnected) {
+      checkForKeys();
+    }
+  }, [isConnected]);
+
+  /**
+   * Http initial setup calls
+   */
+  useEffect(() => {
+    checkForYoutubeApiKey();
+  }, []);
+
   const [showApiKey, setShowApiKey] = useState(false);
+  const [apiKeyExists, setApiKeyExists] = useState<boolean>(false);
+  const [color, setColor] = useState("rgba(255,255,255,0)");
 
   const [settingsYoutube, setSettingsYoutube] = useState<SettingsYoutube>(
     formatYoutubeSettings(config.youtube)
@@ -94,6 +115,9 @@ const SettingsPage: React.FC = () => {
   const [settingsAuthentication, setSettingsAuthentication] =
     useState<SettingsAuthentication>(formatAuthenticationSettings());
 
+  const [settingsApiKey, setSettingsApiKey] =
+    useState<SettingsApiKey>(formatApiKeySettings);
+
   const checkForKeys = () => {
     const eventData = {
       eventType: "authentication-present",
@@ -101,13 +125,65 @@ const SettingsPage: React.FC = () => {
     sendMessage(eventData);
   };
 
+  /*
+  Get apiKeyExists from backend (DONE)
+  Pass apiKeyExists to YoutubeSettings to use for Typography display
+  Textfield to input apiKey
+  Save button -> opens dialog of yes no to save apikey
+  Sends to backend and clears the textfield
+  Query apiKeyExists again? or use result from save(probably)
+  EXTRA
+  Have button to get the api key from the backend and display in
+    a dialog menu that must be closed before proceeding
+    When closed, api key reference values? are removed/set to ""
+
+  */
+
+  const checkForYoutubeApiKey = async () => {
+    try {
+      const url = `http://localhost:${config.port.port}/check-for-youtube-api-key`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result: HasApiKeyResponse = await response.json();
+      setApiKeyExists(result.exists);
+    } catch (error) {
+      console.error("Error checking API key:", error);
+    }
+  };
+
+  const saveYoutubeApiKey = async () => {
+    try {
+      const apiKey = { apiKey: settingsApiKey.apiKey };
+      const jsonData = JSON.stringify(apiKey);
+
+      const url = `http://localhost:${config.port.port}/youtube-api-key`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save config");
+      }
+
+      setSettingsApiKey(formatApiKeySettings());
+    } catch (error) {
+      console.error("Error saving api key: " + error);
+    }
+  };
+
   const saveAuthentication = () => {
-    settingsAuthentication.youtubeApiKey =
-      settingsAuthentication.youtubeApiKey.trim();
+    settingsAuthentication.youtubeApiKeyssss =
+      settingsAuthentication.youtubeApiKeyssss.trim();
     settingsAuthentication.twitch = settingsAuthentication.twitch.trim();
 
     if (
-      settingsAuthentication.youtubeApiKey === "" &&
+      settingsAuthentication.youtubeApiKeyssss === "" &&
       settingsAuthentication.twitch === ""
     ) {
       return;
@@ -116,7 +192,7 @@ const SettingsPage: React.FC = () => {
     const eventData = {
       eventType: "authentication",
       data: {
-        youtubeApiKey: settingsAuthentication.youtubeApiKey,
+        youtubeApiKey: settingsAuthentication.youtubeApiKeyssss,
         twitch: settingsAuthentication.twitch,
       },
     };
@@ -143,6 +219,7 @@ const SettingsPage: React.FC = () => {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = event.target;
+    // console.log(`Name: ${name}, Value: ${value}`);
 
     if (name in settingsYoutube) {
       setSettingsYoutube((prevValues) => ({
@@ -176,6 +253,11 @@ const SettingsPage: React.FC = () => {
       }));
     } else if (name in settingsAuthentication) {
       setSettingsAuthentication((prevValues) => ({
+        ...prevValues,
+        [name]: type === "checkbox" ? checked : value,
+      }));
+    } else if (name in settingsApiKey) {
+      setSettingsApiKey((prevValues) => ({
         ...prevValues,
         [name]: type === "checkbox" ? checked : value,
       }));
@@ -267,9 +349,10 @@ const SettingsPage: React.FC = () => {
         return (
           <YouTubeSettings
             settings={settingsYoutube}
+            apiKeySettings={settingsApiKey}
+            apiKeyExists={apiKeyExists}
+            saveYoutubeApiKey={saveYoutubeApiKey}
             handleInputChange={handleInputChange}
-            showApiKey={showApiKey}
-            handleClickShowPassword={handleClickShowPassword}
           />
         );
 
@@ -319,6 +402,8 @@ const SettingsPage: React.FC = () => {
         return (
           <EmoteSettings
             settings={settingsEmote}
+            color={color}
+            setColor={setColor}
             handleInputChange={handleInputChange}
           />
         );
@@ -358,13 +443,6 @@ const SettingsPage: React.FC = () => {
 
   const dividerMargin = 1;
   const dividerWidth = 1;
-
-  useEffect(() => {
-    if (isConnected) {
-      checkForKeys();
-      console.log("Checked");
-    }
-  }, [isConnected]);
 
   return (
     <ThemeProvider theme={darkTheme}>

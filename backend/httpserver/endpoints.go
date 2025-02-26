@@ -9,11 +9,28 @@ import (
 	"path/filepath"
 	"strings"
 
+	"slices"
+
 	"github.com/NamedAuto/EmotesDisplay/backend/config"
 	"github.com/NamedAuto/EmotesDisplay/backend/database"
 	"github.com/NamedAuto/EmotesDisplay/backend/github"
 	"gorm.io/gorm"
 )
+
+type YoutubeApiKeyResponse struct {
+	ApiKey string `json:"apiKey"`
+}
+
+type HasApiKeyResponse struct {
+	Exists bool `json:"exists"`
+}
+
+type RepoResponse struct {
+	Owner          string `json:"owner"`
+	RepoName       string `json:"repoName"`
+	CurrentVersion string `json:"currentVersion"`
+	LatestVersion  string `json:"latestVersion"`
+}
 
 var assets embed.FS
 
@@ -66,12 +83,7 @@ func configureBackgroundImageEndpoint(mux *http.ServeMux, backgroundPath string)
 }
 
 func contains(slice []string, item string) bool {
-	for _, s := range slice {
-		if s == item {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(slice, item)
 }
 
 func configureConfigEndpoint(mux *http.ServeMux, db *gorm.DB) {
@@ -93,7 +105,6 @@ func configureConfigEndpoint(mux *http.ServeMux, db *gorm.DB) {
 
 			existingConfig := database.GetAppConfig()
 
-			// Update only the changed fields
 			if incomingConfigDTO.Youtube != database.ToYoutubeDTO(existingConfig.Youtube) {
 				db.Model(&existingConfig.Youtube).Updates(database.ToYoutubeModel(incomingConfigDTO.Youtube))
 			}
@@ -135,15 +146,73 @@ func configureVersionEndpoint(mux *http.ServeMux, repo config.Repo) {
 			return
 		}
 
-		response := map[string]string{
-			"owner":          repo.Owner,
-			"repoName":       repo.RepoName,
-			"currentVersion": repo.AppVersion,
-			"latestVersion":  latestVersion,
+		response := RepoResponse{
+			Owner:          repo.Owner,
+			RepoName:       repo.RepoName,
+			CurrentVersion: repo.AppVersion,
+			LatestVersion:  latestVersion,
+		}
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(jsonResponse)
+	})
+}
+
+func configureCheckForYoutubeApiKey(mux *http.ServeMux, db *gorm.DB) {
+	mux.HandleFunc("/check-for-youtube-api-key", func(w http.ResponseWriter, r *http.Request) {
+		var apiKey database.ApiKey
+		exists := true
+		if err := db.First(&apiKey).Error; err != nil || *apiKey.ApiKey == "" {
+			exists = false
+		}
+
+		response := HasApiKeyResponse{Exists: exists}
+		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(response)
+	})
+}
+
+func configureYoutubeApiKey(mux *http.ServeMux, db *gorm.DB) {
+	mux.HandleFunc("/youtube-api-key", func(w http.ResponseWriter, r *http.Request) {
+		var apiKey database.ApiKey
+		if err := db.First(&apiKey).Error; err != nil {
+			http.Error(w, "API key not found", http.StatusNotFound)
+			return
+		}
+
+		if r.Method == http.MethodGet {
+			response := YoutubeApiKeyResponse{ApiKey: *apiKey.ApiKey}
+			jsonResponse, err := json.Marshal(response)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.Write(jsonResponse)
+		} else if r.Method == http.MethodPost {
+			var apiKeyResponse YoutubeApiKeyResponse
+			if err := json.NewDecoder(r.Body).Decode(&apiKeyResponse); err != nil {
+				http.Error(w, "Invalid request body", http.StatusBadRequest)
+				return
+			}
+
+			key := apiKeyResponse.ApiKey
+			apiKey.ApiKey = &key
+
+			if err := db.Save(&apiKey).Error; err != nil {
+				http.Error(w, "Failed to save API key", http.StatusInternalServerError)
+				return
+			}
+
+			w.WriteHeader(http.StatusOK)
+			fmt.Fprintln(w, "API key saved successfully")
+		}
 	})
 }
 
@@ -203,5 +272,7 @@ func ConfigureEndpoints(mux *http.ServeMux, db *gorm.DB, myPaths config.MyPaths,
 	configureConfigEndpoint(mux, db)
 	configureBackgroundImageEndpoint(mux, myPaths.BackgroundPath)
 	configureVersionEndpoint(mux, repo)
+	configureCheckForYoutubeApiKey(mux, db)
+	configureYoutubeApiKey(mux, db)
 	configureDefaultEndpoint(mux)
 }

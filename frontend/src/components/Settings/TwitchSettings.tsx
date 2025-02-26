@@ -35,7 +35,7 @@ const TwitchSettings: React.FC<TwitchSettingsProps> = ({
           onChange={handleInputChange}
           margin="normal"
           sx={{
-            width: "150px",
+            width: "200px",
             marginLeft: marginLeft,
             marginRight: marginRight,
             "& .MuiInputLabel-root": {

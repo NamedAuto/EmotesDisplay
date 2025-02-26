@@ -4,18 +4,23 @@ import (
 	"context"
 	"log"
 
+	"github.com/NamedAuto/EmotesDisplay/backend/database"
 	"google.golang.org/api/option"
 	"google.golang.org/api/youtube/v3"
+	"gorm.io/gorm"
 )
 
 var youtubeService *youtube.Service
 
-func ConfigureYoutube(ctx context.Context, apiKey string) {
+func ConfigureYoutube(ctx context.Context, db *gorm.DB) {
 	if youtubeService != nil {
 		return
 	}
 
-	tempService, err := youtube.NewService(ctx, option.WithAPIKey(apiKey))
+	var authentication database.Authentication
+	db.First(&authentication)
+
+	tempService, err := youtube.NewService(ctx, option.WithAPIKey(authentication.YoutubeApiKey))
 	if err != nil {
 		log.Printf("Unable to create YouTube service: %v", err)
 	}

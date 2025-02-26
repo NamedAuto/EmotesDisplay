@@ -27,7 +27,7 @@ func StartServer(ctx context.Context) {
 	repo := config.GetRepo()
 	emoteMap := config.GetEmoteMap()
 
-	go myyoutube.ConfigureYoutube(ctx, *appConfig.Youtube.ApiKey)
+	go myyoutube.ConfigureYoutube(ctx, db)
 	go websocketserver.StartWebSocketServer(mux, handler, db, emoteMap)
 	go httpserver.StartHttpServer(mux, db, myPaths, repo, appConfig.Port.Port)
 }

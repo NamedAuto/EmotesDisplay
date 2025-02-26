@@ -19,6 +19,7 @@
     "js-yaml": "^4.1.0",
     "pnpm": "^9.15.3",
     "react": "^19.0.0",
+    "react-best-gradient-color-picker": "^3.0.14",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.1.1"
   },
