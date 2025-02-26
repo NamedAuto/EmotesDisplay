@@ -152,6 +152,7 @@ func configureVersionEndpoint(mux *http.ServeMux, repo config.Repo) {
 			CurrentVersion: repo.AppVersion,
 			LatestVersion:  latestVersion,
 		}
+
 		jsonResponse, err := json.Marshal(response)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -159,7 +160,7 @@ func configureVersionEndpoint(mux *http.ServeMux, repo config.Repo) {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(jsonResponse)
+		w.Write(jsonResponse)
 	})
 }
 
