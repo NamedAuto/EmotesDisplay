@@ -5,6 +5,8 @@ declare module "@mui/material/styles/createPalette" {
     customColors: {
       backgroundDarker: string;
       myCustomText: string;
+      textColorLighter: string;
+      modalBg: string;
     };
   }
 
@@ -12,6 +14,8 @@ declare module "@mui/material/styles/createPalette" {
     customColors?: {
       backgroundDarker?: string;
       myCustomText?: string;
+      textColorLighter?: string;
+      modalBg?: string;
     };
   }
 }
@@ -38,6 +42,8 @@ const darkTheme = createTheme({
     customColors: {
       backgroundDarker: "#13252c",
       myCustomText: "#f4458f",
+      textColorLighter: "#f167a7",
+      modalBg: "#162f3a",
     },
   },
   components: {

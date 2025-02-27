@@ -153,10 +153,21 @@ const SettingsPage: React.FC = () => {
     }
   };
 
+  const getYoutubeApiKey = async (callback: (key: string) => void) => {
+    const response = await fetch(
+      `http://localhost:${config.port.port}/youtube-api-key`
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const apiKey = await response.json();
+    callback(apiKey.apiKey);
+  };
+
   const saveYoutubeApiKey = async () => {
     try {
-      const apiKey = { apiKey: settingsApiKey.apiKey };
-      const jsonData = JSON.stringify(apiKey);
+      const jsonData = JSON.stringify(settingsApiKey);
 
       const url = `http://localhost:${config.port.port}/youtube-api-key`;
       const response = await fetch(url, {
@@ -169,6 +180,13 @@ const SettingsPage: React.FC = () => {
 
       if (!response.ok) {
         throw new Error("Failed to save config");
+      }
+
+      // Treat empty api key saves as removing the key
+      if (settingsApiKey.apiKey == "") {
+        setApiKeyExists(false);
+      } else {
+        setApiKeyExists(true);
       }
 
       setSettingsApiKey(formatApiKeySettings());
@@ -352,6 +370,7 @@ const SettingsPage: React.FC = () => {
             apiKeySettings={settingsApiKey}
             apiKeyExists={apiKeyExists}
             saveYoutubeApiKey={saveYoutubeApiKey}
+            getYoutubeApiKey={getYoutubeApiKey}
             handleInputChange={handleInputChange}
           />
         );
@@ -388,14 +407,14 @@ const SettingsPage: React.FC = () => {
           />
         );
 
-      case "Authentication":
-        return (
-          <AuthenticationSettings
-            settings={settingsAuthentication}
-            handleInputChange={handleInputChange}
-            saveAuthentication={saveAuthentication}
-          />
-        );
+      // case "Authentication":
+      //   return (
+      //     <AuthenticationSettings
+      //       settings={settingsAuthentication}
+      //       handleInputChange={handleInputChange}
+      //       saveAuthentication={saveAuthentication}
+      //     />
+      //   );
 
       default:
       case "Emote":
@@ -519,12 +538,12 @@ const SettingsPage: React.FC = () => {
               {isDrawerOpen && <ListItemText primary="Emote" />}
             </ListItemButton>
 
-            <ListItemButton onClick={() => handleItemClick("Authentication")}>
+            {/* <ListItemButton onClick={() => handleItemClick("Authentication")}>
               <ListItemIcon>
                 <MenuIcon />
               </ListItemIcon>
               {isDrawerOpen && <ListItemText primary="Authentication" />}
-            </ListItemButton>
+            </ListItemButton> */}
           </List>
         </Drawer>
         <Box

@@ -1,22 +1,23 @@
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   Box,
   Button,
-  IconButton,
   InputAdornment,
+  Modal,
   TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import React, { useState } from "react";
-import { SettingsApiKey, SettingsYoutube } from "./settingsInterface";
 import ConfirmDialog from "./ConfirmDialog";
+import { SettingsApiKey, SettingsYoutube } from "./settingsInterface";
 
 interface YouTubeSettingsProps {
   settings: SettingsYoutube;
   apiKeySettings: SettingsApiKey;
   apiKeyExists: boolean;
   saveYoutubeApiKey: () => Promise<void>;
+  getYoutubeApiKey: (callback: (key: string) => void) => Promise<void>;
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -29,37 +30,56 @@ const fontSize = "16px";
 const marginTop = "10px";
 const marginBottom = "10px";
 
-/*
-
-GOAL
-1) Input field for api key
-2) Save button for api key
-3) On Success, the key is cleared and a flag is raised
-4) MAYBE add Typography saying key is now present
-5) Have button that will show the key from the back end
-
-*/
-
 const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
   settings,
   apiKeySettings,
   apiKeyExists,
   saveYoutubeApiKey,
+  getYoutubeApiKey,
   handleInputChange,
 }) => {
-  const [open, setOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openApiKeyModal, setOpenApiKeyModal] = useState(false);
+  const [apiKey, setApiKey] = useState("");
+  const theme = useTheme();
+
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    backgroundColor: theme.palette.customColors.modalBg,
+    border: "2px solid #000",
+    boxShadow: 24,
+    p: 4,
+  };
 
   const handleOpenDialog = () => {
-    setOpen(true);
+    setOpenDialog(true);
   };
 
   const handleCloseDialog = () => {
-    setOpen(false);
+    setOpenDialog(false);
   };
 
   const handleConfirmDialog = () => {
     saveYoutubeApiKey();
-    setOpen(false);
+    setOpenDialog(false);
+  };
+
+  const handleOpenApiKeyModal = () => {
+    getYoutubeApiKey(handleApiKey);
+    setOpenApiKeyModal(true);
+  };
+
+  const handleCloseApiKeyModal = () => {
+    setApiKey("");
+    setOpenApiKeyModal(false);
+  };
+
+  const handleApiKey = (key: string) => {
+    setApiKey(key);
   };
 
   return (
@@ -75,52 +95,109 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
           flexWrap: "wrap",
         }}
       >
-        <Typography>
-          {apiKeyExists ? "Update Api Key" : "No Api Key found. Add one"}
-        </Typography>
-        <TextField
-          name="apiKey"
-          label="Api Key"
-          value={apiKeySettings.apiKey}
-          onChange={handleInputChange}
-          margin="normal"
+        <Box
           sx={{
-            width: "160px",
-            marginLeft: marginLeft,
-            marginRight: marginRight,
-            "& .MuiInputLabel-root": {
-              fontSize: labelFontSize,
-            },
-            "& .MuiInputBase-input": {
-              fontSize: inputFontSize,
-            },
-          }}
-        />
-
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleOpenDialog}
-          style={{
-            fontSize: fontSize,
-            marginTop: marginTop,
-            marginBottom: marginBottom,
-          }}
-          sx={{
-            marginLeft: marginLeft,
-            marginRight: marginRight,
-            width: "150px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            flexDirection: "column",
           }}
         >
-          Save Authentication
-        </Button>
-        <ConfirmDialog
-          open={open}
-          title="Save non-empty values?"
-          content="This will save/overwrite non-empty inputs"
-          onClose={handleCloseDialog}
-          onConfirm={handleConfirmDialog}
-        />
+          <Typography variant="h6">
+            {apiKeyExists ? "Api Key Present" : "Missing Api Key"}
+          </Typography>
+          <TextField
+            name="apiKey"
+            label="Api Key"
+            value={apiKeySettings.apiKey}
+            onChange={handleInputChange}
+            margin="normal"
+            sx={{
+              width: "160px",
+              marginLeft: marginLeft,
+              marginRight: marginRight,
+              "& .MuiInputLabel-root": {
+                fontSize: labelFontSize,
+              },
+              "& .MuiInputBase-input": {
+                fontSize: inputFontSize,
+              },
+            }}
+          />
+
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleOpenDialog}
+            style={{
+              fontSize: fontSize,
+              marginTop: marginTop,
+              marginBottom: marginBottom,
+            }}
+            sx={{
+              marginLeft: marginLeft,
+              marginRight: marginRight,
+              width: "150px",
+            }}
+          >
+            Save Api Key
+          </Button>
+          <ConfirmDialog
+            open={openDialog}
+            title="Save the api key?"
+            content={`Save "${apiKeySettings.apiKey}" as the new api key?`}
+            onClose={handleCloseDialog}
+            onConfirm={handleConfirmDialog}
+          />
+
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleOpenApiKeyModal}
+            style={{
+              fontSize: fontSize,
+              marginTop: marginTop,
+              marginBottom: marginBottom,
+            }}
+            sx={{
+              marginLeft: marginLeft,
+              marginRight: marginRight,
+              width: "150px",
+            }}
+          >
+            Get Api Key
+          </Button>
+          <Modal
+            open={openApiKeyModal}
+            onClose={handleCloseApiKeyModal}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={style}>
+              <Typography
+                variant="h6"
+                component="h2"
+                sx={{ color: theme.palette.customColors.myCustomText }}
+              >
+                Your API Key is
+              </Typography>
+              <Typography
+                sx={{
+                  mt: 2,
+                  color: theme.palette.customColors.textColorLighter,
+                }}
+              >
+                {apiKey == "" ? "No Api Key Found" : apiKey}
+              </Typography>
+            </Box>
+          </Modal>
+        </Box>
+
+        {/*
+        TODO: Add a button that will retrieve the api key from the backend
+            and show it in a pop up menu? dialog?
+        */}
 
         {/* <Tooltip title="Needed to connect to youtube" arrow>
         <TextField
