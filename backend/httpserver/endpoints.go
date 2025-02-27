@@ -4,7 +4,6 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -150,8 +149,7 @@ func configureConfigEndpoint(mux *http.ServeMux, db *gorm.DB) {
 
 const timeInMillisToWaitBeforeChecking = 3600000
 
-// TODO: Update so that the api is only called every x hours instead of every time th  app is ran
-func configureVersionEndpoint(mux *http.ServeMux, db *gorm.DB) {
+func configureAppInfoEndpoint(mux *http.ServeMux, db *gorm.DB) {
 	mux.HandleFunc("/app-info", func(w http.ResponseWriter, r *http.Request) {
 		var appInfo database.AppInfo
 		db.First(&appInfo)
@@ -169,7 +167,6 @@ func configureVersionEndpoint(mux *http.ServeMux, db *gorm.DB) {
 		}
 
 		if (millis - appInfo.LastChecked) > timeInMillisToWaitBeforeChecking {
-			log.Println("Getting new info")
 			latestVersion, err :=
 				github.GetLatestReleaseVersion(appInfo.Owner, appInfo.RepoName)
 			if err != nil {
@@ -179,8 +176,6 @@ func configureVersionEndpoint(mux *http.ServeMux, db *gorm.DB) {
 
 			db.Model(&appInfo).Update("LastChecked", millis)
 			response.LatestVersion = latestVersion
-		} else {
-			log.Println("Using old info")
 		}
 
 		jsonResponse, err := json.Marshal(response)
@@ -302,7 +297,7 @@ func ConfigureEndpoints(mux *http.ServeMux, db *gorm.DB, myPaths config.MyPaths,
 	configureEmotesEndpoint(mux, myPaths.EmotePath)
 	configureConfigEndpoint(mux, db)
 	configureBackgroundImageEndpoint(mux, myPaths.BackgroundPath)
-	configureVersionEndpoint(mux, db)
+	configureAppInfoEndpoint(mux, db)
 	configureCheckForYoutubeApiKey(mux, db)
 	configureYoutubeApiKey(mux, db)
 	configureDefaultEndpoint(mux)

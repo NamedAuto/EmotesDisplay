@@ -1,6 +1,7 @@
 package myyoutube
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"sync"
@@ -14,18 +15,26 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
-// can try encapsuling in a struct to remove tight coupling
 var (
 	stopChan chan bool
 	wg       sync.WaitGroup
 	mu       sync.Mutex
 )
 var apiCallCounter = 0
+var keyInUse = ""
 
-func ConnectToYoutube(handler common.HandlerInterface, db *gorm.DB, emoteMap map[string]string) {
+func ConnectToYoutube(ctx context.Context, handler common.HandlerInterface, db *gorm.DB, emoteMap map[string]string) {
 	log.Println("Connecting to youtube")
 	mu.Lock()
 	defer mu.Unlock()
+
+	var apiKey database.ApiKey
+	db.First(&apiKey)
+
+	if youtubeService == nil || keyInUse != *apiKey.ApiKey {
+		keyInUse = *apiKey.ApiKey
+		ConfigureYoutube(ctx, *apiKey.ApiKey)
+	}
 
 	if stopChan != nil {
 		log.Println("Youtube goroutine is already running")

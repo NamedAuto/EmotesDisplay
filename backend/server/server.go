@@ -8,7 +8,6 @@ import (
 	"github.com/NamedAuto/EmotesDisplay/backend/config"
 	"github.com/NamedAuto/EmotesDisplay/backend/database"
 	"github.com/NamedAuto/EmotesDisplay/backend/httpserver"
-	"github.com/NamedAuto/EmotesDisplay/backend/myyoutube"
 	"github.com/NamedAuto/EmotesDisplay/backend/websocketserver"
 	"gorm.io/gorm"
 )
@@ -27,7 +26,6 @@ func StartServer(ctx context.Context) {
 	repo := config.GetRepo()
 	emoteMap := config.GetEmoteMap()
 
-	go myyoutube.ConfigureYoutube(ctx, db)
-	go websocketserver.StartWebSocketServer(mux, handler, db, emoteMap)
+	go websocketserver.StartWebSocketServer(ctx, mux, handler, db, emoteMap)
 	go httpserver.StartHttpServer(mux, db, myPaths, repo, appConfig.Port.Port)
 }

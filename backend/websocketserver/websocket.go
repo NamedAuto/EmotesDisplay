@@ -1,6 +1,7 @@
 package websocketserver
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -15,6 +16,7 @@ import (
 )
 
 func (handler *WebSocketHandler) HandleConnections(
+	ctx context.Context,
 	allowedOrigin string,
 	db *gorm.DB,
 	emoteMap map[string]string) http.HandlerFunc {
@@ -42,7 +44,7 @@ func (handler *WebSocketHandler) HandleConnections(
 					break
 				}
 				log.Printf("Received: %s\n", msg)
-				handler.HandleMessage(ws, msg, db, emoteMap)
+				handler.HandleMessage(ctx, ws, msg, db, emoteMap)
 			}
 		}()
 
@@ -54,6 +56,7 @@ func (handler *WebSocketHandler) HandleConnections(
 }
 
 func (handler *WebSocketHandler) HandleMessage(
+	ctx context.Context,
 	ws *websocket.Conn,
 	message []byte,
 	db *gorm.DB,
@@ -84,7 +87,7 @@ func (handler *WebSocketHandler) HandleMessage(
 		log.Printf("Received customEvent with data: %v", data)
 
 	case "connectYoutube":
-		myyoutube.ConnectToYoutube(handler, db, emoteMap)
+		myyoutube.ConnectToYoutube(ctx, handler, db, emoteMap)
 	case "disconnectYoutube":
 		myyoutube.DisconnectFromYoutube()
 	case "connectTwitch":
