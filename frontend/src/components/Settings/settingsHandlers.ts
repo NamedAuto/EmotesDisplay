@@ -23,6 +23,17 @@ const handleYoutubeConnection = (
   }
 };
 
+const handleTwitchconnection = (
+  message: any,
+  setIsTwitchConnected: React.Dispatch<React.SetStateAction<boolean>>
+) => {
+  if (message.connection === "connected") {
+    setIsTwitchConnected(true);
+  } else {
+    setIsTwitchConnected(false);
+  }
+};
+
 const handleAuthenticationSave = (
   message: any,
   setSettingsAuthentication: React.Dispatch<
@@ -49,6 +60,7 @@ export const setupHandlers = (
   updateHandlers: WebSocketContextType["updateHandlers"],
   setIsPreviewConnected: React.Dispatch<React.SetStateAction<boolean>>,
   setIsYoutubeConnected: React.Dispatch<React.SetStateAction<boolean>>,
+  setIsTwitchConnected: React.Dispatch<React.SetStateAction<boolean>>,
   setSettingsAuthentication: React.Dispatch<
     React.SetStateAction<SettingsAuthentication>
   >
@@ -59,6 +71,9 @@ export const setupHandlers = (
 
     "youtube-connection": (message: any) =>
       handleYoutubeConnection(message, setIsYoutubeConnected),
+
+    "twitch-connection": (message: any) =>
+      handleTwitchconnection(message, setIsTwitchConnected),
 
     "authentication-present": (message: any) =>
       handleAuthenticationSave(message, setSettingsAuthentication),

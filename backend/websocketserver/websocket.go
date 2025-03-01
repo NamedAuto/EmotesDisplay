@@ -93,7 +93,7 @@ func (handler *WebSocketHandler) HandleMessage(
 	case "connectTwitch":
 		twitch.ConnectToIRC(handler, db)
 	case "disconnectTwitch":
-		twitch.DisconnectFromIRC()
+		twitch.DisconnectFromIRC(handler)
 	case "startPreview":
 		previewView.StartPreview(handler, db, emoteMap)
 	case "stopPreview":

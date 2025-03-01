@@ -7,7 +7,6 @@ import {
   Drawer,
   IconButton,
   List,
-  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
@@ -24,6 +23,7 @@ import EmoteSettings from "./EmoteSettings";
 import HeaderSettings from "./HeaderSettings";
 import PortSettings from "./PortSettings";
 import PreviewSettings from "./PreviewSettings";
+import TwitchSettings from "./TwitchSettings";
 import YouTubeSettings from "./YoutubeSettings";
 import {
   createConfigCopyWithUpdate,
@@ -49,8 +49,6 @@ import {
   SettingsYoutube,
 } from "./settingsInterface";
 import darkTheme from "./settingsTheme";
-import AuthenticationSettings from "./AuthenticationSettings";
-import TwitchSettings from "./TwitchSettings";
 
 const SettingsPage: React.FC = () => {
   const config = useConfig();
@@ -58,11 +56,13 @@ const SettingsPage: React.FC = () => {
   const { isConnected, updateHandlers, sendMessage } = useWebSocketContext();
   const [isPreviewConnected, setIsPreviewConnected] = useState(false);
   const [isYoutubeConnected, setIsYoutubeConnected] = useState(false);
+  const [isTwitchConnected, setIsTwitchConnected] = useState(false);
   useEffect(() => {
     setupHandlers(
       updateHandlers,
       setIsPreviewConnected,
       setIsYoutubeConnected,
+      setIsTwitchConnected,
       setSettingsAuthentication
     );
   }, [updateHandlers]);
@@ -595,10 +595,13 @@ const SettingsPage: React.FC = () => {
           <ButtonSettings
             isPreviewConnected={isPreviewConnected}
             isYoutubeConnected={isYoutubeConnected}
+            isTwitchConnected={isTwitchConnected}
             handlePreviewStart={handlePreviewStart}
             handlePreviewStop={handlePreviewStop}
             handleYoutubeStart={handleYoutubeStart}
             handleYoutubeStop={handleYoutubeStop}
+            handleTwitchStart={handleTwitchStart}
+            handleTwitchStop={handleTwitchStop}
             handleReset={handleReset}
             handleSave={handleSave}
           />

@@ -3,10 +3,13 @@ import { Box, Button, Tooltip } from "@mui/material";
 interface ButonSettingsProps {
   isPreviewConnected: boolean;
   isYoutubeConnected: boolean;
+  isTwitchConnected: boolean;
   handlePreviewStart: () => void;
   handlePreviewStop: () => void;
   handleYoutubeStart: () => void;
   handleYoutubeStop: () => void;
+  handleTwitchStart: () => void;
+  handleTwitchStop: () => void;
   handleReset: () => void;
   handleSave: () => void;
 }
@@ -20,10 +23,13 @@ const marginRight = "10px";
 const ButtonSettings: React.FC<ButonSettingsProps> = ({
   isPreviewConnected,
   isYoutubeConnected,
+  isTwitchConnected,
   handlePreviewStart,
   handlePreviewStop,
   handleYoutubeStart,
   handleYoutubeStop,
+  handleTwitchStart,
+  handleTwitchStop,
   handleReset,
   handleSave,
 }) => (
@@ -129,6 +135,33 @@ const ButtonSettings: React.FC<ButonSettingsProps> = ({
         }}
       >
         {isYoutubeConnected ? "Stop Youtube" : "Start Youtube"}
+      </Button>
+    </Tooltip>
+
+    <Tooltip
+      title={
+        isTwitchConnected
+          ? "Disconnect from Twitch"
+          : "Connect to Twitch and display emotes from chat"
+      }
+      arrow
+    >
+      <Button
+        variant="contained"
+        color={isTwitchConnected ? "secondary" : "primary"}
+        onClick={isTwitchConnected ? handleTwitchStop : handleTwitchStart}
+        style={{
+          fontSize: fontSize,
+          marginTop: marginTop,
+          marginBottom: marginBottom,
+        }}
+        sx={{
+          marginLeft: marginLeft,
+          marginRight: marginRight,
+          width: "160px",
+        }}
+      >
+        {isTwitchConnected ? "Stop Twitch" : "Start Twitch"}
       </Button>
     </Tooltip>
   </Box>

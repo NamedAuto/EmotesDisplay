@@ -2,6 +2,7 @@ package twitch
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/NamedAuto/EmotesDisplay/backend/common"
 	"github.com/NamedAuto/EmotesDisplay/backend/database"
@@ -68,12 +69,14 @@ func ConnectToIRC(handler common.HandlerInterface, db *gorm.DB) {
 	ircClient = twitch.NewAnonymousClient()
 
 	ircClient.OnPrivateMessage(func(message twitch.PrivateMessage) {
-		handler.EmitTwitchEmotes(GetEmoteURLs(message.Emotes))
-		// urls := GetEmoteURLs(message.Emotes)
-
-		// fmt.Println(message)
 		fmt.Println(message.Emotes)
 		fmt.Println(message.Message)
+
+		if len(message.Emotes) != 0 {
+			log.Println(message)
+			log.Println(message.Emotes[0])
+			handler.EmitTwitchEmotes(GetEmoteURLs(message.Emotes))
+		}
 	})
 
 	var twitch database.Twitch
@@ -81,13 +84,21 @@ func ConnectToIRC(handler common.HandlerInterface, db *gorm.DB) {
 
 	ircClient.Join(*twitch.ChannelName)
 
-	err := ircClient.Connect()
-	if err != nil {
-		panic(err)
-	}
+	go func() {
+		/*
+			Assume the connectioin is a success since Connect() is blocking
+			and does not return unless an error or Disconnect() is called
+		*/
+		handler.EmitTwitchConnection(true)
+		err := ircClient.Connect()
+		if err != nil {
+			handler.EmitTwitchConnection(false)
+		}
+	}()
 }
 
-func DisconnectFromIRC() {
+func DisconnectFromIRC(handler common.HandlerInterface) {
+	handler.EmitTwitchConnection(false)
 	ircClient.Disconnect()
 }
 
@@ -95,12 +106,12 @@ func ConnectToChatIRC(handler common.HandlerInterface) {
 	ircClient := twitch.NewAnonymousClient()
 
 	ircClient.OnPrivateMessage(func(message twitch.PrivateMessage) {
-		handler.EmitTwitchEmotes(GetEmoteURLs(message.Emotes))
-		// urls := GetEmoteURLs(message.Emotes)
-
-		// fmt.Println(message)
 		fmt.Println(message.Emotes)
 		fmt.Println(message.Message)
+
+		if len(message.Emotes) != 0 {
+			handler.EmitTwitchEmotes(GetEmoteURLs(message.Emotes))
+		}
 	})
 
 	ircClient.Join(user.DisplayName)
