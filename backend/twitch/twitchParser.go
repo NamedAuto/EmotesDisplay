@@ -12,7 +12,9 @@ func GetEmoteURLs(emotes []*twitch.Emote) []string {
 
 	for _, emote := range emotes {
 		var url = base + emote.ID + end
-		emoteUrls = append(emoteUrls, url)
+		for range emote.Count {
+			emoteUrls = append(emoteUrls, url)
+		}
 	}
 
 	return emoteUrls
