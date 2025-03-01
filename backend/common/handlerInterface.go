@@ -22,9 +22,10 @@ type HandlerInterface interface {
 		db *gorm.DB,
 		emoteMap map[string]string)
 	EmitToAllRandom(port int, emoteMap map[string]string)
-	EmitToAll(emoteUrls []string)
+	EmitYoutubeEmotes(emoteUrls []string)
 	EmitTwitchEmotes(emoteUrls []string)
 	EmitPreviewConnection(connected bool)
 	EmitYoutubeConnection(connected bool)
+	EmitTwitchConnection(connected bool)
 	EmitAuthenticationPresent(success AuthenticationPresent)
 }

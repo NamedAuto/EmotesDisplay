@@ -131,22 +131,22 @@ func (handler *WebSocketHandler) EmitToAllRandom(port int, emoteMap map[string]s
 	handler.mu.Lock()
 	defer handler.mu.Unlock()
 
-	message := generateRandomUrls(port, emoteMap)
+	emoteUrls := generateRandomUrls(port, emoteMap)
 
 	msg := map[string]any{
-		"eventType": "new-emote",
-		"data":      message,
+		"eventType": "preview-emote",
+		"data":      emoteUrls,
 	}
 
 	emit(msg, handler)
 }
 
-func (handler *WebSocketHandler) EmitToAll(emoteUrls []string) {
+func (handler *WebSocketHandler) EmitYoutubeEmotes(emoteUrls []string) {
 	handler.mu.Lock()
 	defer handler.mu.Unlock()
 
 	msg := map[string]any{
-		"eventType": "new-emote",
+		"eventType": "youtube-emote",
 		"data":      emoteUrls,
 	}
 	// fmt.Printf("Emit: %s\n", emoteUrls)
@@ -199,6 +199,26 @@ func (handler *WebSocketHandler) EmitYoutubeConnection(connected bool) {
 	} else {
 		msg = map[string]any{
 			"eventType":  "youtube-connection",
+			"connection": "disconnected",
+		}
+	}
+
+	emit(msg, handler)
+}
+
+func (handler *WebSocketHandler) EmitTwitchConnection(connected bool) {
+	handler.mu.Lock()
+	defer handler.mu.Unlock()
+
+	var msg map[string]any
+	if connected {
+		msg = map[string]any{
+			"eventType":  "twitch-connection",
+			"connection": "connected",
+		}
+	} else {
+		msg = map[string]any{
+			"eventType":  "twitch-connection",
 			"connection": "disconnected",
 		}
 	}

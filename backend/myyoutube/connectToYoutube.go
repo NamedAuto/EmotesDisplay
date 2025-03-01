@@ -147,7 +147,7 @@ func GetYoutubeMessages(
 						// for _, url := range emoteUrls {
 						// 	log.Println(url)
 						// }
-						handler.EmitToAll(emoteUrls)
+						handler.EmitYoutubeEmotes(emoteUrls)
 					}
 				}
 			}

@@ -38,9 +38,15 @@ const CanvasComponent: React.FC = () => {
   );
 
   useEffect(() => {
-    const handleNewEmote = (message: any) => {
+    const handlePreviewEmotes = (message: any) => {
       const emoteUrls = message.data;
-      console.log("Received new emotes:", emoteUrls);
+      console.log("Received preview emotes:", emoteUrls);
+      placeEmotesGroupInBackground(emoteUrls, nonTransparentPositions, true);
+    };
+
+    const handleYoutubeEmotes = (message: any) => {
+      const emoteUrls = message.data;
+      console.log("Received youtube emotes:", emoteUrls);
       placeEmotesGroupInBackground(emoteUrls, nonTransparentPositions, true);
     };
 
@@ -51,7 +57,8 @@ const CanvasComponent: React.FC = () => {
     };
 
     updateHandlers({
-      "new-emote": handleNewEmote,
+      "preview-emote": handlePreviewEmotes,
+      "youtube-emote": handleYoutubeEmotes,
       "twitch-emote": handleTwitchEmotes,
     });
   }, [updateHandlers]);
