@@ -47,7 +47,7 @@ const AspectRatioSettings: React.FC<AspectRatioSettingsProps> = ({
               onChange={handleInputChange}
             />
           }
-          label="Force Width Height"
+          label="Force Width x Height"
           sx={{ marginLeft: marginLeft, marginRight: marginRight }}
         />
       </Tooltip>

@@ -24,7 +24,7 @@ const PreviewSettings: React.FC<PreviewSettingsProps> = ({
 }) => (
   <Box>
     <Typography variant="h4" sx={{ textAlign: "center" }}>
-      Preview
+      Random
     </Typography>
     <Box
       sx={{
@@ -34,7 +34,7 @@ const PreviewSettings: React.FC<PreviewSettingsProps> = ({
         flexWrap: "wrap",
       }}
     >
-      <Tooltip title="Only works for preview. Lower is faster" arrow>
+      <Tooltip title="Only works for Random. Lower is faster" arrow>
         <TextField
           name="speedOfEmotes"
           label="Emotes Delay"

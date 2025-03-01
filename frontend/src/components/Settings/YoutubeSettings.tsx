@@ -85,7 +85,7 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
   return (
     <Box>
       <Typography variant="h4" sx={{ textAlign: "center" }}>
-        Youtube
+        YouTube
       </Typography>
       <Box
         sx={{
@@ -104,28 +104,6 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
             flexDirection: "column",
           }}
         >
-          <Typography variant="h6">
-            {apiKeyExists ? "Api Key Present" : "Missing Api Key"}
-          </Typography>
-          <TextField
-            name="apiKey"
-            label="Api Key"
-            value={apiKeySettings.apiKey}
-            onChange={handleInputChange}
-            margin="normal"
-            sx={{
-              width: "160px",
-              marginLeft: marginLeft,
-              marginRight: marginRight,
-              "& .MuiInputLabel-root": {
-                fontSize: labelFontSize,
-              },
-              "& .MuiInputBase-input": {
-                fontSize: inputFontSize,
-              },
-            }}
-          />
-
           <Button
             variant="contained"
             color="primary"
@@ -153,7 +131,7 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
 
           <Button
             variant="contained"
-            color="primary"
+            color="secondary"
             onClick={handleOpenApiKeyModal}
             style={{
               fontSize: fontSize,
@@ -166,7 +144,7 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
               width: "150px",
             }}
           >
-            Get Api Key
+            Show Api Key
           </Button>
           <Modal
             open={openApiKeyModal}
@@ -194,65 +172,40 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
           </Modal>
         </Box>
 
-        {/*
-        TODO: Add a button that will retrieve the api key from the backend
-            and show it in a pop up menu? dialog?
-        */}
-
-        {/* <Tooltip title="Needed to connect to youtube" arrow>
-        <TextField
-          type={showApiKey ? "text" : "password"}
-          name="apiKey"
-          label="Api Key"
-          value={settings.apiKey}
-          onChange={handleInputChange}
-          margin="normal"
+        <Box
           sx={{
-            width: "300px",
-            marginLeft: marginLeft,
-            marginRight: marginRight,
-            "& .MuiInputLabel-root": {
-              fontSize: labelFontSize,
-            },
-            "& .MuiInputBase-input": {
-              fontSize: inputFontSize,
-            },
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            flexDirection: "column",
           }}
-          slotProps={{
-            input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    edge="end"
-                  >
-                    {showApiKey ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            },
-          }}
-        />
-      </Tooltip> */}
+        >
+          <Typography variant="h6">
+            {apiKeyExists ? "Api Key Present" : "Missing Api Key"}
+          </Typography>
 
-        {/* <TextField
-        name="hasApiKey"
-        label="API Key Present"
-        value={settings.videoId}
-        margin="normal"
-        sx={{
-          width: "160px",
-          marginLeft: marginLeft,
-          marginRight: marginRight,
-          "& .MuiInputLabel-root": {
-            fontSize: labelFontSize,
-          },
-          "& .MuiInputBase-input": {
-            fontSize: inputFontSize,
-          },
-        }}
-      /> */}
+          <Tooltip title="Needed to connect to YouTube" arrow>
+            <TextField
+              name="apiKey"
+              label="Api Key"
+              value={apiKeySettings.apiKey}
+              onChange={handleInputChange}
+              margin="normal"
+              sx={{
+                width: "160px",
+                marginLeft: marginLeft,
+                marginRight: marginRight,
+                "& .MuiInputLabel-root": {
+                  fontSize: labelFontSize,
+                },
+                "& .MuiInputBase-input": {
+                  fontSize: inputFontSize,
+                },
+              }}
+            />
+          </Tooltip>
+        </Box>
 
         <Tooltip
           title="Found at the end of the youtube stream url. From the url, include everything after the ?v="
@@ -278,7 +231,7 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
           />
         </Tooltip>
 
-        <Tooltip title="Check README if you change this number." arrow>
+        <Tooltip title="Check README if you change this number" arrow>
           <TextField
             name="messageDelay"
             label="Message Delay"

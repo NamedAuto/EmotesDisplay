@@ -41,129 +41,144 @@ const ButtonSettings: React.FC<ButonSettingsProps> = ({
       flexWrap: "wrap",
     }}
   >
-    <Tooltip
-      title="Save changes. Has some quirks involving saving. Read README"
-      arrow
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexWrap: "wrap",
+      }}
     >
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleSave}
-        style={{
-          fontSize: fontSize,
-          marginTop: marginTop,
-          marginBottom: marginBottom,
-        }}
-        sx={{
-          marginLeft: marginLeft,
-          marginRight: marginRight,
-          width: "100px",
-        }}
-      >
-        Save
-      </Button>
-    </Tooltip>
+      <Tooltip title="Save changes. Check README for more info" arrow>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSave}
+          style={{
+            fontSize: fontSize,
+            marginTop: marginTop,
+            marginBottom: marginBottom,
+          }}
+          sx={{
+            marginLeft: marginLeft,
+            marginRight: marginRight,
+            width: "100px",
+          }}
+        >
+          Save
+        </Button>
+      </Tooltip>
 
-    <Tooltip title="Reset settings back to the last save" arrow>
-      <Button
-        variant="contained"
-        color="secondary"
-        onClick={handleReset}
-        style={{
-          fontSize: fontSize,
-          marginTop: marginTop,
-          marginBottom: marginBottom,
-        }}
-        sx={{
-          marginLeft: marginLeft,
-          marginRight: marginRight,
-          width: "100px",
-        }}
-      >
-        Reset
-      </Button>
-    </Tooltip>
+      <Tooltip title="Reset settings back to the last save" arrow>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleReset}
+          style={{
+            fontSize: fontSize,
+            marginTop: marginTop,
+            marginBottom: marginBottom,
+          }}
+          sx={{
+            marginLeft: marginLeft,
+            marginRight: marginRight,
+            width: "100px",
+          }}
+        >
+          Reset
+        </Button>
+      </Tooltip>
+    </Box>
 
-    <Tooltip
-      title={
-        isPreviewConnected
-          ? "Stop displaying random emotes on the screen"
-          : "Display random emotes on the screen"
-      }
-      arrow
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexWrap: "wrap",
+      }}
     >
-      <Button
-        variant="contained"
-        color={isPreviewConnected ? "secondary" : "primary"}
-        onClick={isPreviewConnected ? handlePreviewStop : handlePreviewStart}
-        style={{
-          fontSize: fontSize,
-          marginTop: marginTop,
-          marginBottom: marginBottom,
-        }}
-        sx={{
-          marginLeft: marginLeft,
-          marginRight: marginRight,
-          width: "160px",
-        }}
+      <Tooltip
+        title={
+          isPreviewConnected
+            ? "Stop random emotes"
+            : "Display random emotes from folder"
+        }
+        arrow
       >
-        {isPreviewConnected ? "Stop Preview" : "Start Preview"}
-      </Button>
-    </Tooltip>
+        <Button
+          variant="contained"
+          color={isPreviewConnected ? "secondary" : "primary"}
+          onClick={isPreviewConnected ? handlePreviewStop : handlePreviewStart}
+          style={{
+            fontSize: fontSize,
+            marginTop: marginTop,
+            marginBottom: marginBottom,
+          }}
+          sx={{
+            marginLeft: marginLeft,
+            marginRight: marginRight,
+            width: "160px",
+          }}
+        >
+          {isPreviewConnected ? "Stop Random" : "Start Random"}
+        </Button>
+      </Tooltip>
 
-    <Tooltip
-      title={
-        isPreviewConnected
-          ? "Disconnect from youtube"
-          : "Connect to youtube and display emotes from chat"
-      }
-      arrow
-    >
-      <Button
-        variant="contained"
-        color={isYoutubeConnected ? "secondary" : "primary"}
-        onClick={isYoutubeConnected ? handleYoutubeStop : handleYoutubeStart}
-        style={{
-          fontSize: fontSize,
-          marginTop: marginTop,
-          marginBottom: marginBottom,
-        }}
-        sx={{
-          marginLeft: marginLeft,
-          marginRight: marginRight,
-          width: "160px",
-        }}
+      <Tooltip
+        title={
+          isPreviewConnected
+            ? "Disconnect from YouTube"
+            : "Display emotes from YouTube"
+        }
+        arrow
       >
-        {isYoutubeConnected ? "Stop Youtube" : "Start Youtube"}
-      </Button>
-    </Tooltip>
+        <Button
+          variant="contained"
+          color={isYoutubeConnected ? "secondary" : "primary"}
+          onClick={isYoutubeConnected ? handleYoutubeStop : handleYoutubeStart}
+          style={{
+            fontSize: fontSize,
+            marginTop: marginTop,
+            marginBottom: marginBottom,
+          }}
+          sx={{
+            marginLeft: marginLeft,
+            marginRight: marginRight,
+            width: "160px",
+          }}
+        >
+          {isYoutubeConnected ? "Stop YouTube" : "Start YouTube"}
+        </Button>
+      </Tooltip>
 
-    <Tooltip
-      title={
-        isTwitchConnected
-          ? "Disconnect from Twitch"
-          : "Connect to Twitch and display emotes from chat"
-      }
-      arrow
-    >
-      <Button
-        variant="contained"
-        color={isTwitchConnected ? "secondary" : "primary"}
-        onClick={isTwitchConnected ? handleTwitchStop : handleTwitchStart}
-        style={{
-          fontSize: fontSize,
-          marginTop: marginTop,
-          marginBottom: marginBottom,
-        }}
-        sx={{
-          marginLeft: marginLeft,
-          marginRight: marginRight,
-          width: "160px",
-        }}
+      <Tooltip
+        title={
+          isTwitchConnected
+            ? "Disconnect from Twitch"
+            : "Display emotes from Twitch"
+        }
+        arrow
       >
-        {isTwitchConnected ? "Stop Twitch" : "Start Twitch"}
-      </Button>
-    </Tooltip>
+        <Button
+          variant="contained"
+          color={isTwitchConnected ? "secondary" : "primary"}
+          onClick={isTwitchConnected ? handleTwitchStop : handleTwitchStart}
+          style={{
+            fontSize: fontSize,
+            marginTop: marginTop,
+            marginBottom: marginBottom,
+          }}
+          sx={{
+            marginLeft: marginLeft,
+            marginRight: marginRight,
+            width: "160px",
+          }}
+        >
+          {isTwitchConnected ? "Stop Twitch" : "Start Twitch"}
+        </Button>
+      </Tooltip>
+    </Box>
   </Box>
 );
 

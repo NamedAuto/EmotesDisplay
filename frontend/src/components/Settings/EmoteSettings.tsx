@@ -108,7 +108,7 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
           type="number"
           margin="normal"
           sx={{
-            width: "200px",
+            width: "180px",
             marginLeft: marginLeft,
             marginRight: marginRight,
             "& .MuiInputLabel-root": {
@@ -138,7 +138,7 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
           type="number"
           margin="normal"
           sx={{
-            width: "200px",
+            width: "180px",
             marginLeft: marginLeft,
             marginRight: marginRight,
             "& .MuiInputLabel-root": {
@@ -182,7 +182,7 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
       </Tooltip>
 
       <Tooltip
-        title="Make emotes round. 0 does nothing. 50+ makes it a circle"
+        title="Make emotes round. 0 does nothing. 50+ rounds the edges"
         arrow
       >
         <TextField
