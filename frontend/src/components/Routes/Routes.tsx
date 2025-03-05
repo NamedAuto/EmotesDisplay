@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import CanvasComponent from "../Canvas/CanvasComponent";
 import NotFound from "../NotFound/NotFound";
-import Settings from "../Settings/Settings";
+import Settings from "../Settings/components/Settings";
 import { WebSocketProvider } from "../WebSocket/WebSocketProvider";
 import OAuthCallback from "../Settings/OAuth";
 

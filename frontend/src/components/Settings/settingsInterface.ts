@@ -24,6 +24,7 @@ export interface SettingsEmote {
   randomSizeIncrease: string;
   randomSizeDecrease: string;
   maxEmoteCount: string;
+  maxEmotesPerMsg: string;
   groupEmotes: boolean;
   emoteRoundness: string;
   emoteBackgroundColor: string;

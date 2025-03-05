@@ -7,7 +7,7 @@ import {
   Typography,
   Tooltip,
 } from "@mui/material";
-import { SettingsAspectRatio } from "./settingsInterface";
+import { SettingsAspectRatio } from "../settingsInterface";
 
 interface AspectRatioSettingsProps {
   settings: SettingsAspectRatio;

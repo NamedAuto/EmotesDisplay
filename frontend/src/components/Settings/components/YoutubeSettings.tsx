@@ -9,8 +9,8 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import React, { useState } from "react";
-import ConfirmDialog from "./ConfirmDialog";
-import { SettingsApiKey, SettingsYoutube } from "./settingsInterface";
+import ConfirmDialog from "../subcomponent/ConfirmDialog";
+import { SettingsApiKey, SettingsYoutube } from "../settingsInterface";
 
 interface YouTubeSettingsProps {
   settings: SettingsYoutube;

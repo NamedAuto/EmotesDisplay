@@ -70,7 +70,7 @@ func insertDefaultValues(db *gorm.DB) {
 	twitch := Twitch{ChannelName: &channelName}
 	db.Create(&twitch)
 
-	port := Port{Port: 3124}
+	port := Port{Port: 3125}
 	db.Create(&port)
 
 	appInfo := AppInfo{
@@ -102,6 +102,7 @@ func insertDefaultValues(db *gorm.DB) {
 		RandomSizeIncrease: &randomSizeIncrease,
 		RandomSizeDecrease: &randomSizeDecrease,
 		MaxEmoteCount:      200,
+		MaxEmotesPerMsg:    5,
 		GroupEmotes:        &groupEmotes,
 		Roundness:          &roundness,
 		BackgroundColor:    "rgba(255, 255, 255, 0)",

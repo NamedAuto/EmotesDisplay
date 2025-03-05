@@ -34,6 +34,7 @@ type EmoteDTO struct {
 	RandomSizeIncrease int    `json:"randomSizeIncrease"`
 	RandomSizeDecrease int    `json:"randomSizeDecrease"`
 	MaxEmoteCount      int    `json:"maxEmoteCount"`
+	MaxEmotesPerMsg    int    `json:"maxEmotesPerMsg"`
 	GroupEmotes        bool   `json:"groupEmotes"`
 	Roundness          int    `json:"roundness"`
 	BackgroundColor    string `json:"backgroundColor"`
@@ -103,6 +104,7 @@ func ToEmoteDTO(e Emote) EmoteDTO {
 		RandomSizeIncrease: *e.RandomSizeIncrease,
 		RandomSizeDecrease: *e.RandomSizeDecrease,
 		MaxEmoteCount:      e.MaxEmoteCount,
+		MaxEmotesPerMsg:    e.MaxEmotesPerMsg,
 		GroupEmotes:        *e.GroupEmotes,
 		Roundness:          *e.Roundness,
 		BackgroundColor:    e.BackgroundColor,
@@ -192,6 +194,7 @@ func ToEmoteModel(dto EmoteDTO) Emote {
 		RandomSizeIncrease: &dto.RandomSizeIncrease,
 		RandomSizeDecrease: &dto.RandomSizeDecrease,
 		MaxEmoteCount:      dto.MaxEmoteCount,
+		MaxEmotesPerMsg:    dto.MaxEmotesPerMsg,
 		GroupEmotes:        &dto.GroupEmotes,
 		Roundness:          &dto.Roundness,
 		BackgroundColor:    dto.BackgroundColor,

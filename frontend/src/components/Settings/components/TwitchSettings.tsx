@@ -1,15 +1,8 @@
-import {
-  Box,
-  InputAdornment,
-  TextField,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-import React from "react";
-import { SettingsPreview } from "./settingsInterface";
+import { Box, TextField, Tooltip, Typography } from "@mui/material";
+import { SettingsTwitch } from "../settingsInterface";
 
-interface PreviewSettingsProps {
-  settings: SettingsPreview;
+interface TwitchSettingsProps {
+  settings: SettingsTwitch;
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -18,13 +11,13 @@ const inputFontSize = "1.1em";
 const marginLeft = "10px";
 const marginRight = "10px";
 
-const PreviewSettings: React.FC<PreviewSettingsProps> = ({
+const TwitchSettings: React.FC<TwitchSettingsProps> = ({
   settings,
   handleInputChange,
 }) => (
   <Box>
     <Typography variant="h4" sx={{ textAlign: "center" }}>
-      Random
+      Twitch
     </Typography>
     <Box
       sx={{
@@ -34,16 +27,15 @@ const PreviewSettings: React.FC<PreviewSettingsProps> = ({
         flexWrap: "wrap",
       }}
     >
-      <Tooltip title="Only works for Random. Lower is faster" arrow>
+      <Tooltip title="Name of the Twitch channel to connect to" arrow>
         <TextField
-          name="speedOfEmotes"
-          label="Emotes Delay"
-          value={settings.speedOfEmotes}
+          name="channelName"
+          label="Channel Name"
+          value={settings.channelName}
           onChange={handleInputChange}
-          type="number"
           margin="normal"
           sx={{
-            width: "150px",
+            width: "200px",
             marginLeft: marginLeft,
             marginRight: marginRight,
             "& .MuiInputLabel-root": {
@@ -53,15 +45,10 @@ const PreviewSettings: React.FC<PreviewSettingsProps> = ({
               fontSize: inputFontSize,
             },
           }}
-          slotProps={{
-            input: {
-              endAdornment: <InputAdornment position="end">sec</InputAdornment>,
-            },
-          }}
         />
       </Tooltip>
     </Box>
   </Box>
 );
 
-export default PreviewSettings;
+export default TwitchSettings;

@@ -2,7 +2,6 @@ package twitch
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/NamedAuto/EmotesDisplay/backend/common"
 	"github.com/NamedAuto/EmotesDisplay/backend/database"
@@ -73,8 +72,8 @@ func ConnectToIRC(handler common.HandlerInterface, db *gorm.DB) {
 		fmt.Println(message.Message)
 
 		if len(message.Emotes) != 0 {
-			log.Println(message)
-			log.Println(message.Emotes[0])
+			// log.Println(message)
+			// log.Println(message.Emotes[0])
 			handler.EmitTwitchEmotes(GetEmoteURLs(message.Emotes))
 		}
 	})

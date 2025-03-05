@@ -1,5 +1,5 @@
-import { WebSocketContextType } from "../WebSocket/websocketTypes";
-import { SettingsAuthentication } from "./settingsInterface";
+import { WebSocketContextType } from "../../WebSocket/websocketTypes";
+import { SettingsAuthentication } from "../settingsInterface";
 
 const handlePreviewConnection = (
   message: any,

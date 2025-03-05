@@ -115,6 +115,10 @@ export const UseEmotes = (
   ) => {
     const randomAnimation = getRandomAnimation();
 
+    if (emoteUrls.length > config.emote.maxEmotesPerMsg) {
+      emoteUrls.length = config.emote.maxEmotesPerMsg;
+    }
+
     if (config.emote.groupEmotes) {
       // var emoteSize = config.emote.width;
       // var roundness = "0";

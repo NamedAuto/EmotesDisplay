@@ -1,8 +1,9 @@
 import { Box, TextField, Tooltip, Typography } from "@mui/material";
-import { SettingsTwitch } from "./settingsInterface";
+import React from "react";
+import { SettingsPort } from "../settingsInterface";
 
-interface TwitchSettingsProps {
-  settings: SettingsTwitch;
+interface PortSettingsProps {
+  settings: SettingsPort;
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -11,13 +12,13 @@ const inputFontSize = "1.1em";
 const marginLeft = "10px";
 const marginRight = "10px";
 
-const TwitchSettings: React.FC<TwitchSettingsProps> = ({
+const PortSettings: React.FC<PortSettingsProps> = ({
   settings,
   handleInputChange,
 }) => (
   <Box>
     <Typography variant="h4" sx={{ textAlign: "center" }}>
-      Twitch
+      Port
     </Typography>
     <Box
       sx={{
@@ -27,15 +28,19 @@ const TwitchSettings: React.FC<TwitchSettingsProps> = ({
         flexWrap: "wrap",
       }}
     >
-      <Tooltip title="Name of the Twitch channel to connect to" arrow>
+      <Tooltip
+        title="Port number the app will use. Check README if changing"
+        arrow
+      >
         <TextField
-          name="channelName"
-          label="Channel Name"
-          value={settings.channelName}
+          name="port"
+          label="Port"
+          value={settings.port}
           onChange={handleInputChange}
+          type="number"
           margin="normal"
           sx={{
-            width: "200px",
+            width: "150px",
             marginLeft: marginLeft,
             marginRight: marginRight,
             "& .MuiInputLabel-root": {
@@ -51,4 +56,4 @@ const TwitchSettings: React.FC<TwitchSettingsProps> = ({
   </Box>
 );
 
-export default TwitchSettings;
+export default PortSettings;

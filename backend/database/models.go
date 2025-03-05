@@ -42,6 +42,7 @@ type Emote struct {
 	RandomSizeIncrease *int
 	RandomSizeDecrease *int
 	MaxEmoteCount      int
+	MaxEmotesPerMsg    int
 	GroupEmotes        *bool
 	Roundness          *int
 	BackgroundColor    string

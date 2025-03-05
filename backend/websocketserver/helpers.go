@@ -8,7 +8,7 @@ import (
 )
 
 func generateRandomUrls(port int, emoteMap map[string]string) []string {
-	count := rand.Intn(3) + 1
+	count := rand.Intn(5) + 1
 	var urls []string
 	for range count {
 		emote := getRandomEmoteKey(emoteMap)

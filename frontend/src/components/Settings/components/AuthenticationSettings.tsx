@@ -1,7 +1,7 @@
 import { Box, Button, Link, TextField, Typography } from "@mui/material";
-import { SettingsAuthentication } from "./settingsInterface";
+import { SettingsAuthentication } from "../settingsInterface";
 import { useState } from "react";
-import ConfirmDialog from "./ConfirmDialog";
+import ConfirmDialog from "../subcomponent/ConfirmDialog";
 
 const labelFontSize = "1.2em";
 const inputFontSize = "1.1em";

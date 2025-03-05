@@ -15,8 +15,8 @@ import {
   ThemeProvider,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useConfig } from "../Config/ConfigProvider";
-import { useWebSocketContext } from "../WebSocket/WebSocketProvider";
+import { useConfig } from "../../Config/ConfigProvider";
+import { useWebSocketContext } from "../../WebSocket/WebSocketProvider";
 import AspectRatioSettings from "./AspectRatioSettings";
 import ButtonSettings from "./ButtonSetings";
 import EmoteSettings from "./EmoteSettings";
@@ -35,8 +35,8 @@ import {
   formatPreviewSettings,
   formatTwitchSettings,
   formatYoutubeSettings,
-} from "./settingUtils";
-import { setupHandlers } from "./settingsHandlers";
+} from "../settingUtils";
+import { setupHandlers } from "../handlers/settingsHandlers";
 import {
   HasApiKeyResponse,
   SettingsApiKey,
@@ -47,8 +47,8 @@ import {
   SettingsPreview,
   SettingsTwitch,
   SettingsYoutube,
-} from "./settingsInterface";
-import darkTheme from "./settingsTheme";
+} from "../settingsInterface";
+import darkTheme from "../settingsTheme";
 
 const SettingsPage: React.FC = () => {
   const config = useConfig();

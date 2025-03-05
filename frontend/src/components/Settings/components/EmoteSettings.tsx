@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { SettingsEmote } from "./settingsInterface";
+import { SettingsEmote } from "../settingsInterface";
 import ColorPicker from "react-best-gradient-color-picker";
 
 interface EmoteSettingsProps {
@@ -164,6 +164,28 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
           name="maxEmoteCount"
           label="Max Emote Groups"
           value={settings.maxEmoteCount}
+          onChange={handleInputChange}
+          type="number"
+          margin="normal"
+          sx={{
+            width: "150px",
+            marginLeft: marginLeft,
+            marginRight: marginRight,
+            "& .MuiInputLabel-root": {
+              fontSize: labelFontSize,
+            },
+            "& .MuiInputBase-input": {
+              fontSize: inputFontSize,
+            },
+          }}
+        />
+      </Tooltip>
+
+      <Tooltip title="Max emotes to show per msg" arrow>
+        <TextField
+          name="maxEmotesPerMsg"
+          label="Max Emotes Per Msg"
+          value={settings.maxEmotesPerMsg}
           onChange={handleInputChange}
           type="number"
           margin="normal"

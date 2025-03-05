@@ -1,9 +1,15 @@
-import { Box, TextField, Tooltip, Typography } from "@mui/material";
+import {
+  Box,
+  InputAdornment,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import React from "react";
-import { SettingsPort } from "./settingsInterface";
+import { SettingsPreview } from "../settingsInterface";
 
-interface PortSettingsProps {
-  settings: SettingsPort;
+interface PreviewSettingsProps {
+  settings: SettingsPreview;
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -12,13 +18,13 @@ const inputFontSize = "1.1em";
 const marginLeft = "10px";
 const marginRight = "10px";
 
-const PortSettings: React.FC<PortSettingsProps> = ({
+const PreviewSettings: React.FC<PreviewSettingsProps> = ({
   settings,
   handleInputChange,
 }) => (
   <Box>
     <Typography variant="h4" sx={{ textAlign: "center" }}>
-      Port
+      Random
     </Typography>
     <Box
       sx={{
@@ -28,14 +34,11 @@ const PortSettings: React.FC<PortSettingsProps> = ({
         flexWrap: "wrap",
       }}
     >
-      <Tooltip
-        title="Port number the app will use. Check README if changing"
-        arrow
-      >
+      <Tooltip title="Only works for Random. Lower is faster" arrow>
         <TextField
-          name="port"
-          label="Port"
-          value={settings.port}
+          name="speedOfEmotes"
+          label="Emotes Delay"
+          value={settings.speedOfEmotes}
           onChange={handleInputChange}
           type="number"
           margin="normal"
@@ -50,10 +53,15 @@ const PortSettings: React.FC<PortSettingsProps> = ({
               fontSize: inputFontSize,
             },
           }}
+          slotProps={{
+            input: {
+              endAdornment: <InputAdornment position="end">sec</InputAdornment>,
+            },
+          }}
         />
       </Tooltip>
     </Box>
   </Box>
 );
 
-export default PortSettings;
+export default PreviewSettings;

@@ -5,7 +5,6 @@ import "../../style.css";
 import { Config } from "../Config/ConfigInterface";
 import { useConfig } from "../Config/ConfigProvider";
 import { loadBackground } from "../Config/FetchBackground";
-import { animationMap } from "../Settings/AnimationSettings";
 import { useWebSocketContext } from "../WebSocket/WebSocketProvider";
 import { Position } from "./positionInterface";
 import { UseEmotes } from "./useEmotes";
