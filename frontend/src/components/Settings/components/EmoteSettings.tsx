@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Checkbox,
   FormControlLabel,
   InputAdornment,
@@ -8,9 +7,8 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React from "react";
 import { SettingsEmote } from "../settingsInterface";
-import ColorPicker from "react-best-gradient-color-picker";
 
 interface EmoteSettingsProps {
   settings: SettingsEmote;
@@ -44,7 +42,8 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
       }}
     >
       <Tooltip
-        title="If checked, emotes from the same message will be displayed together"
+        title="If checked, emotes from the same message are displayed together, 
+        else they appear separate"
         arrow
       >
         <FormControlLabel
@@ -102,13 +101,13 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
       >
         <TextField
           name="randomSizeIncrease"
-          label="Random Size Increase"
+          label="Random Upsize"
           value={settings.randomSizeIncrease}
           onChange={handleInputChange}
           type="number"
           margin="normal"
           sx={{
-            width: "180px",
+            width: "150px",
             marginLeft: marginLeft,
             marginRight: marginRight,
             "& .MuiInputLabel-root": {
@@ -132,13 +131,13 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
       >
         <TextField
           name="randomSizeDecrease"
-          label="Random Size Decrease"
+          label="Random Downsize"
           value={settings.randomSizeDecrease}
           onChange={handleInputChange}
           type="number"
           margin="normal"
           sx={{
-            width: "180px",
+            width: "150px",
             marginLeft: marginLeft,
             marginRight: marginRight,
             "& .MuiInputLabel-root": {
@@ -162,13 +161,13 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
       >
         <TextField
           name="maxEmoteCount"
-          label="Max Emote Groups"
+          label="Max Groups"
           value={settings.maxEmoteCount}
           onChange={handleInputChange}
           type="number"
           margin="normal"
           sx={{
-            width: "150px",
+            width: "120px",
             marginLeft: marginLeft,
             marginRight: marginRight,
             "& .MuiInputLabel-root": {
@@ -184,13 +183,13 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
       <Tooltip title="Max emotes to show per msg" arrow>
         <TextField
           name="maxEmotesPerMsg"
-          label="Max Emotes Per Msg"
+          label="Max Per Msg"
           value={settings.maxEmotesPerMsg}
           onChange={handleInputChange}
           type="number"
           margin="normal"
           sx={{
-            width: "150px",
+            width: "120px",
             marginLeft: marginLeft,
             marginRight: marginRight,
             "& .MuiInputLabel-root": {
