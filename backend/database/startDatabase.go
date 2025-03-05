@@ -62,7 +62,7 @@ func insertDefaultValues(db *gorm.DB) {
 	twitch := Twitch{ChannelName: &channelName}
 	db.Create(&twitch)
 
-	port := Port{Port: 3125}
+	port := Port{Port: 3124}
 	db.Create(&port)
 
 	appInfo := AppInfo{
@@ -84,13 +84,12 @@ func insertDefaultValues(db *gorm.DB) {
 	db.Create(&aspectRatio)
 
 	groupEmotes := true
-
-	randomSizeIncrease := 10
-	randomSizeDecrease := 20
-	roundness := 50
+	randomSizeIncrease := 0
+	randomSizeDecrease := 0
+	roundness := 0
 	emote := Emote{
-		Width:              50,
-		Height:             50,
+		Width:              64,
+		Height:             64,
 		RandomSizeIncrease: &randomSizeIncrease,
 		RandomSizeDecrease: &randomSizeDecrease,
 		MaxEmoteCount:      200,
@@ -104,7 +103,13 @@ func insertDefaultValues(db *gorm.DB) {
 	animations := Animations{}
 	db.Create(&animations)
 
-	preview := Preview{SpeedOfEmotes: 500}
+	useChannelEmotes := true
+	useRandomEmotes := true
+	preview := Preview{
+		SpeedOfEmotes:    500,
+		UseChannelEmotes: &useChannelEmotes,
+		UseRandomEmotes:  &useRandomEmotes,
+	}
 	db.Create(&preview)
 
 	initialConfig := AppConfig{

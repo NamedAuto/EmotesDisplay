@@ -32,6 +32,8 @@ export interface SettingsEmote {
 
 export interface SettingsPreview {
   speedOfEmotes: string;
+  useChannelEmotes: boolean;
+  useRandomEmotes: boolean;
 }
 
 export interface SettingsAuthentication {

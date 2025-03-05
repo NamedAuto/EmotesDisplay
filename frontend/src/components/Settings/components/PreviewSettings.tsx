@@ -1,5 +1,8 @@
 import {
   Box,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
   InputAdornment,
   TextField,
   Tooltip,
@@ -34,6 +37,38 @@ const PreviewSettings: React.FC<PreviewSettingsProps> = ({
         flexWrap: "wrap",
       }}
     >
+      <FormGroup>
+        <Tooltip title="Uses images from the channelEmotes folder" arrow>
+          <FormControlLabel
+            control={
+              <Checkbox
+                name="useChannelEmotes"
+                checked={settings.useChannelEmotes}
+                onChange={handleInputChange}
+              />
+            }
+            label="Channel Emotes"
+            // labelPlacement="bottom"
+            sx={{ marginLeft: marginLeft, marginRight: marginRight }}
+          />
+        </Tooltip>
+
+        <Tooltip title="Uses images from the random folder" arrow>
+          <FormControlLabel
+            control={
+              <Checkbox
+                name="useRandomEmotes"
+                checked={settings.useRandomEmotes}
+                onChange={handleInputChange}
+              />
+            }
+            label="Random Emotes"
+            // labelPlacement="bottom"
+            sx={{ marginLeft: marginLeft, marginRight: marginRight }}
+          />
+        </Tooltip>
+      </FormGroup>
+
       <Tooltip title="Only works for Random. Lower is faster" arrow>
         <TextField
           name="speedOfEmotes"

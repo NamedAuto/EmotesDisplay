@@ -52,6 +52,8 @@ export const formatEmoteSettings = (emote: Emote) => ({
 
 export const formatPreviewSettings = (preview: Preview) => ({
   speedOfEmotes: (preview.speedOfEmotes / 1000).toString(),
+  useChannelEmotes: preview.useChannelEmotes,
+  useRandomEmotes: preview.useRandomEmotes,
 });
 
 export const formatAuthenticationSettings = () => ({
@@ -113,6 +115,8 @@ export const createConfigCopyWithUpdate = (
       speedOfEmotes: Math.round(
         parseFloat(settingsPreview.speedOfEmotes) * 1000
       ),
+      useChannelEmotes: settingsPreview.useChannelEmotes,
+      useRandomEmotse: settingsPreview.useRandomEmotes,
     },
   };
 };

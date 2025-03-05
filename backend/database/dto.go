@@ -45,7 +45,9 @@ type AnimationsDTO struct {
 }
 
 type PreviewDTO struct {
-	SpeedOfEmotes int `json:"speedOfEmotes"`
+	SpeedOfEmotes    int  `json:"speedOfEmotes"`
+	UseChannelEmotes bool `json:"useChannelEmotes"`
+	UseRandomEmotes  bool `json:"useRandomEmotes"`
 }
 
 type AppConfigDTO struct {
@@ -119,7 +121,9 @@ func ToAnimationsDTO(a Animations) AnimationsDTO {
 
 func ToPreviewDTO(p Preview) PreviewDTO {
 	return PreviewDTO{
-		SpeedOfEmotes: p.SpeedOfEmotes,
+		SpeedOfEmotes:    p.SpeedOfEmotes,
+		UseChannelEmotes: *p.UseChannelEmotes,
+		UseRandomEmotes:  *p.UseChannelEmotes,
 	}
 }
 
@@ -209,6 +213,8 @@ func ToAnimationsModel(dto AnimationsDTO) Animations {
 
 func ToPreviewModel(dto PreviewDTO) Preview {
 	return Preview{
-		SpeedOfEmotes: dto.SpeedOfEmotes,
+		SpeedOfEmotes:    dto.SpeedOfEmotes,
+		UseChannelEmotes: &dto.UseChannelEmotes,
+		UseRandomEmotes:  &dto.UseRandomEmotes,
 	}
 }

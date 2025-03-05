@@ -54,7 +54,9 @@ type Animations struct {
 
 type Preview struct {
 	gorm.Model
-	SpeedOfEmotes int
+	SpeedOfEmotes    int
+	UseChannelEmotes *bool
+	UseRandomEmotes  *bool
 }
 
 type Authentication struct {

@@ -55,6 +55,7 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
             />
           }
           label="Group Emotes"
+          labelPlacement="bottom"
           sx={{ marginLeft: marginLeft, marginRight: marginRight }}
         />
       </Tooltip>

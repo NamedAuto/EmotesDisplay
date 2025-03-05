@@ -33,6 +33,8 @@ export interface Emote {
 
 export interface Preview {
   speedOfEmotes: number;
+  useChannelEmotes: boolean;
+  useRandomEmotes: boolean;
 }
 
 export interface Authentication {
