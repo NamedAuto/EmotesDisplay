@@ -189,6 +189,7 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
             <TextField
               name="apiKey"
               label="Api Key"
+              autoComplete="off"
               value={apiKeySettings.apiKey}
               onChange={handleInputChange}
               margin="normal"
