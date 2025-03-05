@@ -8,9 +8,11 @@ import (
 )
 
 var appConfig *AppConfig
+var db *gorm.DB
 
 func StartDatabase() *gorm.DB {
-	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+	var err error
+	db, err = gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
 	if err != nil {
 		panic("Failed to connect to the database")
 	}
@@ -33,16 +35,6 @@ func StartDatabase() *gorm.DB {
 	}
 
 	initDatabase(db)
-
-	db.Preload("Youtube").
-		Preload("Twitch").
-		Preload("Port").
-		Preload("AppInfo").
-		Preload("AspectRatio").
-		Preload("Emote").
-		Preload("Animations").
-		Preload("Preview").
-		First(&appConfig)
 
 	return db
 }
@@ -152,6 +144,15 @@ func insertDefaultValues(db *gorm.DB) {
 }
 
 func GetAppConfig() *AppConfig {
+	db.Preload("Youtube").
+		Preload("Twitch").
+		Preload("Port").
+		Preload("AppInfo").
+		Preload("AspectRatio").
+		Preload("Emote").
+		Preload("Animations").
+		Preload("Preview").
+		First(&appConfig)
 	return appConfig
 }
 
