@@ -41,9 +41,9 @@ func AssignAssets(embed embed.FS) {
 	assets = embed
 }
 
-func configureEmotesEndpoint(mux *http.ServeMux, emotePath string) {
-	mux.HandleFunc("/emotes/", func(w http.ResponseWriter, r *http.Request) {
-		filename := strings.TrimPrefix(r.URL.Path, "/emotes/")
+func configureChannelEmotesEndpoint(mux *http.ServeMux, emotePath string) {
+	mux.HandleFunc("/channel-emotes/", func(w http.ResponseWriter, r *http.Request) {
+		filename := strings.TrimPrefix(r.URL.Path, "/channel-emotes/")
 		var filePath string
 		for _, ext := range extensions {
 			filePath = filepath.Join(emotePath, filename+ext)
@@ -52,7 +52,37 @@ func configureEmotesEndpoint(mux *http.ServeMux, emotePath string) {
 				return
 			}
 		}
-		http.Error(w, "File not found", http.StatusNotFound)
+		http.Error(w, "Channel Emote not found", http.StatusNotFound)
+	})
+}
+
+func configureRandomEmotesEndpoint(mux *http.ServeMux, randomPath string) {
+	mux.HandleFunc("/random-emotes/", func(w http.ResponseWriter, r *http.Request) {
+		filename := strings.TrimPrefix(r.URL.Path, "/random-emotes/")
+		var filePath string
+		for _, ext := range extensions {
+			filePath = filepath.Join(randomPath, filename+ext)
+			if _, err := os.Stat(filePath); err == nil {
+				http.ServeFile(w, r, filePath)
+				return
+			}
+		}
+		http.Error(w, "Random Emote not found", http.StatusNotFound)
+	})
+}
+
+func configureIconEndpoint(mux *http.ServeMux, iconPath string) {
+	mux.HandleFunc("/icons/", func(w http.ResponseWriter, r *http.Request) {
+		filename := strings.TrimPrefix(r.URL.Path, "/icons/")
+		var filePath string
+		for _, ext := range extensions {
+			filePath = filepath.Join(iconPath, filename+ext)
+			if _, err := os.Stat(filePath); err == nil {
+				http.ServeFile(w, r, filePath)
+				return
+			}
+		}
+		http.Error(w, "Icon not found", http.StatusNotFound)
 	})
 }
 
@@ -294,7 +324,9 @@ func configureDefaultEndpoint(mux *http.ServeMux) {
 
 func ConfigureEndpoints(mux *http.ServeMux, db *gorm.DB, myPaths config.MyPaths, repo config.Repo) {
 
-	configureEmotesEndpoint(mux, myPaths.EmotePath)
+	configureChannelEmotesEndpoint(mux, myPaths.ChannelEmotePath)
+	configureRandomEmotesEndpoint(mux, myPaths.PreviewEmotePath)
+	configureIconEndpoint(mux, myPaths.IconPath)
 	configureConfigEndpoint(mux, db)
 	configureBackgroundImageEndpoint(mux, myPaths.BackgroundPath)
 	configureAppInfoEndpoint(mux, db)

@@ -2,7 +2,7 @@ package config
 
 import (
 	"log"
-	"sync"
+	// "sync"
 
 	"github.com/joho/godotenv"
 )
@@ -14,9 +14,11 @@ type Repo struct {
 }
 
 type MyPaths struct {
-	EmotePath      string
-	YamlPath       string
-	BackgroundPath string
+	ChannelEmotePath string
+	PreviewEmotePath string
+	IconPath         string
+	YamlPath         string
+	BackgroundPath   string
 }
 
 var repo Repo
@@ -24,7 +26,7 @@ var myPaths MyPaths
 var emoteMap map[string]string
 
 // var myConfig *AppConfig
-var mu sync.RWMutex
+// var mu sync.RWMutex
 
 const appVersion = "v2.1"
 const owner = "NamedAuto"
@@ -43,7 +45,7 @@ func init() {
 	// 	log.Fatalf("Error loading config.yaml")
 	// }
 
-	emoteMap = GenerateEmoteMap(myPaths.EmotePath)
+	emoteMap = GenerateEmoteMap(myPaths.ChannelEmotePath)
 	// fmt.Println("Formatted Emote Map:")
 	// for key, value := range emoteMap {
 	// 	fmt.Printf("%s: %s\n", key, value)

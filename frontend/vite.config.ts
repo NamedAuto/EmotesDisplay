@@ -18,11 +18,23 @@ export default defineConfig({
         secure: false,
         rewrite: (path) => path.replace(/^\/config/, "/config"),
       },
-      "/emotes": {
+      "/icons": {
         target: "http://localhost:3124",
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path.replace(/^\/emotes/, "/emotes"),
+        rewrite: (path) => path.replace(/^\/icons/, "/icons"),
+      },
+      "/channel-emotes": {
+        target: "http://localhost:3124",
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/channel-emotes/, "/channel-emotes"),
+      },
+      "/random-emotes": {
+        target: "http://localhost:3124",
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/random-emotes/, "/random-emotes"),
       },
       "/background": {
         target: "http://localhost:3124",

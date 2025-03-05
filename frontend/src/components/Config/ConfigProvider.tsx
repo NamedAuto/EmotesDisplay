@@ -26,7 +26,7 @@ export async function loadConfigFront(): Promise<Config | null> {
       }
       config = await response.json();
     } catch (error) {
-      console.error("Error fetching config:", error);
+      console.error("Error fetching config with port:", error);
     }
   } else {
     try {

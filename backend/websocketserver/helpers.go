@@ -21,7 +21,7 @@ func generateRandomUrls(port int, emoteMap map[string]string) []string {
 }
 
 func generateEmotesUrl(port int) string {
-	return fmt.Sprintf("http://localhost:%d/emotes/", port)
+	return fmt.Sprintf("http://localhost:%d/channel-emotes/", port)
 }
 
 func getRandomEmoteKey(emoteMap map[string]string) string {
