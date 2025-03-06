@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/NamedAuto/EmotesDisplay/backend/common"
+	"github.com/NamedAuto/EmotesDisplay/backend/config"
 	"github.com/NamedAuto/EmotesDisplay/backend/database"
 	"gorm.io/gorm"
 )
@@ -14,7 +15,8 @@ var ticker *time.Ticker
 func startEmitTimer(handler common.HandlerInterface,
 	db *gorm.DB,
 	emoteMap map[string]string,
-	stopChan chan bool) {
+	stopChan chan bool,
+	endpoints config.Endpoint) {
 
 	defer wg.Done()
 
@@ -31,7 +33,7 @@ func startEmitTimer(handler common.HandlerInterface,
 	for {
 		select {
 		case <-ticker.C:
-			handler.EmitToAllRandom(port.Port, emoteMap)
+			handler.EmitToAllRandom(port.Port, emoteMap, endpoints)
 
 			var currentSpeedOfEmotes int
 			db.Model(&database.Preview{}).

@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/NamedAuto/EmotesDisplay/backend/common"
+	"github.com/NamedAuto/EmotesDisplay/backend/config"
 	"gorm.io/gorm"
 )
 
@@ -14,7 +15,10 @@ var (
 	mu       sync.Mutex
 )
 
-func StartPreview(handler common.HandlerInterface, db *gorm.DB, emoteMap map[string]string) {
+func StartPreview(handler common.HandlerInterface,
+	db *gorm.DB,
+	emoteMap map[string]string,
+	endpoints config.Endpoint) {
 	mu.Lock()
 	defer mu.Unlock()
 
@@ -27,5 +31,5 @@ func StartPreview(handler common.HandlerInterface, db *gorm.DB, emoteMap map[str
 	wg.Add(1)
 
 	handler.EmitPreviewConnection(true)
-	go startEmitTimer(handler, db, emoteMap, stopChan)
+	go startEmitTimer(handler, db, emoteMap, stopChan, endpoints)
 }

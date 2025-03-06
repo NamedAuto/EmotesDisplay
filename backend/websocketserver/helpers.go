@@ -4,15 +4,16 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/NamedAuto/EmotesDisplay/backend/config"
 	"golang.org/x/exp/rand"
 )
 
-func generateRandomUrls(port int, emoteMap map[string]string) []string {
+func generateRandomUrls(port int, emoteMap map[string]string, endpoints config.Endpoint) []string {
 	count := rand.Intn(5) + 1
 	var urls []string
 	for range count {
 		emote := getRandomEmoteKey(emoteMap)
-		url := generateEmotesUrl(port)
+		url := generateEmotesUrl(port, endpoints.ChannelEmote)
 		message := parseEmoteToURL(emote, url)
 		urls = append(urls, message)
 	}
@@ -20,8 +21,8 @@ func generateRandomUrls(port int, emoteMap map[string]string) []string {
 	return urls
 }
 
-func generateEmotesUrl(port int) string {
-	return fmt.Sprintf("http://localhost:%d/channel-emotes/", port)
+func generateEmotesUrl(port int, endpoint string) string {
+	return fmt.Sprintf("http://localhost:%d%s", port, endpoint)
 }
 
 func getRandomEmoteKey(emoteMap map[string]string) string {

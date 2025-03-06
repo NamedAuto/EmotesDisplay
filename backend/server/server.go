@@ -44,13 +44,14 @@ func StartServer(ctx context.Context) {
 		}
 	}
 
-	appConfig := database.GetAppConfig()
+	// appConfig := database.GetAppConfig()
 	myPaths := config.GetMyPaths()
+	endpoints := config.GetMyEndpoints()
 	repo := config.GetRepo()
 	emoteMap := config.GetEmoteMap()
 
-	go websocketserver.StartWebSocketServer(ctx, mux, handler, db, emoteMap)
-	go httpserver.StartHttpServer(mux, db, myPaths, repo, appConfig.Port.Port)
+	go websocketserver.StartWebSocketServer(ctx, mux, handler, db, emoteMap, endpoints)
+	go httpserver.StartHttpServer(mux, db, myPaths, repo, endpoints)
 }
 
 func isPortAvailable(port int) bool {

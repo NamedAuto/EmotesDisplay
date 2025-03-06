@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/NamedAuto/EmotesDisplay/backend/common"
+	"github.com/NamedAuto/EmotesDisplay/backend/config"
 	"github.com/NamedAuto/EmotesDisplay/backend/database"
 	"github.com/NamedAuto/EmotesDisplay/backend/myyoutube"
 	"github.com/NamedAuto/EmotesDisplay/backend/previewView"
@@ -19,7 +20,8 @@ func (handler *WebSocketHandler) HandleConnections(
 	ctx context.Context,
 	allowedOrigin string,
 	db *gorm.DB,
-	emoteMap map[string]string) http.HandlerFunc {
+	emoteMap map[string]string,
+	endpoints config.Endpoint) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		upgrader := handler.ConfigureUpgrader(allowedOrigin)
@@ -44,7 +46,7 @@ func (handler *WebSocketHandler) HandleConnections(
 					break
 				}
 				log.Printf("Received: %s\n", msg)
-				handler.HandleMessage(ctx, ws, msg, db, emoteMap)
+				handler.HandleMessage(ctx, ws, msg, db, emoteMap, endpoints)
 			}
 		}()
 
@@ -60,7 +62,8 @@ func (handler *WebSocketHandler) HandleMessage(
 	ws *websocket.Conn,
 	message []byte,
 	db *gorm.DB,
-	emoteMap map[string]string) {
+	emoteMap map[string]string,
+	endpoints config.Endpoint) {
 
 	var event map[string]any
 	if err := json.Unmarshal(message, &event); err != nil {
@@ -95,7 +98,7 @@ func (handler *WebSocketHandler) HandleMessage(
 	case "disconnectTwitch":
 		twitch.DisconnectFromIRC(handler)
 	case "startPreview":
-		previewView.StartPreview(handler, db, emoteMap)
+		previewView.StartPreview(handler, db, emoteMap, endpoints)
 	case "stopPreview":
 		previewView.StopPreview()
 
@@ -127,11 +130,23 @@ func (handler *WebSocketHandler) HandleMessage(
 	}
 }
 
-func (handler *WebSocketHandler) EmitToAllRandom(port int, emoteMap map[string]string) {
+/*
+FOR RANDOM, CHECK DB TO SEE WHAT FOLDERS IT SHOULD USE FOR ITS IMAGES
+NEED DB
+  - How to decide what to use
+    Can do random on which folder
+    PROBLEM, not properly balanced
+    One folder might have more or less and thus be picked less
+    Maybe if possible, check how many items are in each folder and
+    then pick a random number to land between the folders
+*/
+func (handler *WebSocketHandler) EmitToAllRandom(port int,
+	emoteMap map[string]string,
+	endpoints config.Endpoint) {
 	handler.mu.Lock()
 	defer handler.mu.Unlock()
 
-	emoteUrls := generateRandomUrls(port, emoteMap)
+	emoteUrls := generateRandomUrls(port, emoteMap, endpoints)
 
 	msg := map[string]any{
 		"eventType": "preview-emote",

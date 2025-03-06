@@ -41,9 +41,9 @@ func AssignAssets(embed embed.FS) {
 	assets = embed
 }
 
-func configureChannelEmotesEndpoint(mux *http.ServeMux, emotePath string) {
-	mux.HandleFunc("/channel-emotes/", func(w http.ResponseWriter, r *http.Request) {
-		filename := strings.TrimPrefix(r.URL.Path, "/channel-emotes/")
+func configureChannelEmotesEndpoint(mux *http.ServeMux, emotePath string, endpoint string) {
+	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
+		filename := strings.TrimPrefix(r.URL.Path, endpoint)
 		var filePath string
 		for _, ext := range extensions {
 			filePath = filepath.Join(emotePath, filename+ext)
@@ -56,9 +56,9 @@ func configureChannelEmotesEndpoint(mux *http.ServeMux, emotePath string) {
 	})
 }
 
-func configureRandomEmotesEndpoint(mux *http.ServeMux, randomPath string) {
-	mux.HandleFunc("/random-emotes/", func(w http.ResponseWriter, r *http.Request) {
-		filename := strings.TrimPrefix(r.URL.Path, "/random-emotes/")
+func configureRandomEmotesEndpoint(mux *http.ServeMux, randomPath string, endpoint string) {
+	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
+		filename := strings.TrimPrefix(r.URL.Path, endpoint)
 		var filePath string
 		for _, ext := range extensions {
 			filePath = filepath.Join(randomPath, filename+ext)
@@ -71,9 +71,9 @@ func configureRandomEmotesEndpoint(mux *http.ServeMux, randomPath string) {
 	})
 }
 
-func configureIconEndpoint(mux *http.ServeMux, iconPath string) {
-	mux.HandleFunc("/icons/", func(w http.ResponseWriter, r *http.Request) {
-		filename := strings.TrimPrefix(r.URL.Path, "/icons/")
+func configureIconEndpoint(mux *http.ServeMux, iconPath string, endpoint string) {
+	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
+		filename := strings.TrimPrefix(r.URL.Path, endpoint)
 		var filePath string
 		for _, ext := range extensions {
 			filePath = filepath.Join(iconPath, filename+ext)
@@ -86,8 +86,8 @@ func configureIconEndpoint(mux *http.ServeMux, iconPath string) {
 	})
 }
 
-func configureBackgroundImageEndpoint(mux *http.ServeMux, backgroundPath string) {
-	mux.HandleFunc("/background", func(w http.ResponseWriter, r *http.Request) {
+func configureBackgroundImageEndpoint(mux *http.ServeMux, backgroundPath string, endpoint string) {
+	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
 		folderPath := backgroundPath
 		files, err := os.ReadDir(folderPath)
 		if err != nil {
@@ -117,8 +117,8 @@ func contains(slice []string, item string) bool {
 	return slices.Contains(slice, item)
 }
 
-func configureConfigEndpoint(mux *http.ServeMux, db *gorm.DB) {
-	mux.HandleFunc("/config", func(w http.ResponseWriter, r *http.Request) {
+func configureConfigEndpoint(mux *http.ServeMux, db *gorm.DB, endpoint string) {
+	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			w.Header().Set("Content-Type", "application/json")
 
@@ -179,8 +179,8 @@ func configureConfigEndpoint(mux *http.ServeMux, db *gorm.DB) {
 
 const timeInMillisToWaitBeforeChecking = 3600000
 
-func configureAppInfoEndpoint(mux *http.ServeMux, db *gorm.DB) {
-	mux.HandleFunc("/app-info", func(w http.ResponseWriter, r *http.Request) {
+func configureAppInfoEndpoint(mux *http.ServeMux, db *gorm.DB, endpoint string) {
+	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
 		var appInfo database.AppInfo
 		db.First(&appInfo)
 
@@ -219,8 +219,8 @@ func configureAppInfoEndpoint(mux *http.ServeMux, db *gorm.DB) {
 	})
 }
 
-func configureCheckForYoutubeApiKey(mux *http.ServeMux, db *gorm.DB) {
-	mux.HandleFunc("/check-for-youtube-api-key", func(w http.ResponseWriter, r *http.Request) {
+func configureCheckForYoutubeApiKey(mux *http.ServeMux, db *gorm.DB, endpoint string) {
+	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
 		var apiKey database.ApiKey
 		exists := true
 		if err := db.First(&apiKey).Error; err != nil || *apiKey.ApiKey == "" {
@@ -233,8 +233,8 @@ func configureCheckForYoutubeApiKey(mux *http.ServeMux, db *gorm.DB) {
 	})
 }
 
-func configureYoutubeApiKey(mux *http.ServeMux, db *gorm.DB) {
-	mux.HandleFunc("/youtube-api-key", func(w http.ResponseWriter, r *http.Request) {
+func configureYoutubeApiKey(mux *http.ServeMux, db *gorm.DB, endpoint string) {
+	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
 		var apiKey database.ApiKey
 		if err := db.First(&apiKey).Error; err != nil {
 			http.Error(w, "API key not found", http.StatusNotFound)
@@ -272,9 +272,9 @@ func configureYoutubeApiKey(mux *http.ServeMux, db *gorm.DB) {
 	})
 }
 
-func configureDefaultEndpoint(mux *http.ServeMux) {
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/" || r.URL.Path == "/index.html" {
+func configureDefaultEndpoint(mux *http.ServeMux, endpoint string) {
+	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == endpoint || r.URL.Path == "/index.html" {
 			data, err := assets.ReadFile("frontend/dist/index.html")
 			if err != nil {
 				http.Error(w, "Could not read index.html", http.StatusInternalServerError)
@@ -322,15 +322,19 @@ func configureDefaultEndpoint(mux *http.ServeMux) {
 	})
 }
 
-func ConfigureEndpoints(mux *http.ServeMux, db *gorm.DB, myPaths config.MyPaths, repo config.Repo) {
+func ConfigureEndpoints(mux *http.ServeMux,
+	db *gorm.DB,
+	myPaths config.MyPaths,
+	repo config.Repo,
+	endpoints config.Endpoint) {
 
-	configureChannelEmotesEndpoint(mux, myPaths.ChannelEmotePath)
-	configureRandomEmotesEndpoint(mux, myPaths.PreviewEmotePath)
-	configureIconEndpoint(mux, myPaths.IconPath)
-	configureConfigEndpoint(mux, db)
-	configureBackgroundImageEndpoint(mux, myPaths.BackgroundPath)
-	configureAppInfoEndpoint(mux, db)
-	configureCheckForYoutubeApiKey(mux, db)
-	configureYoutubeApiKey(mux, db)
-	configureDefaultEndpoint(mux)
+	configureChannelEmotesEndpoint(mux, myPaths.ChannelEmotePath, endpoints.ChannelEmote)
+	configureRandomEmotesEndpoint(mux, myPaths.PreviewEmotePath, endpoints.PreviewEmote)
+	configureIconEndpoint(mux, myPaths.IconPath, endpoints.Icon)
+	configureConfigEndpoint(mux, db, endpoints.Config)
+	configureBackgroundImageEndpoint(mux, myPaths.BackgroundPath, endpoints.Background)
+	configureAppInfoEndpoint(mux, db, endpoints.AppInfo)
+	configureCheckForYoutubeApiKey(mux, db, endpoints.CheckYTAPiKey)
+	configureYoutubeApiKey(mux, db, endpoints.YTAPiKey)
+	configureDefaultEndpoint(mux, endpoints.Default)
 }

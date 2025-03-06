@@ -6,34 +6,31 @@ import (
 	"path/filepath"
 )
 
-func SetupFilePaths() MyPaths {
+func SetupFilePaths(folder Folder) MyPaths {
 	env := os.Getenv("ENV")
 
-	var channelEmote = "images/emotes/channelEmotes"
-	var previewEmote = "images/emotes/randomEmotes"
-	var icon = "images/icons"
-	var yaml = "config"
-	var background = "public/background"
+	channelEmote := "Images/Emotes/" + folder.ChannelEmote
+	globalEmote := "Images/Emotes/" + folder.GlobalEmote
+	previewEmote := "Images/Emotes/" + folder.PreviewEmote
+	icon := "Images/" + folder.Icon
+	yaml := folder.Yaml
+	background := "Images/" + folder.Background
 
 	var channelEmotePath string
+	var globalEmotePath string
 	var previewEmotePath string
 	var iconPath string
 	var yamlPath string
 	var backgroundPath string
 
+	var dir string
 	if env == "development" {
 		log.Println("In development")
-
-		cwd, err := os.Getwd()
+		var err error
+		dir, err = os.Getwd()
 		if err != nil {
 			log.Fatalf("Error getting current working directory: %v", err)
 		}
-
-		channelEmotePath = filepath.Join(cwd, channelEmote)
-		previewEmotePath = filepath.Join(cwd, previewEmote)
-		iconPath = filepath.Join(cwd, icon)
-		yamlPath = filepath.Join(cwd, yaml)
-		backgroundPath = filepath.Join(cwd, background)
 
 	} else {
 		log.Println("In production")
@@ -41,19 +38,22 @@ func SetupFilePaths() MyPaths {
 		if err != nil {
 			log.Fatalf("Failed to get executable path: %v", err)
 		}
-		exeDir := filepath.Dir(exePath)
 
-		channelEmotePath = filepath.Join(exeDir, channelEmote)
-		previewEmotePath = filepath.Join(exeDir, previewEmote)
-		iconPath = filepath.Join(exeDir, icon)
-		yamlPath = filepath.Join(exeDir, yaml)
-		backgroundPath = filepath.Join(exeDir, background)
+		dir = filepath.Dir(exePath)
 	}
+
+	channelEmotePath = filepath.Join(dir, channelEmote)
+	globalEmotePath = filepath.Join(dir, globalEmote)
+	previewEmotePath = filepath.Join(dir, previewEmote)
+	iconPath = filepath.Join(dir, icon)
+	yamlPath = filepath.Join(dir, yaml)
+	backgroundPath = filepath.Join(dir, background)
 
 	// log.Printf("EMOTEPATH: %s", EmotePath)
 	// log.Printf("YAMLPATH: %s", YamlPath)
 	// log.Printf("BACKGROUNDPATH: %s", BackgroundPath)
 	return MyPaths{ChannelEmotePath: channelEmotePath,
+		GlobalEmotePath:  globalEmotePath,
 		PreviewEmotePath: previewEmotePath,
 		IconPath:         iconPath,
 		YamlPath:         yamlPath,
