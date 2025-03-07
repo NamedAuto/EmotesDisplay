@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+
+	"github.com/NamedAuto/EmotesDisplay/backend/config"
 )
 
 // func parse(message string){
@@ -16,7 +18,7 @@ import (
 // 	}
 // }
 
-func ParseMessageForEmotes(message string, emoteUrl string, emoteMap map[string]string) []string {
+func ParseMessageForEmotes(message string, emoteUrl string, emoteMap config.EmotesMap) []string {
 	emoteUrls := []string{}
 	regex := regexp.MustCompile(`:_.*?:`)
 	matches := regex.FindAllString(message, -1)
@@ -24,7 +26,7 @@ func ParseMessageForEmotes(message string, emoteUrl string, emoteMap map[string]
 	for _, emoteText := range matches {
 		loweredText := strings.ToLower((emoteText))
 
-		if _, exists := emoteMap[loweredText]; exists {
+		if _, exists := emoteMap.ChannelMap[loweredText]; exists {
 			cleanedText := strings.ReplaceAll(loweredText, ":", "")
 			cleanedText = strings.ReplaceAll(cleanedText, "_", "")
 			newEmoteUrl := emoteUrl + cleanedText

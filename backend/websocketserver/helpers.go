@@ -8,7 +8,7 @@ import (
 	"golang.org/x/exp/rand"
 )
 
-func generateRandomUrls(port int, emoteMap map[string]string, endpoints config.Endpoint) []string {
+func generateRandomUrls(port int, emoteMap config.EmotesMap, endpoints config.Endpoint) []string {
 	count := rand.Intn(5) + 1
 	var urls []string
 	for range count {
@@ -25,9 +25,9 @@ func generateEmotesUrl(port int, endpoint string) string {
 	return fmt.Sprintf("http://localhost:%d%s", port, endpoint)
 }
 
-func getRandomEmoteKey(emoteMap map[string]string) string {
-	keys := make([]string, 0, len(emoteMap))
-	for key := range emoteMap {
+func getRandomEmoteKey(emoteMap config.EmotesMap) string {
+	keys := make([]string, 0, len(emoteMap.ChannelMap))
+	for key := range emoteMap.ChannelMap {
 		keys = append(keys, key)
 	}
 

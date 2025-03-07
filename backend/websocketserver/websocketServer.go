@@ -15,7 +15,7 @@ func StartWebSocketServer(ctx context.Context,
 	mux *http.ServeMux,
 	handler *WebSocketHandler,
 	db *gorm.DB,
-	emoteMap map[string]string,
+	emoteMap config.EmotesMap,
 	endpoints config.Endpoint) {
 
 	var port database.Port

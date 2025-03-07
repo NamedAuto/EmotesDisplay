@@ -14,7 +14,7 @@ var ticker *time.Ticker
 
 func startEmitTimer(handler common.HandlerInterface,
 	db *gorm.DB,
-	emoteMap map[string]string,
+	emoteMap config.EmotesMap,
 	stopChan chan bool,
 	endpoints config.Endpoint) {
 

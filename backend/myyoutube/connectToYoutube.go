@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/NamedAuto/EmotesDisplay/backend/common"
+	"github.com/NamedAuto/EmotesDisplay/backend/config"
 	"github.com/NamedAuto/EmotesDisplay/backend/database"
 	"github.com/NamedAuto/EmotesDisplay/backend/parse"
 	"gorm.io/gorm"
@@ -23,7 +24,11 @@ var (
 var apiCallCounter = 0
 var keyInUse = ""
 
-func ConnectToYoutube(ctx context.Context, handler common.HandlerInterface, db *gorm.DB, emoteMap map[string]string) {
+func ConnectToYoutube(
+	ctx context.Context,
+	handler common.HandlerInterface,
+	db *gorm.DB,
+	emoteMap config.EmotesMap) {
 	log.Println("Connecting to youtube")
 	mu.Lock()
 	defer mu.Unlock()
@@ -71,7 +76,7 @@ func GetYoutubeMessages(
 	handler common.HandlerInterface,
 	db *gorm.DB,
 	youtubeService *youtube.Service,
-	emoteMap map[string]string,
+	emoteMap config.EmotesMap,
 ) {
 
 	defer wg.Done()
@@ -131,9 +136,9 @@ func GetYoutubeMessages(
 
 			if len(messages) > 0 {
 				for _, message := range messages {
-					// displayName := message.AuthorDetails.DisplayName
+					displayName := message.AuthorDetails.DisplayName
 					msg := message.Snippet.DisplayMessage
-					// log.Printf("%s: %s", displayName, msg)
+					log.Printf("%s: %s", displayName, msg)
 
 					baseUrl := fmt.Sprintf("http://localhost:%d/channel-emotes/", port.Port)
 					emoteUrls := parse.ParseMessageForEmotes(

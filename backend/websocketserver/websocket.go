@@ -20,7 +20,7 @@ func (handler *WebSocketHandler) HandleConnections(
 	ctx context.Context,
 	allowedOrigin string,
 	db *gorm.DB,
-	emoteMap map[string]string,
+	emoteMap config.EmotesMap,
 	endpoints config.Endpoint) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -62,7 +62,7 @@ func (handler *WebSocketHandler) HandleMessage(
 	ws *websocket.Conn,
 	message []byte,
 	db *gorm.DB,
-	emoteMap map[string]string,
+	emoteMap config.EmotesMap,
 	endpoints config.Endpoint) {
 
 	var event map[string]any
@@ -141,7 +141,7 @@ NEED DB
     then pick a random number to land between the folders
 */
 func (handler *WebSocketHandler) EmitToAllRandom(port int,
-	emoteMap map[string]string,
+	emoteMap config.EmotesMap,
 	endpoints config.Endpoint) {
 	handler.mu.Lock()
 	defer handler.mu.Unlock()

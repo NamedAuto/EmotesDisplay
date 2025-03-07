@@ -7,12 +7,12 @@ import (
 	"strings"
 )
 
-func GenerateEmoteMap(emotePath string) map[string]string {
+func generateEmoteMap(path string) map[string]string {
 	emoteMap := make(map[string]string)
 
-	emoteFiles, err := os.ReadDir(emotePath)
+	emoteFiles, err := os.ReadDir(path)
 	if err != nil {
-		fmt.Println("Error reading directory for emotes:", err)
+		fmt.Printf("Error reading directory %s for emotes: %s", path, err)
 		return emoteMap
 	}
 
@@ -20,7 +20,7 @@ func GenerateEmoteMap(emotePath string) map[string]string {
 		if !file.IsDir() {
 			emoteName := strings.TrimSuffix(file.Name(), filepath.Ext(file.Name()))
 			emoteKey := fmt.Sprintf(":_%s:", strings.ToLower(emoteName))
-			emoteMap[emoteKey] = filepath.Join(emotePath, file.Name())
+			emoteMap[emoteKey] = filepath.Join(path, file.Name())
 		}
 	}
 

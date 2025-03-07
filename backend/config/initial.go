@@ -22,18 +22,6 @@ type MyPaths struct {
 	BackgroundPath   string
 }
 
-var repo Repo
-var myPaths MyPaths
-var emoteMap map[string]string
-var endpoints Endpoint
-
-// var myConfig *AppConfig
-// var mu sync.RWMutex
-
-const appVersion = "v2.1"
-const owner = "NamedAuto"
-const repoName = "EmotesDisplay"
-
 type Folder struct {
 	ChannelEmote string
 	GlobalEmote  string
@@ -56,6 +44,27 @@ type Endpoint struct {
 	Default       string
 }
 
+type EmotesMap struct {
+	ChannelMap map[string]string
+	GlobalMap  map[string]string
+	RandomMap  map[string]string
+}
+
+var repo Repo
+var myPaths MyPaths
+var emotesMap EmotesMap
+
+// var channelEmoteMap map[string]string
+// var globalEmoteMap map[string]string
+var endpoints Endpoint
+
+// var myConfig *AppConfig
+// var mu sync.RWMutex
+
+const appVersion = "v2.1"
+const owner = "NamedAuto"
+const repoName = "EmotesDisplay"
+
 func init() {
 	log.Println("Initializing")
 	godotenv.Load()
@@ -65,13 +74,11 @@ func init() {
 	myPaths = SetupFilePaths(folder)
 	endpoints = initEndpointNames()
 
-	// var err error
-	// myConfig, err = LoadYamlConfig(myPaths.YamlPath)
-	// if err != nil {
-	// 	log.Fatalf("Error loading config.yaml")
-	// }
+	emotesMap = EmotesMap{
+		ChannelMap: generateEmoteMap(myPaths.ChannelEmotePath),
+		GlobalMap:  generateEmoteMap(myPaths.GlobalEmotePath),
+		RandomMap:  generateEmoteMap(myPaths.PreviewEmotePath)}
 
-	emoteMap = GenerateEmoteMap(myPaths.ChannelEmotePath)
 	// fmt.Println("Formatted Emote Map:")
 	// for key, value := range emoteMap {
 	// 	fmt.Printf("%s: %s\n", key, value)
@@ -116,6 +123,6 @@ func GetMyEndpoints() Endpoint {
 	return endpoints
 }
 
-func GetEmoteMap() map[string]string {
-	return emoteMap
+func GetEmoteMap() EmotesMap {
+	return emotesMap
 }
