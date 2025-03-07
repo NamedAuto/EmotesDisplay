@@ -53,6 +53,16 @@ import darkTheme from "../settingsTheme";
 const SettingsPage: React.FC = () => {
   const config = useConfig();
 
+  const baseURL = "http://localhost:" + config.port.port + "/icons/";
+  const youtubeIconUrl = baseURL + "youtubeIcon";
+  const twitchIconUrl = baseURL + "twitchIcon";
+  const randomIconUrl = baseURL + "randomIcon";
+  const aspectRatioUrl = baseURL + "aspectRatioIcon";
+  const portUrl = baseURL + "portIcon";
+  const emoteUrl = baseURL + "emoteIcon";
+
+  const iconWidthHeight = 35;
+
   const { isConnected, updateHandlers, sendMessage } = useWebSocketContext();
   const [isPreviewConnected, setIsPreviewConnected] = useState(false);
   const [isYoutubeConnected, setIsYoutubeConnected] = useState(false);
@@ -399,7 +409,7 @@ const SettingsPage: React.FC = () => {
           />
         );
 
-      case "Preview":
+      case "Random":
         return (
           <PreviewSettings
             settings={settingsPreview}
@@ -498,42 +508,44 @@ const SettingsPage: React.FC = () => {
           <List>
             <ListItemButton onClick={() => handleItemClick("YouTube")}>
               <ListItemIcon>
-                <MenuIcon />
+                <img
+                  src={youtubeIconUrl}
+                  alt="youtubeIcon"
+                  style={{ width: iconWidthHeight, height: iconWidthHeight }}
+                />
               </ListItemIcon>
               {isDrawerOpen && <ListItemText primary="YouTube" />}
             </ListItemButton>
 
             <ListItemButton onClick={() => handleItemClick("Twitch")}>
               <ListItemIcon>
-                <MenuIcon />
+                <img
+                  src={twitchIconUrl}
+                  alt="twitchIcon"
+                  style={{ width: iconWidthHeight, height: iconWidthHeight }}
+                />
               </ListItemIcon>
               {isDrawerOpen && <ListItemText primary="Twitch" />}
             </ListItemButton>
 
-            <ListItemButton onClick={() => handleItemClick("AspectRatio")}>
+            <ListItemButton onClick={() => handleItemClick("Random")}>
               <ListItemIcon>
-                <MenuIcon />
+                <img
+                  src={randomIconUrl}
+                  alt="randomIcon"
+                  style={{ width: iconWidthHeight, height: iconWidthHeight }}
+                />
               </ListItemIcon>
-              {isDrawerOpen && <ListItemText primary="Aspect Ratio" />}
-            </ListItemButton>
-
-            <ListItemButton onClick={() => handleItemClick("Port")}>
-              <ListItemIcon>
-                <MenuIcon />
-              </ListItemIcon>
-              {isDrawerOpen && <ListItemText primary="Port" />}
-            </ListItemButton>
-
-            <ListItemButton onClick={() => handleItemClick("Preview")}>
-              <ListItemIcon>
-                <MenuIcon />
-              </ListItemIcon>
-              {isDrawerOpen && <ListItemText primary="Preview" />}
+              {isDrawerOpen && <ListItemText primary="Random" />}
             </ListItemButton>
 
             <ListItemButton onClick={() => handleItemClick("Emote")}>
               <ListItemIcon>
-                <MenuIcon />
+                <img
+                  src={emoteUrl}
+                  alt="emoteIcon"
+                  style={{ width: iconWidthHeight, height: iconWidthHeight }}
+                />
               </ListItemIcon>
               {isDrawerOpen && <ListItemText primary="Emote" />}
             </ListItemButton>
@@ -544,6 +556,28 @@ const SettingsPage: React.FC = () => {
               </ListItemIcon>
               {isDrawerOpen && <ListItemText primary="Authentication" />}
             </ListItemButton> */}
+
+            <ListItemButton onClick={() => handleItemClick("AspectRatio")}>
+              <ListItemIcon>
+                <img
+                  src={aspectRatioUrl}
+                  alt="aspectRatioIcon"
+                  style={{ width: iconWidthHeight, height: iconWidthHeight }}
+                />
+              </ListItemIcon>
+              {isDrawerOpen && <ListItemText primary="Aspect Ratio" />}
+            </ListItemButton>
+
+            <ListItemButton onClick={() => handleItemClick("Port")}>
+              <ListItemIcon>
+                <img
+                  src={portUrl}
+                  alt="portIcon"
+                  style={{ width: iconWidthHeight, height: iconWidthHeight }}
+                />
+              </ListItemIcon>
+              {isDrawerOpen && <ListItemText primary="Port" />}
+            </ListItemButton>
           </List>
         </Drawer>
         <Box

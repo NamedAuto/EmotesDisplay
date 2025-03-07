@@ -38,7 +38,7 @@ const PreviewSettings: React.FC<PreviewSettingsProps> = ({
       }}
     >
       <FormGroup>
-        <Tooltip title="Uses images from the channelEmotes folder" arrow>
+        <Tooltip title="Uses images from the ChannelEmotesYT folder" arrow>
           <FormControlLabel
             control={
               <Checkbox
@@ -47,13 +47,13 @@ const PreviewSettings: React.FC<PreviewSettingsProps> = ({
                 onChange={handleInputChange}
               />
             }
-            label="Channel Emotes"
+            label="Use Channel Emotes"
             // labelPlacement="bottom"
             sx={{ marginLeft: marginLeft, marginRight: marginRight }}
           />
         </Tooltip>
 
-        <Tooltip title="Uses images from the random folder" arrow>
+        <Tooltip title="Uses images from the RandomEmotes folder" arrow>
           <FormControlLabel
             control={
               <Checkbox
@@ -62,7 +62,7 @@ const PreviewSettings: React.FC<PreviewSettingsProps> = ({
                 onChange={handleInputChange}
               />
             }
-            label="Random Emotes"
+            label="Use Random Emotes"
             // labelPlacement="bottom"
             sx={{ marginLeft: marginLeft, marginRight: marginRight }}
           />

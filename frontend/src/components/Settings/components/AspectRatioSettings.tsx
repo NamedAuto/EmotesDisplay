@@ -48,6 +48,7 @@ const AspectRatioSettings: React.FC<AspectRatioSettingsProps> = ({
             />
           }
           label="Force Width x Height"
+          labelPlacement="bottom"
           sx={{ marginLeft: marginLeft, marginRight: marginRight }}
         />
       </Tooltip>

@@ -104,83 +104,6 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
             flexDirection: "column",
           }}
         >
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleOpenDialog}
-            style={{
-              fontSize: fontSize,
-              marginTop: marginTop,
-              marginBottom: marginBottom,
-            }}
-            sx={{
-              marginLeft: marginLeft,
-              marginRight: marginRight,
-              width: "150px",
-            }}
-          >
-            Save Api Key
-          </Button>
-          <ConfirmDialog
-            open={openDialog}
-            title="Save the api key?"
-            content={`Save "${apiKeySettings.apiKey}" as the new api key?`}
-            onClose={handleCloseDialog}
-            onConfirm={handleConfirmDialog}
-          />
-
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={handleOpenApiKeyModal}
-            style={{
-              fontSize: fontSize,
-              marginTop: marginTop,
-              marginBottom: marginBottom,
-            }}
-            sx={{
-              marginLeft: marginLeft,
-              marginRight: marginRight,
-              width: "150px",
-            }}
-          >
-            Show Api Key
-          </Button>
-          <Modal
-            open={openApiKeyModal}
-            onClose={handleCloseApiKeyModal}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box sx={style}>
-              <Typography
-                variant="h6"
-                component="h2"
-                sx={{ color: theme.palette.customColors.myCustomText }}
-              >
-                Your API Key is
-              </Typography>
-              <Typography
-                sx={{
-                  mt: 2,
-                  color: theme.palette.customColors.textColorLighter,
-                }}
-              >
-                {apiKey == "" ? "No Api Key Found" : apiKey}
-              </Typography>
-            </Box>
-          </Modal>
-        </Box>
-
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexWrap: "wrap",
-            flexDirection: "column",
-          }}
-        >
           <Typography variant="h6">
             {apiKeyExists ? "Api Key Present" : "Missing Api Key"}
           </Typography>
@@ -206,6 +129,93 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
               }}
             />
           </Tooltip>
+
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexWrap: "wrap",
+              flexDirection: "row",
+            }}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleOpenDialog}
+              style={{
+                fontSize: fontSize,
+                marginTop: marginTop,
+                marginBottom: marginBottom,
+              }}
+              sx={{
+                marginLeft: marginLeft,
+                marginRight: marginRight,
+                width: "150px",
+              }}
+            >
+              Save Api Key
+            </Button>
+            <ConfirmDialog
+              open={openDialog}
+              title="Save the api key?"
+              content={`Save "${apiKeySettings.apiKey}" as the new api key?`}
+              onClose={handleCloseDialog}
+              onConfirm={handleConfirmDialog}
+            />
+
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleOpenApiKeyModal}
+              style={{
+                fontSize: fontSize,
+                marginTop: marginTop,
+                marginBottom: marginBottom,
+              }}
+              sx={{
+                marginLeft: marginLeft,
+                marginRight: marginRight,
+                width: "150px",
+              }}
+            >
+              Show Api Key
+            </Button>
+            <Modal
+              open={openApiKeyModal}
+              onClose={handleCloseApiKeyModal}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={style}>
+                <Typography
+                  variant="h6"
+                  component="h2"
+                  sx={{ color: theme.palette.customColors.myCustomText }}
+                >
+                  Your API Key is
+                </Typography>
+                <Typography
+                  sx={{
+                    mt: 2,
+                    color: theme.palette.customColors.textColorLighter,
+                  }}
+                >
+                  {apiKey == "" ? "No Api Key Found" : apiKey}
+                </Typography>
+              </Box>
+            </Modal>
+          </Box>
+
+          {/* <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            flexDirection: "column",
+          }}
+        > */}
         </Box>
 
         <Tooltip
