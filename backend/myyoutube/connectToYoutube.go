@@ -28,7 +28,9 @@ func ConnectToYoutube(
 	ctx context.Context,
 	handler common.HandlerInterface,
 	db *gorm.DB,
-	emoteMap config.EmotesMap) {
+	emoteMap config.EmotesMap,
+	endpoints config.Endpoint,
+) {
 	log.Println("Connecting to youtube")
 	mu.Lock()
 	defer mu.Unlock()
@@ -49,7 +51,7 @@ func ConnectToYoutube(
 	stopChan = make(chan bool)
 	wg.Add(1)
 
-	go GetYoutubeMessages(handler, db, youtubeService, emoteMap)
+	go GetYoutubeMessages(handler, db, youtubeService, emoteMap, endpoints)
 }
 
 func DisconnectFromYoutube() {
@@ -77,6 +79,7 @@ func GetYoutubeMessages(
 	db *gorm.DB,
 	youtubeService *youtube.Service,
 	emoteMap config.EmotesMap,
+	endpoints config.Endpoint,
 ) {
 
 	defer wg.Done()
@@ -140,10 +143,14 @@ func GetYoutubeMessages(
 					msg := message.Snippet.DisplayMessage
 					log.Printf("%s: %s", displayName, msg)
 
-					baseUrl := fmt.Sprintf("http://localhost:%d/channel-emotes/", port.Port)
+					channelUrl :=
+						fmt.Sprintf("http://localhost:%d/%s/", port.Port, endpoints.ChannelEmote)
+					globalUrl :=
+						fmt.Sprintf("http://localhost:%d/%s/", port.Port, endpoints.GlobalEmote)
 					emoteUrls := parse.ParseMessageForEmotes(
 						msg,
-						baseUrl,
+						channelUrl,
+						globalUrl,
 						emoteMap)
 
 					if len(emoteUrls) > 0 {

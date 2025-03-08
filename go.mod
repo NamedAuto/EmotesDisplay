@@ -10,7 +10,6 @@ require (
 	github.com/nicklaw5/helix/v2 v2.31.0
 	github.com/rs/cors v1.11.1
 	github.com/wailsapp/wails/v2 v2.9.2
-	golang.org/x/exp v0.0.0-20250218142911-aa4b98e5adaa
 	google.golang.org/api v0.222.0
 	gorm.io/driver/sqlite v1.5.7
 	gorm.io/gorm v1.25.12

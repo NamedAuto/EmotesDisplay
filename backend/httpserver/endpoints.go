@@ -56,6 +56,21 @@ func configureChannelEmotesEndpoint(mux *http.ServeMux, emotePath string, endpoi
 	})
 }
 
+func configureGlobalEmotesEndpoint(mux *http.ServeMux, randomPath string, endpoint string) {
+	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
+		filename := strings.TrimPrefix(r.URL.Path, endpoint)
+		var filePath string
+		for _, ext := range extensions {
+			filePath = filepath.Join(randomPath, filename+ext)
+			if _, err := os.Stat(filePath); err == nil {
+				http.ServeFile(w, r, filePath)
+				return
+			}
+		}
+		http.Error(w, "Global Emote not found", http.StatusNotFound)
+	})
+}
+
 func configureRandomEmotesEndpoint(mux *http.ServeMux, randomPath string, endpoint string) {
 	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
 		filename := strings.TrimPrefix(r.URL.Path, endpoint)
@@ -329,6 +344,7 @@ func ConfigureEndpoints(mux *http.ServeMux,
 	endpoints config.Endpoint) {
 
 	configureChannelEmotesEndpoint(mux, myPaths.ChannelEmotePath, endpoints.ChannelEmote)
+	configureGlobalEmotesEndpoint(mux, myPaths.GlobalEmotePath, endpoints.GlobalEmote)
 	configureRandomEmotesEndpoint(mux, myPaths.PreviewEmotePath, endpoints.PreviewEmote)
 	configureIconEndpoint(mux, myPaths.IconPath, endpoints.Icon)
 	configureConfigEndpoint(mux, db, endpoints.Config)

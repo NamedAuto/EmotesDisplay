@@ -90,7 +90,7 @@ func (handler *WebSocketHandler) HandleMessage(
 		log.Printf("Received customEvent with data: %v", data)
 
 	case "connectYoutube":
-		myyoutube.ConnectToYoutube(ctx, handler, db, emoteMap)
+		myyoutube.ConnectToYoutube(ctx, handler, db, emoteMap, endpoints)
 	case "disconnectYoutube":
 		myyoutube.DisconnectFromYoutube()
 	case "connectTwitch":

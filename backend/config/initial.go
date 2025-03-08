@@ -77,12 +77,11 @@ func init() {
 	myPaths = SetupFilePaths(folder)
 	endpoints = initEndpointNames()
 
-	// emotesMap = EmotesMap{
-	channelMap := generateEmoteMap(myPaths.ChannelEmotePath)
+	channelMap := generateEmoteMap(myPaths.ChannelEmotePath, ":_", ":")
 	channelKeys := generateKeyArray(channelMap)
-	globalMap := generateEmoteMap(myPaths.GlobalEmotePath)
+	globalMap := generateEmoteMap(myPaths.GlobalEmotePath, ":", ":")
 	globalKeys := generateKeyArray(globalMap)
-	randomMap := generateEmoteMap(myPaths.PreviewEmotePath)
+	randomMap := generateEmoteMap(myPaths.PreviewEmotePath, "", "")
 	randomKeys := generateKeyArray(randomMap)
 
 	emotesMap = EmotesMap{

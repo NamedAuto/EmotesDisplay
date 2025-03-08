@@ -32,6 +32,7 @@ export interface Emote {
 }
 
 export interface Preview {
+  maxRandomEmotes: number;
   speedOfEmotes: number;
   useChannelEmotes: boolean;
   useRandomEmotes: boolean;
