@@ -69,7 +69,29 @@ const PreviewSettings: React.FC<PreviewSettingsProps> = ({
         </Tooltip>
       </FormGroup>
 
-      <Tooltip title="Only works for Random. Lower is faster" arrow>
+      <Tooltip title="TODO" arrow>
+        <TextField
+          name="maxRandomEmotes"
+          label="Max Emotes"
+          value={settings.maxRandomEmotes}
+          onChange={handleInputChange}
+          type="number"
+          margin="normal"
+          sx={{
+            width: "125px",
+            marginLeft: marginLeft,
+            marginRight: marginRight,
+            "& .MuiInputLabel-root": {
+              fontSize: labelFontSize,
+            },
+            "& .MuiInputBase-input": {
+              fontSize: inputFontSize,
+            },
+          }}
+        />
+      </Tooltip>
+
+      <Tooltip title="Lower is faster" arrow>
         <TextField
           name="speedOfEmotes"
           label="Emotes Delay"
@@ -78,7 +100,7 @@ const PreviewSettings: React.FC<PreviewSettingsProps> = ({
           type="number"
           margin="normal"
           sx={{
-            width: "150px",
+            width: "125px",
             marginLeft: marginLeft,
             marginRight: marginRight,
             "& .MuiInputLabel-root": {

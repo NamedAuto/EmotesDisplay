@@ -51,6 +51,7 @@ export const formatEmoteSettings = (emote: Emote) => ({
 });
 
 export const formatPreviewSettings = (preview: Preview) => ({
+  maxRandomEmotes: preview.maxRandomEmotes.toString(),
   speedOfEmotes: (preview.speedOfEmotes / 1000).toString(),
   useChannelEmotes: preview.useChannelEmotes,
   useRandomEmotes: preview.useRandomEmotes,
@@ -112,6 +113,7 @@ export const createConfigCopyWithUpdate = (
     },
     preview: {
       ...config.preview,
+      maxRandomEmotes: parseInt(settingsPreview.maxRandomEmotes, 10),
       speedOfEmotes: Math.round(
         parseFloat(settingsPreview.speedOfEmotes) * 1000
       ),
