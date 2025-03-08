@@ -45,6 +45,7 @@ type AnimationsDTO struct {
 }
 
 type PreviewDTO struct {
+	MaxRandomEmotes  int  `json:"maxRandomEmotes"`
 	SpeedOfEmotes    int  `json:"speedOfEmotes"`
 	UseChannelEmotes bool `json:"useChannelEmotes"`
 	UseRandomEmotes  bool `json:"useRandomEmotes"`
@@ -121,6 +122,7 @@ func ToAnimationsDTO(a Animations) AnimationsDTO {
 
 func ToPreviewDTO(p Preview) PreviewDTO {
 	return PreviewDTO{
+		MaxRandomEmotes:  p.MaxRandomEmotes,
 		SpeedOfEmotes:    p.SpeedOfEmotes,
 		UseChannelEmotes: *p.UseChannelEmotes,
 		UseRandomEmotes:  *p.UseChannelEmotes,
@@ -213,6 +215,7 @@ func ToAnimationsModel(dto AnimationsDTO) Animations {
 
 func ToPreviewModel(dto PreviewDTO) Preview {
 	return Preview{
+		MaxRandomEmotes:  dto.MaxRandomEmotes,
 		SpeedOfEmotes:    dto.SpeedOfEmotes,
 		UseChannelEmotes: &dto.UseChannelEmotes,
 		UseRandomEmotes:  &dto.UseRandomEmotes,

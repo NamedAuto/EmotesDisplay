@@ -54,6 +54,7 @@ type Animations struct {
 
 type Preview struct {
 	gorm.Model
+	MaxRandomEmotes  int
 	SpeedOfEmotes    int
 	UseChannelEmotes *bool
 	UseRandomEmotes  *bool

@@ -33,7 +33,7 @@ func startEmitTimer(handler common.HandlerInterface,
 	for {
 		select {
 		case <-ticker.C:
-			handler.EmitToAllRandom(port.Port, emoteMap, endpoints)
+			handler.EmitToAllRandom(port.Port, emoteMap, endpoints, db)
 
 			var currentSpeedOfEmotes int
 			db.Model(&database.Preview{}).

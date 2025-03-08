@@ -45,9 +45,12 @@ type Endpoint struct {
 }
 
 type EmotesMap struct {
-	ChannelMap map[string]string
-	GlobalMap  map[string]string
-	RandomMap  map[string]string
+	ChannelMap  map[string]string
+	ChannelKeys []string
+	GlobalMap   map[string]string
+	GlobalKeys  []string
+	RandomMap   map[string]string
+	RandomKeys  []string
 }
 
 var repo Repo
@@ -74,10 +77,22 @@ func init() {
 	myPaths = SetupFilePaths(folder)
 	endpoints = initEndpointNames()
 
+	// emotesMap = EmotesMap{
+	channelMap := generateEmoteMap(myPaths.ChannelEmotePath)
+	channelKeys := generateKeyArray(channelMap)
+	globalMap := generateEmoteMap(myPaths.GlobalEmotePath)
+	globalKeys := generateKeyArray(globalMap)
+	randomMap := generateEmoteMap(myPaths.PreviewEmotePath)
+	randomKeys := generateKeyArray(randomMap)
+
 	emotesMap = EmotesMap{
-		ChannelMap: generateEmoteMap(myPaths.ChannelEmotePath),
-		GlobalMap:  generateEmoteMap(myPaths.GlobalEmotePath),
-		RandomMap:  generateEmoteMap(myPaths.PreviewEmotePath)}
+		ChannelMap:  channelMap,
+		ChannelKeys: channelKeys,
+		GlobalMap:   globalMap,
+		GlobalKeys:  globalKeys,
+		RandomMap:   randomMap,
+		RandomKeys:  randomKeys,
+	}
 
 	// fmt.Println("Formatted Emote Map:")
 	// for key, value := range emoteMap {
@@ -109,6 +124,15 @@ func initFolderNames() Folder {
 		Yaml:         "Config",
 		Background:   "Background",
 	}
+}
+
+func generateKeyArray(myMap map[string]string) []string {
+	keys := make([]string, 0, len(myMap))
+	for key := range myMap {
+		keys = append(keys, key)
+	}
+
+	return keys
 }
 
 func GetRepo() Repo {

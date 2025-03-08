@@ -142,11 +142,15 @@ NEED DB
 */
 func (handler *WebSocketHandler) EmitToAllRandom(port int,
 	emoteMap config.EmotesMap,
-	endpoints config.Endpoint) {
+	endpoints config.Endpoint,
+	db *gorm.DB) {
 	handler.mu.Lock()
 	defer handler.mu.Unlock()
+	// TODO:
 
-	emoteUrls := generateRandomUrls(port, emoteMap, endpoints)
+	var random database.Preview
+	db.First(&random)
+	emoteUrls := generateRandomUrls(port, emoteMap, endpoints, random)
 
 	msg := map[string]any{
 		"eventType": "preview-emote",

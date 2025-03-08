@@ -3,17 +3,29 @@ package websocketserver
 import (
 	"fmt"
 	"regexp"
+	"time"
 
 	"github.com/NamedAuto/EmotesDisplay/backend/config"
+	"github.com/NamedAuto/EmotesDisplay/backend/database"
 	"golang.org/x/exp/rand"
 )
 
-func generateRandomUrls(port int, emoteMap config.EmotesMap, endpoints config.Endpoint) []string {
-	count := rand.Intn(5) + 1
+func generateRandomUrls(port int,
+	emoteMap config.EmotesMap,
+	endpoints config.Endpoint,
+	random database.Preview) []string {
+	count := rand.Intn(random.MaxRandomEmotes) + 1
 	var urls []string
+
+	keysToUse, endpoint := decideMapAndEndpoint(emoteMap, endpoints, random)
+
+	if keysToUse == nil {
+		return urls
+	}
+
 	for range count {
-		emote := getRandomEmoteKey(emoteMap)
-		url := generateEmotesUrl(port, endpoints.ChannelEmote)
+		emote := keysToUse[rand.Intn((len(keysToUse)))]
+		url := generateEmotesUrl(port, endpoint)
 		message := parseEmoteToURL(emote, url)
 		urls = append(urls, message)
 	}
@@ -25,14 +37,60 @@ func generateEmotesUrl(port int, endpoint string) string {
 	return fmt.Sprintf("http://localhost:%d%s", port, endpoint)
 }
 
-func getRandomEmoteKey(emoteMap config.EmotesMap) string {
-	keys := make([]string, 0, len(emoteMap.ChannelMap))
-	for key := range emoteMap.ChannelMap {
-		keys = append(keys, key)
+func getMapAndEndpoint() {
+
+}
+
+// func getRandomEmote(emoteMap config.EmotesMap, random database.Preview, endpoints config.Endpoint) string {
+// 	keysToUse, endpoint := decideMapAndEndpoint(emoteMap, endpoints, random)
+// 	if keysToUse == nil {
+// 		return "",
+// 	}
+
+// 	keys := make([]string, 0, len(keysToUse))
+// 	for key := range keysToUse {
+// 		keys = append(keys, key)
+// 	}
+
+// 	randomKey := keys[rand.Intn(len(keys))]
+// 	return randomKey
+// }
+
+func decideMapAndEndpoint(
+	emoteMap config.EmotesMap,
+	endpoints config.Endpoint,
+	random database.Preview) ([]string, string) {
+	count := 0
+	channelCount := len(emoteMap.ChannelMap)
+	randmonCount := len(emoteMap.RandomMap)
+
+	if *random.UseChannelEmotes {
+		count += channelCount
+	}
+	if *random.UseRandomEmotes {
+		count += randmonCount
 	}
 
-	randomKey := keys[rand.Intn(len(keys))]
-	return randomKey
+	if count == 0 {
+		return nil, ""
+	}
+
+	rand.Seed(uint64(time.Now().UnixNano()))
+	randomNum := rand.Intn(count)
+
+	var randomKey []string
+	var endpoint string
+	if *random.UseChannelEmotes && randomNum < channelCount {
+		// mapToUse = emoteMap.ChannelMap
+		randomKey = emoteMap.ChannelKeys
+		endpoint = endpoints.ChannelEmote
+	} else {
+		// mapToUse = emoteMap.RandomMap
+		randomKey = emoteMap.RandomKeys
+		endpoint = endpoints.PreviewEmote
+	}
+
+	return randomKey, endpoint
 }
 
 func parseEmoteToURL(emote string, url string) string {
