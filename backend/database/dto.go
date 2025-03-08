@@ -125,7 +125,7 @@ func ToPreviewDTO(p Preview) PreviewDTO {
 		MaxRandomEmotes:  p.MaxRandomEmotes,
 		SpeedOfEmotes:    p.SpeedOfEmotes,
 		UseChannelEmotes: *p.UseChannelEmotes,
-		UseRandomEmotes:  *p.UseChannelEmotes,
+		UseRandomEmotes:  *p.UseRandomEmotes,
 	}
 }
 

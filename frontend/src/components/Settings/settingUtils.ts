@@ -116,7 +116,7 @@ export const createConfigCopyWithUpdate = (
         parseFloat(settingsPreview.speedOfEmotes) * 1000
       ),
       useChannelEmotes: settingsPreview.useChannelEmotes,
-      useRandomEmotse: settingsPreview.useRandomEmotes,
+      useRandomEmotes: settingsPreview.useRandomEmotes,
     },
   };
 };
