@@ -53,6 +53,21 @@ const PreviewSettings: React.FC<PreviewSettingsProps> = ({
           />
         </Tooltip>
 
+        <Tooltip title="Uses images from the GlobalEmotesYT folder" arrow>
+          <FormControlLabel
+            control={
+              <Checkbox
+                name="useGlobalEmotes"
+                checked={settings.useGlobalEmotes}
+                onChange={handleInputChange}
+              />
+            }
+            label="Use Global Emotes"
+            // labelPlacement="bottom"
+            sx={{ marginLeft: marginLeft, marginRight: marginRight }}
+          />
+        </Tooltip>
+
         <Tooltip title="Uses images from the RandomEmotes folder" arrow>
           <FormControlLabel
             control={
@@ -69,7 +84,7 @@ const PreviewSettings: React.FC<PreviewSettingsProps> = ({
         </Tooltip>
       </FormGroup>
 
-      <Tooltip title="TODO" arrow>
+      <Tooltip title="Add 1-max(random) amount of emotes every delay" arrow>
         <TextField
           name="maxRandomEmotes"
           label="Max Emotes"
@@ -91,7 +106,10 @@ const PreviewSettings: React.FC<PreviewSettingsProps> = ({
         />
       </Tooltip>
 
-      <Tooltip title="Lower is faster" arrow>
+      <Tooltip
+        title="Delay before more emotes are shown. Lower is faster"
+        arrow
+      >
         <TextField
           name="speedOfEmotes"
           label="Emotes Delay"

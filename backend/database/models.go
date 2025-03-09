@@ -57,6 +57,7 @@ type Preview struct {
 	MaxRandomEmotes  int
 	SpeedOfEmotes    int
 	UseChannelEmotes *bool
+	UseGlobalEmotes  *bool
 	UseRandomEmotes  *bool
 }
 

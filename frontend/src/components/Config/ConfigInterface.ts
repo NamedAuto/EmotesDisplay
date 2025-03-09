@@ -35,6 +35,7 @@ export interface Preview {
   maxRandomEmotes: number;
   speedOfEmotes: number;
   useChannelEmotes: boolean;
+  useGlobalEmotes: boolean;
   useRandomEmotes: boolean;
 }
 

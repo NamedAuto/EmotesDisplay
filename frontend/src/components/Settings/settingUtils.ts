@@ -54,6 +54,7 @@ export const formatPreviewSettings = (preview: Preview) => ({
   maxRandomEmotes: preview.maxRandomEmotes.toString(),
   speedOfEmotes: (preview.speedOfEmotes / 1000).toString(),
   useChannelEmotes: preview.useChannelEmotes,
+  useGlobalEmotes: preview.useGlobalEmotes,
   useRandomEmotes: preview.useRandomEmotes,
 });
 
@@ -118,6 +119,7 @@ export const createConfigCopyWithUpdate = (
         parseFloat(settingsPreview.speedOfEmotes) * 1000
       ),
       useChannelEmotes: settingsPreview.useChannelEmotes,
+      useGlobalEmotes: settingsPreview.useGlobalEmotes,
       useRandomEmotes: settingsPreview.useRandomEmotes,
     },
   };

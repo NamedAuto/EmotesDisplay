@@ -34,6 +34,7 @@ export interface SettingsPreview {
   maxRandomEmotes: string;
   speedOfEmotes: string;
   useChannelEmotes: boolean;
+  useGlobalEmotes: boolean;
   useRandomEmotes: boolean;
 }
 

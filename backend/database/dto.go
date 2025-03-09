@@ -48,6 +48,7 @@ type PreviewDTO struct {
 	MaxRandomEmotes  int  `json:"maxRandomEmotes"`
 	SpeedOfEmotes    int  `json:"speedOfEmotes"`
 	UseChannelEmotes bool `json:"useChannelEmotes"`
+	UseGlobalEmotes  bool `json:"useGlobalEmotes"`
 	UseRandomEmotes  bool `json:"useRandomEmotes"`
 }
 
@@ -125,6 +126,7 @@ func ToPreviewDTO(p Preview) PreviewDTO {
 		MaxRandomEmotes:  p.MaxRandomEmotes,
 		SpeedOfEmotes:    p.SpeedOfEmotes,
 		UseChannelEmotes: *p.UseChannelEmotes,
+		UseGlobalEmotes:  *p.UseGlobalEmotes,
 		UseRandomEmotes:  *p.UseRandomEmotes,
 	}
 }
@@ -218,6 +220,7 @@ func ToPreviewModel(dto PreviewDTO) Preview {
 		MaxRandomEmotes:  dto.MaxRandomEmotes,
 		SpeedOfEmotes:    dto.SpeedOfEmotes,
 		UseChannelEmotes: &dto.UseChannelEmotes,
+		UseGlobalEmotes:  &dto.UseGlobalEmotes,
 		UseRandomEmotes:  &dto.UseRandomEmotes,
 	}
 }

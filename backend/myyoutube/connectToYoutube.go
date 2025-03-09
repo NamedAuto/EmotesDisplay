@@ -147,7 +147,7 @@ func GetYoutubeMessages(
 						fmt.Sprintf("http://localhost:%d/%s/", port.Port, endpoints.ChannelEmote)
 					globalUrl :=
 						fmt.Sprintf("http://localhost:%d/%s/", port.Port, endpoints.GlobalEmote)
-					emoteUrls := parse.ParseMessageForEmotes(
+					emoteUrls := parse.ParseYoutubeMessage(
 						msg,
 						channelUrl,
 						globalUrl,

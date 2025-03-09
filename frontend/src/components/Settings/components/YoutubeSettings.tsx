@@ -1,6 +1,8 @@
 import {
   Box,
   Button,
+  Checkbox,
+  FormControlLabel,
   InputAdornment,
   Modal,
   TextField,
@@ -93,6 +95,7 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
           alignItems: "center",
           justifyContent: "center",
           flexWrap: "wrap",
+          flexDirection: "row",
         }}
       >
         <Box
@@ -151,10 +154,10 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
               sx={{
                 marginLeft: marginLeft,
                 marginRight: marginRight,
-                width: "150px",
+                width: "75px",
               }}
             >
-              Save Api Key
+              Save Key
             </Button>
             <ConfirmDialog
               open={openDialog}
@@ -176,10 +179,10 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
               sx={{
                 marginLeft: marginLeft,
                 marginRight: marginRight,
-                width: "150px",
+                width: "75px",
               }}
             >
-              Show Api Key
+              Show Key
             </Button>
             <Modal
               open={openApiKeyModal}
@@ -218,6 +221,7 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
         > */}
         </Box>
 
+        {/* <Box> */}
         <Tooltip
           title="Found at the end of the youtube stream url. From the url, include everything after the ?v="
           arrow
@@ -229,7 +233,7 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
             onChange={handleInputChange}
             margin="normal"
             sx={{
-              width: "160px",
+              width: "150px",
               marginLeft: marginLeft,
               marginRight: marginRight,
               "& .MuiInputLabel-root": {
@@ -251,7 +255,7 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
             type="number"
             margin="normal"
             sx={{
-              width: "150px",
+              width: "125px",
               marginLeft: marginLeft,
               marginRight: marginRight,
               "& .MuiInputLabel-root": {
@@ -270,6 +274,22 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
             }}
           />
         </Tooltip>
+
+        <Tooltip title="Show global youtube emotes" arrow>
+          <FormControlLabel
+            control={
+              <Checkbox
+                name="useGlobalEmotes"
+                checked={true}
+                onChange={handleInputChange}
+              />
+            }
+            label="Show Global Emotes"
+            labelPlacement="bottom"
+            sx={{ marginLeft: marginLeft, marginRight: marginRight }}
+          />
+        </Tooltip>
+        {/* </Box> */}
       </Box>
     </Box>
   );

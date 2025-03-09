@@ -104,11 +104,13 @@ func insertDefaultValues(db *gorm.DB) {
 	db.Create(&animations)
 
 	useChannelEmotes := true
+	useGlobalEmotes := true
 	useRandomEmotes := true
 	preview := Preview{
 		MaxRandomEmotes:  5,
 		SpeedOfEmotes:    500,
 		UseChannelEmotes: &useChannelEmotes,
+		UseGlobalEmotes:  &useGlobalEmotes,
 		UseRandomEmotes:  &useRandomEmotes,
 	}
 	db.Create(&preview)
