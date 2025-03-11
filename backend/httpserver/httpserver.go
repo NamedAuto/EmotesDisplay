@@ -14,13 +14,13 @@ import (
 func StartHttpServer(mux *http.ServeMux,
 	db *gorm.DB,
 	myPaths config.MyPaths,
-	repo config.Repo,
 	endpoints config.Endpoint) {
 
-	ConfigureEndpoints(mux, db, myPaths, repo, endpoints)
+	ConfigureEndpoints(mux, db, myPaths, endpoints)
 
 	var port database.Port
 	db.First(&port)
+
 	log.Printf("Starting http server on port %d\n", port.Port)
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port.Port),
 		middleware.ConfigureCORS(mux))

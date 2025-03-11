@@ -2,23 +2,15 @@ package config
 
 import (
 	"log"
-	// "sync"
 
 	"github.com/joho/godotenv"
 )
-
-type Repo struct {
-	AppVersion string
-	Owner      string
-	RepoName   string
-}
 
 type MyPaths struct {
 	ChannelEmotePath string
 	GlobalEmotePath  string
 	PreviewEmotePath string
 	IconPath         string
-	YamlPath         string
 	BackgroundPath   string
 }
 
@@ -53,28 +45,16 @@ type EmotesMap struct {
 	RandomKeys  []string
 }
 
-var repo Repo
 var myPaths MyPaths
 var emotesMap EmotesMap
-
-// var channelEmoteMap map[string]string
-// var globalEmoteMap map[string]string
 var endpoints Endpoint
-
-// var myConfig *AppConfig
-// var mu sync.RWMutex
-
-const appVersion = "v2.1"
-const owner = "NamedAuto"
-const repoName = "EmotesDisplay"
 
 func init() {
 	log.Println("Initializing")
 	godotenv.Load()
 
-	repo = Repo{AppVersion: appVersion, Owner: owner, RepoName: repoName}
 	folder := initFolderNames()
-	myPaths = SetupFilePaths(folder)
+	myPaths = setupFilePaths(folder)
 	endpoints = initEndpointNames()
 
 	channelMap := generateEmoteMap(myPaths.ChannelEmotePath, ":_", ":")
@@ -123,19 +103,6 @@ func initFolderNames() Folder {
 		Yaml:         "Config",
 		Background:   "Background",
 	}
-}
-
-func generateKeyArray(myMap map[string]string) []string {
-	keys := make([]string, 0, len(myMap))
-	for key := range myMap {
-		keys = append(keys, key)
-	}
-
-	return keys
-}
-
-func GetRepo() Repo {
-	return repo
 }
 
 func GetMyPaths() MyPaths {

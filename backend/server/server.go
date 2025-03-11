@@ -19,7 +19,6 @@ var mux = http.NewServeMux()
 
 var db *gorm.DB
 
-// 49152-65535
 func StartServer(ctx context.Context) {
 	log.Println("Server starting")
 	db = database.StartDatabase()
@@ -30,28 +29,26 @@ func StartServer(ctx context.Context) {
 	if isPortAvailable(port) {
 		fmt.Printf("Port %d is available!\n", port)
 	} else {
-		fmt.Printf("Port %d is already in use.\n", port)
+		fmt.Printf("Port %d is already in use. Searching for another one.\n", port)
 		startPort := 49152
 		endPort := 65535
 
 		port, err := findAvailablePort(startPort, endPort)
 		if err != nil {
-			fmt.Println("Error:", err)
+			log.Println("Error:", err)
 		} else {
-			fmt.Printf("Found available port : %d\n", port)
+			log.Printf("Found available port : %d\n", port)
 			p.Port = port
 			db.Model(&p).Update("Port", port)
 		}
 	}
 
-	// appConfig := database.GetAppConfig()
 	myPaths := config.GetMyPaths()
 	endpoints := config.GetMyEndpoints()
-	repo := config.GetRepo()
 	emoteMap := config.GetEmoteMap()
 
 	go websocketserver.StartWebSocketServer(ctx, mux, handler, db, emoteMap, endpoints)
-	go httpserver.StartHttpServer(mux, db, myPaths, repo, endpoints)
+	go httpserver.StartHttpServer(mux, db, myPaths, endpoints)
 }
 
 func isPortAvailable(port int) bool {

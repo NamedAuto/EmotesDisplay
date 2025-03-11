@@ -18,10 +18,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type YoutubeApiKeyResponse struct {
-	ApiKey string `json:"apiKey"`
-}
-
 type HasApiKeyResponse struct {
 	Exists bool `json:"exists"`
 }
@@ -257,8 +253,7 @@ func configureYoutubeApiKey(mux *http.ServeMux, db *gorm.DB, endpoint string) {
 		}
 
 		if r.Method == http.MethodGet {
-			response := YoutubeApiKeyResponse{ApiKey: *apiKey.ApiKey}
-			jsonResponse, err := json.Marshal(response)
+			jsonResponse, err := json.Marshal(database.ToApiKeyDTO(apiKey))
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
@@ -267,13 +262,14 @@ func configureYoutubeApiKey(mux *http.ServeMux, db *gorm.DB, endpoint string) {
 			w.Header().Set("Content-Type", "application/json")
 			w.Write(jsonResponse)
 		} else if r.Method == http.MethodPost {
-			var apiKeyResponse YoutubeApiKeyResponse
-			if err := json.NewDecoder(r.Body).Decode(&apiKeyResponse); err != nil {
+
+			var aK database.ApiKeyDTO
+			if err := json.NewDecoder(r.Body).Decode(&aK); err != nil {
 				http.Error(w, "Invalid request body", http.StatusBadRequest)
 				return
 			}
 
-			key := apiKeyResponse.ApiKey
+			key := aK.ApiKey
 			apiKey.ApiKey = &key
 
 			if err := db.Save(&apiKey).Error; err != nil {
@@ -340,7 +336,6 @@ func configureDefaultEndpoint(mux *http.ServeMux, endpoint string) {
 func ConfigureEndpoints(mux *http.ServeMux,
 	db *gorm.DB,
 	myPaths config.MyPaths,
-	repo config.Repo,
 	endpoints config.Endpoint) {
 
 	configureChannelEmotesEndpoint(mux, myPaths.ChannelEmotePath, endpoints.ChannelEmote)

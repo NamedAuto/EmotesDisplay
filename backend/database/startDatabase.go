@@ -2,6 +2,7 @@ package database
 
 import (
 	"log"
+	"os"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -12,12 +13,15 @@ var db *gorm.DB
 
 func StartDatabase() *gorm.DB {
 	var err error
-	db, err = gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+	db, err = gorm.Open(sqlite.Open("emotesDisplay.db"), &gorm.Config{})
 	if err != nil {
 		panic("Failed to connect to the database")
 	}
 
-	db = db.Debug()
+	env := os.Getenv("ENV")
+	if env == "development" {
+		db = db.Debug()
+	}
 
 	if err := db.AutoMigrate(
 		&Youtube{},

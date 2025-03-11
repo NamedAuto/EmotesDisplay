@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func generateEmoteMap(path string, start string, end string) map[string]string {
+func generateEmoteMap(path string, prefix string, suffix string) map[string]string {
 	emoteMap := make(map[string]string)
 
 	emoteFiles, err := os.ReadDir(path)
@@ -19,10 +19,19 @@ func generateEmoteMap(path string, start string, end string) map[string]string {
 	for _, file := range emoteFiles {
 		if !file.IsDir() {
 			emoteName := strings.TrimSuffix(file.Name(), filepath.Ext(file.Name()))
-			emoteKey := fmt.Sprintf("%s%s%s", start, strings.ToLower(emoteName), end)
+			emoteKey := fmt.Sprintf("%s%s%s", prefix, strings.ToLower(emoteName), suffix)
 			emoteMap[emoteKey] = filepath.Join(path, file.Name())
 		}
 	}
 
 	return emoteMap
+}
+
+func generateKeyArray(myMap map[string]string) []string {
+	keys := make([]string, 0, len(myMap))
+	for key := range myMap {
+		keys = append(keys, key)
+	}
+
+	return keys
 }
