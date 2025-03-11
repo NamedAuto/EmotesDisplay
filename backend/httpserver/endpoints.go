@@ -37,63 +37,18 @@ func AssignAssets(embed embed.FS) {
 	assets = embed
 }
 
-func configureChannelEmotesEndpoint(mux *http.ServeMux, emotePath string, endpoint string) {
+func configureFolderEndpoint(mux *http.ServeMux, path string, endpoint string, errMsg string) {
 	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
 		filename := strings.TrimPrefix(r.URL.Path, endpoint)
 		var filePath string
 		for _, ext := range extensions {
-			filePath = filepath.Join(emotePath, filename+ext)
+			filePath = filepath.Join(path, filename+ext)
 			if _, err := os.Stat(filePath); err == nil {
 				http.ServeFile(w, r, filePath)
 				return
 			}
 		}
-		http.Error(w, "Channel Emote not found", http.StatusNotFound)
-	})
-}
-
-func configureGlobalEmotesEndpoint(mux *http.ServeMux, randomPath string, endpoint string) {
-	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
-		filename := strings.TrimPrefix(r.URL.Path, endpoint)
-		var filePath string
-		for _, ext := range extensions {
-			filePath = filepath.Join(randomPath, filename+ext)
-			if _, err := os.Stat(filePath); err == nil {
-				http.ServeFile(w, r, filePath)
-				return
-			}
-		}
-		http.Error(w, "Global Emote not found", http.StatusNotFound)
-	})
-}
-
-func configureRandomEmotesEndpoint(mux *http.ServeMux, randomPath string, endpoint string) {
-	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
-		filename := strings.TrimPrefix(r.URL.Path, endpoint)
-		var filePath string
-		for _, ext := range extensions {
-			filePath = filepath.Join(randomPath, filename+ext)
-			if _, err := os.Stat(filePath); err == nil {
-				http.ServeFile(w, r, filePath)
-				return
-			}
-		}
-		http.Error(w, "Random Emote not found", http.StatusNotFound)
-	})
-}
-
-func configureIconEndpoint(mux *http.ServeMux, iconPath string, endpoint string) {
-	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
-		filename := strings.TrimPrefix(r.URL.Path, endpoint)
-		var filePath string
-		for _, ext := range extensions {
-			filePath = filepath.Join(iconPath, filename+ext)
-			if _, err := os.Stat(filePath); err == nil {
-				http.ServeFile(w, r, filePath)
-				return
-			}
-		}
-		http.Error(w, "Icon not found", http.StatusNotFound)
+		http.Error(w, errMsg, http.StatusNotFound)
 	})
 }
 
@@ -337,11 +292,34 @@ func ConfigureEndpoints(mux *http.ServeMux,
 	db *gorm.DB,
 	myPaths config.MyPaths,
 	endpoints config.Endpoint) {
+	configureFolderEndpoint(
+		mux,
+		myPaths.ChannelEmotePath,
+		endpoints.ChannelEmote,
+		"Channel Emote not found",
+	)
 
-	configureChannelEmotesEndpoint(mux, myPaths.ChannelEmotePath, endpoints.ChannelEmote)
-	configureGlobalEmotesEndpoint(mux, myPaths.GlobalEmotePath, endpoints.GlobalEmote)
-	configureRandomEmotesEndpoint(mux, myPaths.PreviewEmotePath, endpoints.PreviewEmote)
-	configureIconEndpoint(mux, myPaths.IconPath, endpoints.Icon)
+	configureFolderEndpoint(
+		mux,
+		myPaths.GlobalEmotePath,
+		endpoints.GlobalEmote,
+		"Global Emote not found",
+	)
+
+	configureFolderEndpoint(
+		mux,
+		myPaths.PreviewEmotePath,
+		endpoints.PreviewEmote,
+		"Random Emote not found",
+	)
+
+	configureFolderEndpoint(
+		mux,
+		myPaths.IconPath,
+		endpoints.Icon,
+		"Icon not found",
+	)
+
 	configureConfigEndpoint(mux, db, endpoints.Config)
 	configureBackgroundImageEndpoint(mux, myPaths.BackgroundPath, endpoints.Background)
 	configureAppInfoEndpoint(mux, db, endpoints.AppInfo)
