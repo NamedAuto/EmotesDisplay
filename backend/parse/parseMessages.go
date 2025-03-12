@@ -13,7 +13,7 @@ import (
 	"github.com/gempir/go-twitch-irc/v4"
 )
 
-// Twitch cdn for Twitch Emotes
+// CDN for Twitch Emotes
 var base = "https://static-cdn.jtvnw.net/emoticons/v2/"
 var end = "/default/light/3.0"
 
@@ -74,13 +74,6 @@ func ParseTwitchMessage(emotes []*twitch.Emote) []string {
 	return emoteUrls
 }
 
-/*
-Does not work for Twitch
-The twitch msg does not seem to show the actual icon when it is printed
-Have to manually remake the emoji?
-👨‍👦‍👦 shows up as 👨 👩‍👧 when parsed
-🦸🏼‍♂️ shows up as 🦸  ♂️
-*/
 func FindEmojisLessEfficient(text string, emojiMap map[string]emoji.Emoji) []emoji.Emoji {
 	var result []emoji.Emoji
 	for len(text) > 0 {

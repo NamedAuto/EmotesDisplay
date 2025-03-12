@@ -7,14 +7,12 @@ import (
 )
 
 func GetLiveChatID(service *youtube.Service, videoID string) (string, error) {
-	// Get the live broadcast details
 	broadcastCall := service.Videos.List([]string{"liveStreamingDetails"}).Id(videoID)
 	broadcastResponse, err := broadcastCall.Do()
 	if err != nil {
 		return "", fmt.Errorf("error retrieving live broadcast details: %v", err)
 	}
 
-	// Check if live chat ID is available
 	if len(broadcastResponse.Items) > 0 {
 		liveChatID := broadcastResponse.Items[0].LiveStreamingDetails.ActiveLiveChatId
 		if liveChatID != "" {
@@ -25,7 +23,6 @@ func GetLiveChatID(service *youtube.Service, videoID string) (string, error) {
 	return "", fmt.Errorf("no live broadcast found or no active live chat")
 }
 
-// Response structure for live chat messages
 type LiveChatMessagesResponse struct {
 	Messages              []*youtube.LiveChatMessage
 	NextPageToken         string

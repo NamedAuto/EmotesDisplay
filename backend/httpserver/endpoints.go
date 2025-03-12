@@ -41,6 +41,7 @@ func configureFolderEndpoint(mux *http.ServeMux, path string, endpoint string, e
 	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
 		filename := strings.TrimPrefix(r.URL.Path, endpoint)
 		var filePath string
+
 		for _, ext := range extensions {
 			filePath = filepath.Join(path, filename+ext)
 			if _, err := os.Stat(filePath); err == nil {
@@ -48,6 +49,7 @@ func configureFolderEndpoint(mux *http.ServeMux, path string, endpoint string, e
 				return
 			}
 		}
+
 		http.Error(w, errMsg, http.StatusNotFound)
 	})
 }
@@ -63,7 +65,11 @@ func configureBackgroundImageEndpoint(mux *http.ServeMux, backgroundPath string,
 
 		var imageFiles []string
 		for _, file := range files {
-			if !file.IsDir() && contains(extensions, strings.ToLower(filepath.Ext(file.Name()))) {
+			if !file.IsDir() &&
+				slices.Contains(
+					extensions,
+					strings.ToLower(filepath.Ext(file.Name())),
+				) {
 				imageFiles = append(imageFiles, file.Name())
 			}
 		}
@@ -77,10 +83,6 @@ func configureBackgroundImageEndpoint(mux *http.ServeMux, backgroundPath string,
 		imagePath := filepath.Join(folderPath, imageName)
 		http.ServeFile(w, r, imagePath)
 	})
-}
-
-func contains(slice []string, item string) bool {
-	return slices.Contains(slice, item)
 }
 
 func configureConfigEndpoint(mux *http.ServeMux, db *gorm.DB, endpoint string) {
@@ -224,8 +226,7 @@ func configureYoutubeApiKey(mux *http.ServeMux, db *gorm.DB, endpoint string) {
 				return
 			}
 
-			key := aK.ApiKey
-			apiKey.ApiKey = &key
+			apiKey.ApiKey = &aK.ApiKey
 
 			if err := db.Save(&apiKey).Error; err != nil {
 				http.Error(w, "Failed to save API key", http.StatusInternalServerError)

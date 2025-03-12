@@ -14,8 +14,8 @@ func ConfigureYoutube(ctx context.Context, apiKey string) {
 	tempService, err := youtube.NewService(ctx, option.WithAPIKey(apiKey))
 	if err != nil {
 		log.Printf("Unable to create YouTube service: %v", err)
+	} else {
+		log.Println("Youtube serivce created")
+		youtubeService = tempService
 	}
-
-	log.Println("Youtube serivce created")
-	youtubeService = tempService
 }

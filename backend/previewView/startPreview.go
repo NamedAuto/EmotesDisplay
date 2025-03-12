@@ -23,7 +23,7 @@ func StartPreview(handler common.HandlerInterface,
 	defer mu.Unlock()
 
 	if stopChan != nil {
-		log.Println("Goroutine is already running.")
+		log.Println("Preview Goroutine is already running.")
 		return
 	}
 

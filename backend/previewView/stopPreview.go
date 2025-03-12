@@ -12,10 +12,10 @@ func StopPreview() {
 		if ticker != nil {
 			ticker.Stop()
 		}
-		log.Println("Goroutine stopped.")
+		log.Println("Preview view goroutine stopped.")
 
 	} else {
-		log.Println("No goroutine to stop")
+		log.Println("No goroutine to stop for the Preview view")
 	}
 
 	wg.Wait()

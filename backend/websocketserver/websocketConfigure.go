@@ -40,7 +40,6 @@ func (handler *WebSocketHandler) ConfigureUpgrader(allowedOrigin string) websock
 
 			env := os.Getenv("ENV")
 			if env == "development" {
-				log.Println("In development in ws upgrader")
 				if origin == "http://wails.localhost:34115" ||
 					origin == "http://localhost:5173" ||
 					origin == allowedOrigin {

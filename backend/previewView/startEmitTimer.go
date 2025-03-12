@@ -25,25 +25,25 @@ func startEmitTimer(handler common.HandlerInterface,
 	db.First(&preview)
 	db.First(&port)
 
-	lastSpeedOfEmotes := preview.SpeedOfEmotes
-	duration := time.Duration(lastSpeedOfEmotes) * time.Millisecond
+	cacheSpeedOfEmotes := preview.SpeedOfEmotes
+	duration := time.Duration(cacheSpeedOfEmotes) * time.Millisecond
 	ticker = time.NewTicker(duration)
 	defer ticker.Stop()
 
 	for {
 		select {
 		case <-ticker.C:
-			handler.EmitToAllRandom(port.Port, emoteMap, endpoints, db)
+			handler.EmitRandom(port.Port, emoteMap, endpoints, db)
 
-			var currentSpeedOfEmotes int
+			var dbSpeedOfEmotes int
 			db.Model(&database.Preview{}).
 				Where("id = ?", preview.ID).
 				Select("speed_of_emotes").
-				Scan(&currentSpeedOfEmotes)
+				Scan(&dbSpeedOfEmotes)
 
-			if currentSpeedOfEmotes != lastSpeedOfEmotes {
-				lastSpeedOfEmotes = currentSpeedOfEmotes
-				duration = time.Duration(currentSpeedOfEmotes) * time.Millisecond
+			if dbSpeedOfEmotes != cacheSpeedOfEmotes {
+				cacheSpeedOfEmotes = dbSpeedOfEmotes
+				duration = time.Duration(dbSpeedOfEmotes) * time.Millisecond
 
 				ticker.Stop()
 				ticker = time.NewTicker(duration)
@@ -51,7 +51,7 @@ func startEmitTimer(handler common.HandlerInterface,
 
 		case <-stopChan:
 			handler.EmitPreviewConnection(false)
-			log.Println("Ending function")
+			log.Println("Ending Preview View")
 			ticker.Stop()
 			return
 		}

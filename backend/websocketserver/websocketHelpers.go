@@ -42,11 +42,17 @@ func decideMapAndEndpoint(
 	random database.Preview) ([]string, string) {
 	count := 0
 	channelCount := len(emoteMap.ChannelMap)
+	globalCount := len(emoteMap.GlobalMap)
 	randmonCount := len(emoteMap.RandomMap)
 
 	if *random.UseChannelEmotes {
 		count += channelCount
 	}
+
+	if *random.UseGlobalEmotes {
+		count += globalCount
+	}
+
 	if *random.UseRandomEmotes {
 		count += randmonCount
 	}
@@ -62,6 +68,9 @@ func decideMapAndEndpoint(
 	if *random.UseChannelEmotes && randomNum < channelCount {
 		randomKey = emoteMap.ChannelKeys
 		endpoint = endpoints.ChannelEmote
+	} else if *random.UseGlobalEmotes && randomNum < channelCount+globalCount {
+		randomKey = emoteMap.GlobalKeys
+		endpoint = endpoints.GlobalEmote
 	} else {
 		randomKey = emoteMap.RandomKeys
 		endpoint = endpoints.PreviewEmote

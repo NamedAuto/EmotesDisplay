@@ -5,33 +5,21 @@ const handlePreviewConnection = (
   message: any,
   setIsPreviewConnected: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
-  if (message.connection === "connected") {
-    setIsPreviewConnected(true);
-  } else {
-    setIsPreviewConnected(false);
-  }
+  setIsPreviewConnected(message.connection);
 };
 
 const handleYoutubeConnection = (
   message: any,
   setIsYoutubeConnected: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
-  if (message.connection === "connected") {
-    setIsYoutubeConnected(true);
-  } else {
-    setIsYoutubeConnected(false);
-  }
+  setIsYoutubeConnected(message.connection);
 };
 
 const handleTwitchconnection = (
   message: any,
   setIsTwitchConnected: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
-  if (message.connection === "connected") {
-    setIsTwitchConnected(true);
-  } else {
-    setIsTwitchConnected(false);
-  }
+  setIsTwitchConnected(message.connection);
 };
 
 const handleAuthenticationSave = (
