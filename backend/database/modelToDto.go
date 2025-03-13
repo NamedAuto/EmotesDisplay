@@ -2,8 +2,9 @@ package database
 
 func ToYoutubeDTO(y Youtube) YoutubeDTO {
 	return YoutubeDTO{
-		VideoId:      *y.VideoId,
-		MessageDelay: y.MessageDelay,
+		VideoId:          *y.VideoId,
+		MessageDelay:     y.MessageDelay,
+		ShowGlobalEmotes: *y.ShowGlobalEmotes,
 	}
 }
 

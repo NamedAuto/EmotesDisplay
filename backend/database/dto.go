@@ -1,8 +1,9 @@
 package database
 
 type YoutubeDTO struct {
-	VideoId      string `json:"videoId"`
-	MessageDelay int    `json:"messageDelay"`
+	VideoId          string `json:"videoId"`
+	MessageDelay     int    `json:"messageDelay"`
+	ShowGlobalEmotes bool   `json:"showGlobalEmotes"`
 }
 
 type TwitchDTO struct {

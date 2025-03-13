@@ -1,6 +1,7 @@
 export interface Youtube {
   videoId: string;
   messageDelay: number;
+  showGlobalEmotes: boolean;
 }
 
 export interface Twitch {

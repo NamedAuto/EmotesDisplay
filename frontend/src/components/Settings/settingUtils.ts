@@ -21,6 +21,7 @@ import {
 export const formatYoutubeSettings = (youtube: Youtube) => ({
   videoId: youtube.videoId,
   messageDelay: (youtube.messageDelay / 1000).toString(),
+  showGlobalEmotes: youtube.showGlobalEmotes,
 });
 
 export const formatTwitchSettings = (twitch: Twitch) => ({
@@ -84,6 +85,7 @@ export const createConfigCopyWithUpdate = (
       ...config.youtube,
       videoId: settingsYoutube.videoId,
       messageDelay: Math.round(parseFloat(settingsYoutube.messageDelay) * 1000),
+      showGlobalEmotes: settingsYoutube.showGlobalEmotes,
     },
     twitch: {
       ...config.twitch,

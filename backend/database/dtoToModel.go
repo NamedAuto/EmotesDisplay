@@ -15,8 +15,9 @@ func ToAppConfigModel(dto AppConfigDTO) AppConfig {
 
 func ToYoutubeModel(dto YoutubeDTO) Youtube {
 	return Youtube{
-		VideoId:      &dto.VideoId,
-		MessageDelay: dto.MessageDelay,
+		VideoId:          &dto.VideoId,
+		MessageDelay:     dto.MessageDelay,
+		ShowGlobalEmotes: &dto.ShowGlobalEmotes,
 	}
 }
 

@@ -4,8 +4,9 @@ import "gorm.io/gorm"
 
 type Youtube struct {
 	gorm.Model
-	VideoId      *string
-	MessageDelay int
+	VideoId          *string
+	MessageDelay     int
+	ShowGlobalEmotes *bool
 }
 
 type Twitch struct {

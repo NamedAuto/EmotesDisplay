@@ -209,16 +209,6 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
               </Box>
             </Modal>
           </Box>
-
-          {/* <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexWrap: "wrap",
-            flexDirection: "column",
-          }}
-        > */}
         </Box>
 
         {/* <Box> */}
@@ -275,12 +265,12 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
           />
         </Tooltip>
 
-        <Tooltip title="Show global youtube emotes" arrow>
+        <Tooltip title="Show global YouTube emotes" arrow>
           <FormControlLabel
             control={
               <Checkbox
                 name="useGlobalEmotes"
-                checked={true}
+                checked={settings.showGlobalEmotes}
                 onChange={handleInputChange}
               />
             }

@@ -56,9 +56,11 @@ func initDatabase(db *gorm.DB) {
 
 func insertDefaultValues(db *gorm.DB) {
 	videoId := ""
+	showGlobalEmotes := true
 	youtube := Youtube{
-		VideoId:      &videoId,
-		MessageDelay: 5000,
+		VideoId:          &videoId,
+		MessageDelay:     5000,
+		ShowGlobalEmotes: &showGlobalEmotes,
 	}
 	db.Create(&youtube)
 

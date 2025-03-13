@@ -151,7 +151,8 @@ func GetYoutubeMessages(
 						msg,
 						baseChannelUrl,
 						baseGlobalUrl,
-						emoteMap)
+						emoteMap,
+						*youtube.ShowGlobalEmotes)
 
 					/*
 						The sleep() is used to prevent the browser from becoming unresponsive from
