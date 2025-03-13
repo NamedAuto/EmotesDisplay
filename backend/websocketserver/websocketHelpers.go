@@ -7,6 +7,7 @@ import (
 
 	"github.com/NamedAuto/EmotesDisplay/backend/config"
 	"github.com/NamedAuto/EmotesDisplay/backend/database"
+	"github.com/labstack/gommon/log"
 )
 
 func generateRandomUrls(port int,
@@ -16,17 +17,20 @@ func generateRandomUrls(port int,
 	count := rand.IntN(random.MaxRandomEmotes) + 1
 	var urls []string
 
-	keysToUse, endpoint := decideMapAndEndpoint(emoteMap, endpoints, random)
-
-	if keysToUse == nil {
+	if !(*random.UseChannelEmotes || *random.UseGlobalEmotes || *random.UseRandomEmotes) {
+		log.Printf("No folder in use for emotes")
 		return urls
 	}
 
 	for range count {
+		keysToUse, endpoint := decideMapAndEndpoint(emoteMap, endpoints, random)
 		emote := keysToUse[rand.IntN((len(keysToUse)))]
 		url := generateEmotesUrl(port, endpoint)
 		message := parseEmoteToURL(emote, url)
 		urls = append(urls, message)
+		log.Printf("Message: %s", message)
+		log.Printf("Url: %s", url)
+
 	}
 
 	return urls
@@ -41,19 +45,22 @@ func decideMapAndEndpoint(
 	endpoints config.Endpoint,
 	random database.Preview) ([]string, string) {
 	count := 0
-	channelCount := len(emoteMap.ChannelMap)
-	globalCount := len(emoteMap.GlobalMap)
-	randmonCount := len(emoteMap.RandomMap)
+	channelCount := 0
+	globalCount := 0
+	randmonCount := 0
 
 	if *random.UseChannelEmotes {
+		channelCount = len(emoteMap.ChannelMap)
 		count += channelCount
 	}
 
 	if *random.UseGlobalEmotes {
+		globalCount = len(emoteMap.GlobalMap)
 		count += globalCount
 	}
 
 	if *random.UseRandomEmotes {
+		randmonCount = len(emoteMap.RandomMap)
 		count += randmonCount
 	}
 
