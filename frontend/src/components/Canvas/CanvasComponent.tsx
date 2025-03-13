@@ -15,18 +15,6 @@ const CanvasComponent: React.FC = () => {
   const emotesLayerRef = useRef<HTMLDivElement>(null);
   const backgroundContainerRef = useRef<HTMLDivElement>(null);
 
-  // const { width, height } = useWindowSize();
-  // const [scale, setScale] = useState(1);
-  // const initialWidth = 1920; // or your preferred reference width
-  // const initialHeight = 1080; // or your preferred reference height
-
-  // // Calculate scale factor based on window size
-  // useEffect(() => {
-  //   const scaleWidth = width / initialWidth;
-  //   const scaleHeight = height / initialHeight;
-  //   setScale(Math.min(scaleWidth, scaleHeight)); // Maintain the aspect ratio
-  // }, [width, height]);
-
   const config = useConfig();
   const { updateHandlers } = useWebSocketContext();
   const nonTransparentPositions = useRef<Position[]>([]);
@@ -40,19 +28,19 @@ const CanvasComponent: React.FC = () => {
     const handlePreviewEmotes = (message: any) => {
       const emoteUrls = message.data;
       console.log("Received preview emotes:", emoteUrls);
-      placeEmotesGroupInBackground(emoteUrls, nonTransparentPositions, true);
+      placeEmotesGroupInBackground(emoteUrls, nonTransparentPositions);
     };
 
     const handleYoutubeEmotes = (message: any) => {
       const emoteUrls = message.data;
       console.log("Received youtube emotes:", emoteUrls);
-      placeEmotesGroupInBackground(emoteUrls, nonTransparentPositions, true);
+      placeEmotesGroupInBackground(emoteUrls, nonTransparentPositions);
     };
 
     const handleTwitchEmotes = (message: any) => {
       const emoteUrls = message.data;
       console.log("Received twitch emotes:", emoteUrls);
-      placeEmotesGroupInBackground(emoteUrls, nonTransparentPositions, false);
+      placeEmotesGroupInBackground(emoteUrls, nonTransparentPositions);
     };
 
     updateHandlers({
@@ -139,18 +127,14 @@ const CanvasComponent: React.FC = () => {
     ctx: CanvasRenderingContext2D,
     canvasRef: React.RefObject<HTMLCanvasElement>
   ) => {
-    // console.log("AM IN HERE");
     let width = canvasRef.current.width;
     let height = canvasRef.current.height;
     const imageData = ctx.getImageData(0, 0, width, height);
-    // console.log("Initial Image Data is:", imageData);
     const data = imageData.data;
     for (let i = 0; i < data.length; i += 4) {
       const alpha = data[i + 3]; // Get the alpha value
 
       if (alpha > 0) {
-        // Check if the pixel is non-transparent
-        // console.log("IT IS")
         const x = (i / 4) % width;
         const y = Math.floor(i / 4 / width);
         nonTransparentPositions.current.push({ x, y });
@@ -213,61 +197,35 @@ const CanvasComponent: React.FC = () => {
               zIndex: 3,
             }}
           >
-            {group.emotes.map(
-              (emote, emoteIdx) => (
-                <Box
-                  key={emoteIdx + "-box"}
-                  sx={{
-                    position: "absolute",
-                    left: emote.pos.x,
-                    top: emote.pos.y,
+            {group.emotes.map((emote, emoteIdx) => (
+              <Box
+                key={emoteIdx + "-box"}
+                sx={{
+                  position: "absolute",
+                  left: emote.pos.x,
+                  top: emote.pos.y,
+                  width: emote.size,
+                  height: emote.size,
+                  // animation: `${
+                  //   animationMap[emote.animation]
+                  // } 5s linear infinite`,
+                }}
+              >
+                <StyledImage
+                  key={emoteIdx}
+                  src={emote.src}
+                  className={`emote ${emote.animation}`}
+                  crossOrigin="anonymous"
+                  style={{
                     width: emote.size,
                     height: emote.size,
-                    // animation: `${
-                    //   animationMap[emote.animation]
-                    // } 5s linear infinite`,
+                    borderRadius: `${emote.roundness}%`,
+                    backgroundColor: config.emote.backgroundColor,
                   }}
-                >
-                  <StyledImage
-                    key={emoteIdx}
-                    src={emote.src}
-                    className={`emote ${emote.animation}`}
-                    crossOrigin="anonymous"
-                    style={{
-                      // position: "absolute",
-                      // left: emote.pos.x,
-                      // top: emote.pos.y,
-                      width: emote.size,
-                      height: emote.size,
-                      borderRadius: `${emote.roundness}%`,
-                      backgroundColor: config.emote.backgroundColor,
-                    }}
-                    alt={`emote-${emoteIdx}`}
-                  />
-                </Box>
-              )
-              // {
-              //   return (
-              //     <img
-              //       key={emoteIdx}
-              //       src={emote.src}
-              //       className={`emote ${emote.animation}`}
-              //       crossOrigin="anonymous"
-              //       style={{
-              //         position: "absolute",
-              //         left: emote.pos.x,
-              //         top: emote.pos.y,
-              //         width: emote.size,
-              //         height: emote.size,
-              //         borderRadius: `${config.Emote.Roundness}%`,
-              //         backgroundColor: config.Emote.BackgroundColor,
-              //         zIndex: 3,
-              //       }}
-              //       alt={`emote-${emoteIdx}`}
-              //     />
-              //   );
-              // }
-            )}
+                  alt={`emote-${emoteIdx}`}
+                />
+              </Box>
+            ))}
           </Box>
         ))}
       </Box>

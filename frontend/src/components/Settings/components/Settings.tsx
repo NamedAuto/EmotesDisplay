@@ -53,15 +53,19 @@ import darkTheme from "../settingsTheme";
 const SettingsPage: React.FC = () => {
   const config = useConfig();
 
-  const baseURL = "http://localhost:" + config.port.port + "/icons/";
-  const youtubeIconUrl = baseURL + "youtubeIcon";
-  const twitchIconUrl = baseURL + "twitchIcon";
-  const randomIconUrl = baseURL + "randomIcon";
-  const aspectRatioUrl = baseURL + "aspectRatioIcon";
-  const portUrl = baseURL + "portIcon";
-  const emoteUrl = baseURL + "emoteIcon";
+  const baseURL = "http://localhost:" + config.port.port;
+  const checkYtApiKeyUrl = baseURL + "/check-for-youtube-api-key";
+  const ytApiKeyUrl = baseURL + "/youtube-api-key";
+  const configUrl = baseURL + "/config";
+  const iconUrl = baseURL + "/icons/";
+  const youtubeIconUrl = iconUrl + "youtubeIcon";
+  const twitchIconUrl = iconUrl + "twitchIcon";
+  const randomIconUrl = iconUrl + "randomIcon";
+  const aspectRatioUrl = iconUrl + "aspectRatioIcon";
+  const portUrl = iconUrl + "portIcon";
+  const emoteUrl = iconUrl + "emoteIcon";
 
-  const iconWidthHeight = 35;
+  const iconWidthHeight = "35px";
 
   const { isConnected, updateHandlers, sendMessage } = useWebSocketContext();
   const [isPreviewConnected, setIsPreviewConnected] = useState(false);
@@ -93,7 +97,6 @@ const SettingsPage: React.FC = () => {
     checkForYoutubeApiKey();
   }, []);
 
-  const [showApiKey, setShowApiKey] = useState(false);
   const [apiKeyExists, setApiKeyExists] = useState<boolean>(false);
   const [color, setColor] = useState("rgba(255,255,255,0)");
 
@@ -135,24 +138,9 @@ const SettingsPage: React.FC = () => {
     sendMessage(eventData);
   };
 
-  /*
-  Get apiKeyExists from backend (DONE)
-  Pass apiKeyExists to YoutubeSettings to use for Typography display
-  Textfield to input apiKey
-  Save button -> opens dialog of yes no to save apikey
-  Sends to backend and clears the textfield
-  Query apiKeyExists again? or use result from save(probably)
-  EXTRA
-  Have button to get the api key from the backend and display in
-    a dialog menu that must be closed before proceeding
-    When closed, api key reference values? are removed/set to ""
-
-  */
-
   const checkForYoutubeApiKey = async () => {
     try {
-      const url = `http://localhost:${config.port.port}/check-for-youtube-api-key`;
-      const response = await fetch(url);
+      const response = await fetch(checkYtApiKeyUrl);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -164,9 +152,7 @@ const SettingsPage: React.FC = () => {
   };
 
   const getYoutubeApiKey = async (callback: (key: string) => void) => {
-    const response = await fetch(
-      `http://localhost:${config.port.port}/youtube-api-key`
-    );
+    const response = await fetch(ytApiKeyUrl);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -178,9 +164,7 @@ const SettingsPage: React.FC = () => {
   const saveYoutubeApiKey = async () => {
     try {
       const jsonData = JSON.stringify(settingsApiKey);
-
-      const url = `http://localhost:${config.port.port}/youtube-api-key`;
-      const response = await fetch(url, {
+      const response = await fetch(ytApiKeyUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -225,15 +209,6 @@ const SettingsPage: React.FC = () => {
       },
     };
     sendMessage(eventData);
-    /*
-    Send to the backend
-    Wait for backend response on save
-    Update flags
-    Clear texfield
-
-    TODO: If a youtube service or twitch connection fails, send this error
-    to the frontend so the user can update their keys
-     */
   };
 
   const handleReset = () => {
@@ -307,8 +282,7 @@ const SettingsPage: React.FC = () => {
       );
 
       // Force to ignore wails.localhost
-      const url = `http://localhost:${config.port.port}/config`;
-      const response = await fetch(url, {
+      const response = await fetch(configUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -326,10 +300,6 @@ const SettingsPage: React.FC = () => {
     } catch (error) {
       console.error("Error saving config: " + error);
     }
-  };
-
-  const handleClickShowPassword = () => {
-    setShowApiKey(!showApiKey);
   };
 
   const handleYoutubeStart = () => {

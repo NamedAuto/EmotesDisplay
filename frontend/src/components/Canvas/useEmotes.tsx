@@ -15,6 +15,7 @@ export const UseEmotes = (
   config: Config,
   backgroundCanvasRef: React.RefObject<HTMLCanvasElement | null>
 ) => {
+  const animations = ["bounce", "rotate", "scale", "slide"];
   const [emotesGroups, setEmotesGroups] = useState<{ emotes: Emote[] }[]>([]);
 
   const createEmoteGroup = (
@@ -34,13 +35,14 @@ export const UseEmotes = (
     The [midpoint] is used to center the group on [posToCenter]
     Since the x axis is already being translated,
     Translate the Y by subtracting half of the [emoteSize] from it
-    This is down to since images start on their top left corner
+    This is translated down since images start on their top left corner
     transform: "translate(0%, -50%)"
     */
+    let d = new Date();
     const midpoint = (emoteUrls.length * emoteSize) / 2;
     for (let i = 0; i < emoteUrls.length; i++) {
       emoteGroup.push({
-        src: `${emoteUrls[i]}?${new Date().getTime()}`,
+        src: `${emoteUrls[i]}?${d.getTime()}`,
         pos: {
           x: posToCenterOn.x + newX - midpoint,
           y: posToCenterOn.y - emoteSize / 2,
@@ -98,8 +100,6 @@ export const UseEmotes = (
     });
   };
 
-  const animations = ["bounce", "rotate", "scale", "slide"];
-
   const getRandomAnimation = () => {
     return animations[Math.floor(Math.random() * animations.length)];
   };
@@ -110,8 +110,7 @@ export const UseEmotes = (
 
   const placeEmotesGroupInBackground = (
     emoteUrls: string[],
-    nonTransparentPositions: RefObject<Position[]>,
-    isYoutube: boolean
+    nonTransparentPositions: RefObject<Position[]>
   ) => {
     const randomAnimation = getRandomAnimation();
 
@@ -120,51 +119,34 @@ export const UseEmotes = (
     }
 
     if (config.emote.groupEmotes) {
-      // var emoteSize = config.emote.width;
-      // var roundness = "0";
-
-      // if (isYoutube) {
-      const emoteSize = getRandomEmoteSizeChange(
-        config.emote.randomSizeIncrease,
-        config.emote.randomSizeDecrease * -1
-      );
-      const roundness = config.emote.roundness + "";
-      // }
-
-      const randomPos = getRandomPosition(nonTransparentPositions.current);
-      const newEmoteGroup = createEmoteGroup(
-        emoteUrls,
-        emoteSize,
-        randomPos,
-        randomAnimation,
-        roundness
-      );
-      updateEmotesGroups(newEmoteGroup);
+      placeEmotes(emoteUrls, nonTransparentPositions, randomAnimation);
     } else {
-      // var emoteSize = config.emote.width;
-      // var roundness = "0";
-
       for (let emote of emoteUrls) {
         const tempArray = [emote];
-
-        // if (isYoutube) {
-        const emoteSize = getRandomEmoteSizeChange(
-          config.emote.randomSizeIncrease,
-          config.emote.randomSizeDecrease * -1
-        );
-        const roundness = config.emote.roundness + "";
-        // }
-        const randomPos = getRandomPosition(nonTransparentPositions.current);
-        const newEmoteGroup = createEmoteGroup(
-          tempArray,
-          emoteSize,
-          randomPos,
-          randomAnimation,
-          roundness
-        );
-        updateEmotesGroups(newEmoteGroup);
+        placeEmotes(tempArray, nonTransparentPositions, randomAnimation);
       }
     }
+  };
+
+  const placeEmotes = (
+    emoteUrls: string[],
+    nonTransparentPositions: RefObject<Position[]>,
+    randomAnimation: string
+  ) => {
+    const emoteSize = getRandomEmoteSizeChange(
+      config.emote.randomSizeIncrease,
+      config.emote.randomSizeDecrease * -1
+    );
+    const roundness = config.emote.roundness + "";
+    const randomPos = getRandomPosition(nonTransparentPositions.current);
+    const newEmoteGroup = createEmoteGroup(
+      emoteUrls,
+      emoteSize,
+      randomPos,
+      randomAnimation,
+      roundness
+    );
+    updateEmotesGroups(newEmoteGroup);
   };
 
   return { emotesGroups, placeEmotesGroupInBackground };

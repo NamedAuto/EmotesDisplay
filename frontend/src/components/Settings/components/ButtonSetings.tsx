@@ -69,7 +69,7 @@ const ButtonSettings: React.FC<ButonSettingsProps> = ({
         </Button>
       </Tooltip>
 
-      <Tooltip title="Reset settings back to the last save" arrow>
+      <Tooltip title="Reset current changes back to the last save" arrow>
         <Button
           variant="contained"
           color="secondary"
@@ -100,9 +100,7 @@ const ButtonSettings: React.FC<ButonSettingsProps> = ({
     >
       <Tooltip
         title={
-          isPreviewConnected
-            ? "Stop random emotes"
-            : "Display random emotes from folder"
+          isPreviewConnected ? "Stop random emotes" : "Display random emotes"
         }
         arrow
       >

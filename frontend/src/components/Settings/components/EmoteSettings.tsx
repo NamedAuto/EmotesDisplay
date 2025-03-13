@@ -81,16 +81,7 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
           }}
           slotProps={{
             input: {
-              endAdornment: (
-                <InputAdornment
-                  position="end"
-                  sx={{
-                    color: "yellow", // Change text color
-                  }}
-                >
-                  px
-                </InputAdornment>
-              ),
+              endAdornment: <InputAdornment position="end">px</InputAdornment>,
             },
           }}
         />
@@ -203,10 +194,7 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
         />
       </Tooltip>
 
-      <Tooltip
-        title="Make emotes round. 0 does nothing. 50+ rounds the edges"
-        arrow
-      >
+      <Tooltip title="Make emotes round. 0 does nothing. 50+ is a circle" arrow>
         <TextField
           name="emoteRoundness"
           label="Roundness (0 - 50)"
@@ -227,55 +215,6 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
           }}
         />
       </Tooltip>
-
-      {/* <Tooltip
-        title="Color the transparent portion of an emote. Only change the numbers"
-        arrow
-      >
-        <TextField
-          name="emoteBackgroundColor"
-          label="Background Color"
-          value={settings.emoteBackgroundColor}
-          onChange={handleInputChange}
-          margin="normal"
-          sx={{
-            width: "250px",
-            marginLeft: marginLeft,
-            marginRight: marginRight,
-            "& .MuiInputLabel-root": {
-              fontSize: labelFontSize,
-            },
-            "& .MuiInputBase-input": {
-              fontSize: inputFontSize,
-            },
-          }}
-        />
-      </Tooltip> */}
-
-      {/* <Button
-        variant="contained"
-        color="primary"
-        onClick={handleInputChange}
-        style={{
-          // fontSize: fontSize,
-          // marginTop: marginTop,
-          // marginBottom: marginBottom,
-        }}
-        sx={{
-          marginLeft: marginLeft,
-          marginRight: marginRight,
-          width: "100px",
-        }}
-      >
-        Save
-      </Button> */}
-
-      {/* <ColorPicker
-        value={color}
-        onChange={setColor}
-        hideGradientControls={true}
-        hideControls={true}
-      /> */}
     </Box>
   </Box>
 );

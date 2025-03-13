@@ -38,7 +38,7 @@ const PreviewSettings: React.FC<PreviewSettingsProps> = ({
       }}
     >
       <FormGroup>
-        <Tooltip title="Uses images from the ChannelEmotesYT folder" arrow>
+        <Tooltip title="Use images from the ChannelEmotesYT folder" arrow>
           <FormControlLabel
             control={
               <Checkbox
@@ -53,7 +53,7 @@ const PreviewSettings: React.FC<PreviewSettingsProps> = ({
           />
         </Tooltip>
 
-        <Tooltip title="Uses images from the GlobalEmotesYT folder" arrow>
+        <Tooltip title="Use images from the GlobalEmotesYT folder" arrow>
           <FormControlLabel
             control={
               <Checkbox
@@ -68,7 +68,7 @@ const PreviewSettings: React.FC<PreviewSettingsProps> = ({
           />
         </Tooltip>
 
-        <Tooltip title="Uses images from the RandomEmotes folder" arrow>
+        <Tooltip title="Use images from the RandomEmotes folder" arrow>
           <FormControlLabel
             control={
               <Checkbox
@@ -84,10 +84,13 @@ const PreviewSettings: React.FC<PreviewSettingsProps> = ({
         </Tooltip>
       </FormGroup>
 
-      <Tooltip title="Add 1-max(random) amount of emotes every delay" arrow>
+      <Tooltip
+        title="The # of emotes that can potentially be used to display"
+        arrow
+      >
         <TextField
           name="maxRandomEmotes"
-          label="Max Emotes"
+          label="Max Random"
           value={settings.maxRandomEmotes}
           onChange={handleInputChange}
           type="number"
@@ -107,12 +110,12 @@ const PreviewSettings: React.FC<PreviewSettingsProps> = ({
       </Tooltip>
 
       <Tooltip
-        title="Delay before more emotes are shown. Lower is faster"
+        title="Delay before more emotes are displayed. Lower is faster"
         arrow
       >
         <TextField
           name="speedOfEmotes"
-          label="Emotes Delay"
+          label="Delay"
           value={settings.speedOfEmotes}
           onChange={handleInputChange}
           type="number"

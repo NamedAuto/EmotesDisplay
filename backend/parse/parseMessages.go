@@ -22,6 +22,7 @@ func ParseYoutubeMessage(
 	channelUrl string,
 	globalUrl string,
 	emoteMap config.EmotesMap,
+	useGlobalEmotes bool,
 ) []string {
 	emoteUrls := []string{}
 	regex := regexp.MustCompile((`:(_.*?|.*?):`))
@@ -33,7 +34,7 @@ func ParseYoutubeMessage(
 		if strings.HasPrefix(word, ":") {
 			loweredText := strings.ToLower((word))
 
-			log.Printf("Looking at: %s", loweredText)
+			fmt.Printf("Looking at: %s", loweredText)
 
 			if _, exists := emoteMap.ChannelMap[loweredText]; exists {
 				cleanedText := strings.ReplaceAll(loweredText, ":", "")
@@ -43,10 +44,14 @@ func ParseYoutubeMessage(
 				emoteUrls = append(emoteUrls, newEmoteUrl)
 
 			} else if _, exists := emoteMap.GlobalMap[loweredText]; exists {
-				cleanedText := strings.ReplaceAll(loweredText, ":", "")
-				newEmoteUrl := globalUrl + cleanedText
+				if useGlobalEmotes {
+					cleanedText := strings.ReplaceAll(loweredText, ":", "")
+					newEmoteUrl := globalUrl + cleanedText
 
-				emoteUrls = append(emoteUrls, newEmoteUrl)
+					emoteUrls = append(emoteUrls, newEmoteUrl)
+				} else {
+					log.Printf("Ignoring global emote %s", word)
+				}
 			} else {
 				log.Printf("Emote Not Found: %s\n", word)
 			}

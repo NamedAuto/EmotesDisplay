@@ -40,7 +40,7 @@ const PortSettings: React.FC<PortSettingsProps> = ({
           type="number"
           margin="normal"
           sx={{
-            width: "150px",
+            width: "125px",
             marginLeft: marginLeft,
             marginRight: marginRight,
             "& .MuiInputLabel-root": {

@@ -5,7 +5,6 @@ import CanvasComponent from "../Canvas/CanvasComponent";
 import NotFound from "../NotFound/NotFound";
 import Settings from "../Settings/components/Settings";
 import { WebSocketProvider } from "../WebSocket/WebSocketProvider";
-import OAuthCallback from "../Settings/OAuth";
 
 const MyRoutes: React.FC = () => {
   return (
@@ -29,14 +28,14 @@ const MyRoutes: React.FC = () => {
           }
         />
 
-        <Route
+        {/* <Route
           path="/twitchOAuth"
           element={
             <WebSocketProvider>
               <OAuthCallback />
             </WebSocketProvider>
           }
-        />
+        /> */}
 
         {/* <Route path="/settings" element={<Settings />} /> */}
         <Route path="/*" element={<NotFound />} />

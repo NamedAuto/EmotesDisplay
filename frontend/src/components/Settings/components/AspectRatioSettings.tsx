@@ -61,7 +61,7 @@ const AspectRatioSettings: React.FC<AspectRatioSettingsProps> = ({
         type="number"
         margin="normal"
         sx={{
-          width: "150px",
+          width: "125px",
           marginLeft: marginLeft,
           marginRight: marginRight,
           "& .MuiInputLabel-root": {
@@ -81,7 +81,7 @@ const AspectRatioSettings: React.FC<AspectRatioSettingsProps> = ({
         type="number"
         margin="normal"
         sx={{
-          width: "150px",
+          width: "125px",
           marginLeft: marginLeft,
           marginRight: marginRight,
           "& .MuiInputLabel-root": {

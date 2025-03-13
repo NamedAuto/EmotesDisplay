@@ -16,30 +16,29 @@ let isWailsApp = typeof window.runtime !== "undefined";
 export async function loadConfigFront(): Promise<Config | null> {
   let config: Config | null = null;
 
+  /*
+  Wails window needs to explicitly have the entire url.
+  Using just the endpoint, the wails window will add wails.localhost to the url
+  which the backend server can not listen to
+  */
+  let fetchUrl = "/config";
   if (isWailsApp) {
     WAILS_PORT = await GetPort();
-
-    try {
-      const response = await fetch(`http://localhost:${WAILS_PORT}/config`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      config = await response.json();
-    } catch (error) {
-      console.error("Error fetching config with port:", error);
-    }
-  } else {
-    try {
-      const response = await fetch(`/config`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      config = await response.json();
-    } catch (error) {
-      console.error("Error fetching config:", error);
-    }
+    fetchUrl = `http://localhost:${WAILS_PORT}/config`;
   }
-  console.log(JSON.stringify(config, null, 2));
+
+  try {
+    const response = await fetch(fetchUrl);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    config = await response.json();
+  } catch (error) {
+    console.error("Error fetching config with port:", error);
+  }
+
+  // console.log(JSON.stringify(config, null, 2));
   return config;
 }
 
