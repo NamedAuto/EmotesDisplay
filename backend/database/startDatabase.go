@@ -13,7 +13,7 @@ var db *gorm.DB
 
 func StartDatabase() *gorm.DB {
 	var err error
-	db, err = gorm.Open(sqlite.Open("emotesDisplay.db"), &gorm.Config{})
+	db, err = gorm.Open(sqlite.Open("AppData/emotesDisplay.db"), &gorm.Config{})
 	if err != nil {
 		panic("Failed to connect to the database")
 	}

@@ -18,7 +18,8 @@ var assets embed.FS
 
 func main() {
 
-	logFile, logErr := os.OpenFile("server.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	logFile, logErr := os.OpenFile(
+		"AppData/emotesDisplay.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if logErr != nil {
 		fmt.Println("Failed to open log file:", logErr)
 	}
