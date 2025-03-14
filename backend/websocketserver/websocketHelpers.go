@@ -2,12 +2,12 @@ package websocketserver
 
 import (
 	"fmt"
+	"log"
 	"math/rand/v2"
 	"regexp"
 
 	"github.com/NamedAuto/EmotesDisplay/backend/config"
 	"github.com/NamedAuto/EmotesDisplay/backend/database"
-	"github.com/labstack/gommon/log"
 )
 
 func generateRandomUrls(port int,
@@ -17,7 +17,7 @@ func generateRandomUrls(port int,
 	count := rand.IntN(random.MaxRandomEmotes) + 1
 	var urls []string
 
-	if !(*random.UseChannelEmotes || *random.UseGlobalEmotes || *random.UseRandomEmotes) {
+	if !*random.UseChannelEmotes && !*random.UseGlobalEmotes && !*random.UseRandomEmotes {
 		log.Printf("No folder in use for emotes")
 		return urls
 	}
@@ -28,9 +28,6 @@ func generateRandomUrls(port int,
 		url := generateEmotesUrl(port, endpoint)
 		message := parseEmoteToURL(emote, url)
 		urls = append(urls, message)
-		log.Printf("Message: %s", message)
-		log.Printf("Url: %s", url)
-
 	}
 
 	return urls
@@ -68,7 +65,7 @@ func decideMapAndEndpoint(
 		return nil, ""
 	}
 
-	randomNum := rand.IntN(count)
+	randomNum := rand.IntN(count) + 1
 
 	var randomKey []string
 	var endpoint string
