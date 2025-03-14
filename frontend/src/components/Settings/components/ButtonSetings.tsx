@@ -100,14 +100,16 @@ const ButtonSettings: React.FC<ButonSettingsProps> = ({
     >
       <Tooltip
         title={
-          isPreviewConnected ? "Stop random emotes" : "Display random emotes"
+          isTwitchConnected
+            ? "Disconnect from Twitch"
+            : "Display emotes from Twitch"
         }
         arrow
       >
         <Button
           variant="contained"
-          color={isPreviewConnected ? "secondary" : "primary"}
-          onClick={isPreviewConnected ? handlePreviewStop : handlePreviewStart}
+          color={isTwitchConnected ? "secondary" : "primary"}
+          onClick={isTwitchConnected ? handleTwitchStop : handleTwitchStart}
           style={{
             fontSize: fontSize,
             marginTop: marginTop,
@@ -119,7 +121,7 @@ const ButtonSettings: React.FC<ButonSettingsProps> = ({
             width: "160px",
           }}
         >
-          {isPreviewConnected ? "Stop Random" : "Start Random"}
+          {isTwitchConnected ? "Stop Twitch" : "Start Twitch"}
         </Button>
       </Tooltip>
 
@@ -152,16 +154,14 @@ const ButtonSettings: React.FC<ButonSettingsProps> = ({
 
       <Tooltip
         title={
-          isTwitchConnected
-            ? "Disconnect from Twitch"
-            : "Display emotes from Twitch"
+          isPreviewConnected ? "Stop random emotes" : "Display random emotes"
         }
         arrow
       >
         <Button
           variant="contained"
-          color={isTwitchConnected ? "secondary" : "primary"}
-          onClick={isTwitchConnected ? handleTwitchStop : handleTwitchStart}
+          color={isPreviewConnected ? "secondary" : "primary"}
+          onClick={isPreviewConnected ? handlePreviewStop : handlePreviewStart}
           style={{
             fontSize: fontSize,
             marginTop: marginTop,
@@ -173,7 +173,7 @@ const ButtonSettings: React.FC<ButonSettingsProps> = ({
             width: "160px",
           }}
         >
-          {isTwitchConnected ? "Stop Twitch" : "Start Twitch"}
+          {isPreviewConnected ? "Stop Random" : "Start Random"}
         </Button>
       </Tooltip>
     </Box>
