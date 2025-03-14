@@ -3,10 +3,7 @@ node_modules
 frontend/dist
 frontend/pnpm-lock.yaml
 frontend/package.json.md5
-public
 images
-server.log
-config/config.yaml
-test.db
+appdata
 .env
 backend/twitch/twitchDetails.go
