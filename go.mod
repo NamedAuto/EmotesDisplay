@@ -7,6 +7,7 @@ require (
 	github.com/gempir/go-twitch-irc/v4 v4.2.0
 	github.com/gorilla/websocket v1.5.3
 	github.com/joho/godotenv v1.5.1
+	github.com/logica0419/resigif v1.0.1
 	github.com/nicklaw5/helix/v2 v2.31.0
 	github.com/rs/cors v1.11.1
 	github.com/wailsapp/wails/v2 v2.10.1
@@ -14,6 +15,8 @@ require (
 	gorm.io/driver/sqlite v1.5.7
 	gorm.io/gorm v1.25.12
 )
+
+require golang.org/x/sync v0.12.0 // indirect
 
 require (
 	cloud.google.com/go/auth v0.15.0 // indirect
