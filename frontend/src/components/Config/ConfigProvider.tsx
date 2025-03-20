@@ -8,13 +8,47 @@ import {
 import { GetPort } from "../../../wailsjs/go/main/App";
 import { Config } from "./ConfigInterface";
 
-const ConfigContext = createContext<Config | null>(null);
+const defaultConfig: Config = {
+  youtube: { videoId: "", messageDelay: 10, showGlobalEmotes: false },
+  twitch: { channelName: "" },
+  port: { port: 3124 },
+  aspectRatio: {
+    forceWidthHeight: true,
+    width: 1920,
+    height: 1080,
+    scaleCanvas: 1,
+    scaleImage: 1,
+  },
+  emote: {
+    width: 64,
+    height: 64,
+    randomSizeIncrease: 0,
+    randomSizeDecrease: 0,
+    maxEmoteCount: 100,
+    maxEmotesPerMsg: 4,
+    groupEmotes: true,
+    roundness: 0,
+    backgroundColor: "",
+  },
+  preview: {
+    maxRandomEmotes: 5,
+    speedOfEmotes: 1,
+    useChannelEmotes: true,
+    useGlobalEmotes: false,
+    useRandomEmotes: true,
+  },
+};
+
+export const ConfigContext = createContext<{
+  config: Config;
+  reloadConfig: () => void;
+} | null>(null);
 
 export let WAILS_PORT = 1234;
 
 let isWailsApp = typeof window.runtime !== "undefined";
-export async function loadConfigFront(): Promise<Config | null> {
-  let config: Config | null = null;
+export async function loadConfigFront(): Promise<Config> {
+  let config: Config = defaultConfig;
 
   /*
   Wails window needs to explicitly have the entire url.
@@ -42,8 +76,9 @@ export async function loadConfigFront(): Promise<Config | null> {
   return config;
 }
 
-export function useConfig(): Config {
+export function useConfig() {
   const config = useContext(ConfigContext);
+  console.log("HI");
   if (!config) {
     throw new Error(
       "Config not available! Ensure ConfigProvider is used correctly."
@@ -53,8 +88,9 @@ export function useConfig(): Config {
 }
 
 export function ConfigProvider({ children }: { children: ReactNode }) {
-  const [config, setConfig] = useState<Config | null>(null);
+  const [config, setConfig] = useState<Config>(defaultConfig);
   const [loading, setLoading] = useState<boolean>(true);
+  const [reload, setReload] = useState(false);
 
   useEffect(() => {
     const fetchConfig = async () => {
@@ -63,8 +99,14 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     };
 
+    console.log("FETCH");
+
     fetchConfig();
-  }, []);
+  }, [reload]);
+
+  const reloadConfig = () => {
+    setReload((prev) => !prev);
+  };
 
   if (loading) {
     // return <div>Loading configuration...</div>;
@@ -72,6 +114,8 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <ConfigContext.Provider value={config!}>{children}</ConfigContext.Provider>
+    <ConfigContext.Provider value={{ config, reloadConfig }}>
+      {children}
+    </ConfigContext.Provider>
   );
 }

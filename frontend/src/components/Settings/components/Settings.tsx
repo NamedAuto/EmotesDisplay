@@ -51,7 +51,7 @@ import {
 import darkTheme from "../settingsTheme";
 
 const SettingsPage: React.FC = () => {
-  const config = useConfig();
+  const { config, reloadConfig } = useConfig();
 
   const baseURL = "http://localhost:" + config.port.port;
   const checkYtApiKeyUrl = baseURL + "/check-for-youtube-api-key";
@@ -211,13 +211,25 @@ const SettingsPage: React.FC = () => {
     sendMessage(eventData);
   };
 
+  useEffect(() => {
+    if (config) {
+      setSettingsYoutube(formatYoutubeSettings(config.youtube));
+      setSettingsTwitch(formatTwitchSettings(config.twitch));
+      setSettingsPort(formatPortSettings(config.port));
+      setSettingsAspectRatio(formatAspectRatioSettings(config.aspectRatio));
+      setSettingsEmote(formatEmoteSettings(config.emote));
+      setSettingsPreview(formatPreviewSettings(config.preview));
+    }
+  }, [config]); // Trigger whenever config updates
+
   const handleReset = () => {
-    setSettingsYoutube(formatYoutubeSettings(config.youtube));
-    setSettingsTwitch(formatTwitchSettings(config.twitch));
-    setSettingsPort(formatPortSettings(config.port));
-    setSettingsAspectRatio(formatAspectRatioSettings(config.aspectRatio));
-    setSettingsEmote(formatEmoteSettings(config.emote));
-    setSettingsPreview(formatPreviewSettings(config.preview));
+    reloadConfig();
+    // setSettingsYoutube(formatYoutubeSettings(config.youtube));
+    // setSettingsTwitch(formatTwitchSettings(config.twitch));
+    // setSettingsPort(formatPortSettings(config.port));
+    // setSettingsAspectRatio(formatAspectRatioSettings(config.aspectRatio));
+    // setSettingsEmote(formatEmoteSettings(config.emote));
+    // setSettingsPreview(formatPreviewSettings(config.preview));
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
