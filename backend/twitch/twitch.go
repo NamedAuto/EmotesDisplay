@@ -14,8 +14,14 @@ import (
 var ircClient *twitch.Client
 
 func ConnectToIRC(handler common.HandlerInterface, db *gorm.DB) {
-	ircClient = twitch.NewAnonymousClient()
+	var myTwitch database.Twitch
+	db.First(&myTwitch)
+	if *myTwitch.ChannelName == "" {
+		handler.EmitTwitchConnection(false)
+		return
+	}
 
+	ircClient = twitch.NewAnonymousClient()
 	ircClient.OnPrivateMessage(func(message twitch.PrivateMessage) {
 		fmt.Println(message)
 		// fmt.Println(message.Emotes)
@@ -32,10 +38,7 @@ func ConnectToIRC(handler common.HandlerInterface, db *gorm.DB) {
 		}
 	})
 
-	var twitch database.Twitch
-	db.First(&twitch)
-
-	ircClient.Join(*twitch.ChannelName)
+	ircClient.Join(*myTwitch.ChannelName)
 
 	go func() {
 		/*
