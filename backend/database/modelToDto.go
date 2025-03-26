@@ -87,3 +87,10 @@ func ToApiKeyDTO(a ApiKey) ApiKeyDTO {
 		ApiKey: *a.ApiKey,
 	}
 }
+
+func ToApiUsageDTO(a ApiKey) ApiUsageDTO {
+	return ApiUsageDTO{
+		ApiUsage: *a.ApiUsage,
+		LastUsed: a.LastUsed,
+	}
+}

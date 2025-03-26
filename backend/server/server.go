@@ -10,6 +10,7 @@ import (
 	"github.com/NamedAuto/EmotesDisplay/backend/config"
 	"github.com/NamedAuto/EmotesDisplay/backend/database"
 	"github.com/NamedAuto/EmotesDisplay/backend/httpserver"
+	"github.com/NamedAuto/EmotesDisplay/backend/myyoutube"
 	"github.com/NamedAuto/EmotesDisplay/backend/websocketserver"
 	"gorm.io/gorm"
 )
@@ -22,6 +23,9 @@ var db *gorm.DB
 func StartServer(ctx context.Context) {
 	log.Println("Server starting")
 	db = database.StartDatabase()
+
+	myyoutube.StartUpApiCheck(db)
+	go myyoutube.WaitUntilQuotaReset()
 
 	var p database.Port
 	db.First(&p)

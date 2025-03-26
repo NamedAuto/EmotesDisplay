@@ -15,7 +15,7 @@ const CanvasComponent: React.FC = () => {
   const emotesLayerRef = useRef<HTMLDivElement>(null);
   const backgroundContainerRef = useRef<HTMLDivElement>(null);
 
-  const config = useConfig();
+  const { config } = useConfig();
   const { updateHandlers } = useWebSocketContext();
   const nonTransparentPositions = useRef<Position[]>([]);
 

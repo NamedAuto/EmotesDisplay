@@ -29,7 +29,7 @@ const WebSocketContext = createContext<WebSocketContextType | undefined>(
 export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
   children,
 }) => {
-  const config = useConfig();
+  const { config } = useConfig();
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
@@ -37,7 +37,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
 
   useEffect(() => {
     if (!config?.port) return;
-
+    console.log(config);
     const port = config.port.port;
     const ws = new WebSocket(`ws://localhost:${port}/ws`);
     setSocket(ws);

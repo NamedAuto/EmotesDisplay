@@ -21,7 +21,8 @@ var (
 	wg       sync.WaitGroup
 	mu       sync.Mutex
 )
-var apiCallCounter = 0
+
+// var apiCallCounter = 0
 var keyInUse = ""
 
 func ConnectToYoutube(
@@ -86,11 +87,14 @@ func GetYoutubeMessages(
 
 	var youtube database.Youtube
 	var port database.Port
+	var apiKey database.ApiKey
 	db.First(&youtube)
 	db.First(&port)
+	db.First(&apiKey)
 
-	apiCallCounter++
-
+	// Getting the live chat id costs 1 unit
+	// apiCallCounter++
+	incrementApiUsage(db, apiKey.ID, 1)
 	liveChatId, err := GetLiveChatID(youtubeService, *youtube.VideoId)
 	if err != nil {
 		log.Printf("Error getting live chat ID: %v\n", err)
@@ -121,8 +125,9 @@ func GetYoutubeMessages(
 				pollingIntervalMillis,
 				err := GetLiveChatMessages(youtubeService, liveChatId, nextPageToken)
 
-			apiCallCounter++
-			log.Printf("API Call counter: %d", apiCallCounter)
+			// Getting the live chat messages costs 5 units
+			// apiCallCounter += 5
+			incrementApiUsage(db, apiKey.ID, 5)
 
 			if err != nil {
 				log.Println("Error in YouTube messages:", err)
@@ -193,5 +198,39 @@ func GetYoutubeMessages(
 			}
 			mu.Unlock()
 		}
+	}
+}
+
+func StartDailyResetTask(db *gorm.DB) {
+	go func() {
+		for {
+			// Calculate the time until the next reset
+			now := time.Now()
+			nextReset := time.Date(
+				now.Year(), now.Month(), now.Day(),
+				2, 0, 0, 0, // Example: reset at 2:00 AM
+				now.Location(),
+			)
+			if now.After(nextReset) {
+				nextReset = nextReset.Add(24 * time.Hour) // Move to the next day
+			}
+			timeUntilReset := time.Until(nextReset)
+
+			log.Printf("Next reset scheduled in %s", timeUntilReset)
+			time.Sleep(timeUntilReset)
+
+			// Perform the reset
+			ResetApiUsageCounter(db)
+		}
+	}()
+}
+
+func ResetApiUsageCounter(db *gorm.DB) {
+	log.Println("Resetting API usage counter...")
+	// Reset the `usage` field for all rows in the `api_keys` table
+	if err := db.Model(&database.ApiKey{}).Update("usage", 0).Error; err != nil {
+		log.Printf("Error resetting API usage counter: %v", err)
+	} else {
+		log.Println("API usage counter reset successfully")
 	}
 }

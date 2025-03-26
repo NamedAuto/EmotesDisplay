@@ -1,6 +1,10 @@
 package database
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Youtube struct {
 	gorm.Model
@@ -90,5 +94,7 @@ type AppConfig struct {
 
 type ApiKey struct {
 	gorm.Model
-	ApiKey *string
+	ApiKey   *string
+	ApiUsage *int
+	LastUsed time.Time
 }

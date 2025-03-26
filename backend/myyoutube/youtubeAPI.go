@@ -29,35 +29,35 @@ type LiveChatMessagesResponse struct {
 	PollingIntervalMillis int64
 }
 
-func GetLiveChatMessagesAsync(
-	service *youtube.Service,
-	liveChatID string,
-	pageToken string) (chan []*youtube.LiveChatMessage, chan string, chan int64, chan error) {
+// func GetLiveChatMessagesAsync(
+// 	service *youtube.Service,
+// 	liveChatID string,
+// 	pageToken string) (chan []*youtube.LiveChatMessage, chan string, chan int64, chan error) {
 
-	messagesChan := make(chan []*youtube.LiveChatMessage)
-	nextPageTokenChan := make(chan string)
-	pollingIntervalMillisChan := make(chan int64)
-	errorChan := make(chan error)
+// 	messagesChan := make(chan []*youtube.LiveChatMessage)
+// 	nextPageTokenChan := make(chan string)
+// 	pollingIntervalMillisChan := make(chan int64)
+// 	errorChan := make(chan error)
 
-	go func() {
-		call := service.LiveChatMessages.List(liveChatID, []string{"snippet", "authorDetails"})
-		if pageToken != "" {
-			call = call.PageToken(pageToken)
-		}
+// 	go func() {
+// 		call := service.LiveChatMessages.List(liveChatID, []string{"snippet", "authorDetails"})
+// 		if pageToken != "" {
+// 			call = call.PageToken(pageToken)
+// 		}
 
-		response, err := call.Do()
-		if err != nil {
-			errorChan <- fmt.Errorf("error retrieving live chat messages: %v", err)
-			return
-		}
+// 		response, err := call.Do()
+// 		if err != nil {
+// 			errorChan <- fmt.Errorf("error retrieving live chat messages: %v", err)
+// 			return
+// 		}
 
-		messagesChan <- response.Items
-		nextPageTokenChan <- response.NextPageToken
-		pollingIntervalMillisChan <- response.PollingIntervalMillis
-	}()
+// 		messagesChan <- response.Items
+// 		nextPageTokenChan <- response.NextPageToken
+// 		pollingIntervalMillisChan <- response.PollingIntervalMillis
+// 	}()
 
-	return messagesChan, nextPageTokenChan, pollingIntervalMillisChan, errorChan
-}
+// 	return messagesChan, nextPageTokenChan, pollingIntervalMillisChan, errorChan
+// }
 
 func GetLiveChatMessages(
 	service *youtube.Service,

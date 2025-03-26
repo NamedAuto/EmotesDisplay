@@ -1,5 +1,7 @@
 package database
 
+import "time"
+
 type YoutubeDTO struct {
 	VideoId          string `json:"videoId"`
 	MessageDelay     int    `json:"messageDelay"`
@@ -55,6 +57,11 @@ type PreviewDTO struct {
 
 type ApiKeyDTO struct {
 	ApiKey string `json:"apiKey"`
+}
+
+type ApiUsageDTO struct {
+	ApiUsage int       `json:"apiUsage"`
+	LastUsed time.Time `json:"lastUsed"`
 }
 
 type AppConfigDTO struct {
