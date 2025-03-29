@@ -30,5 +30,6 @@ type HandlerInterface interface {
 	EmitPreviewConnection(connected bool)
 	EmitYoutubeConnection(connected bool)
 	EmitTwitchConnection(connected bool)
+	EmitYoutubeApiTimeLeft(timeLeft int)
 	EmitAuthenticationPresent(success AuthenticationPresent)
 }

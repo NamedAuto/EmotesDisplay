@@ -1,3 +1,4 @@
+import React from "react";
 import { WebSocketContextType } from "../../WebSocket/websocketTypes";
 import { SettingsAuthentication } from "../settingsInterface";
 
@@ -44,6 +45,14 @@ const handleAuthenticationSave = (
   });
 };
 
+const handleYtApiTimeLeft = (
+  message: any,
+  setYtApiTimeLeft: React.Dispatch<React.SetStateAction<number>>
+) => {
+  console.log("Time Left: ", message.timeLeft / 1000);
+  setYtApiTimeLeft(message.timeLeft);
+};
+
 export const setupHandlers = (
   updateHandlers: WebSocketContextType["updateHandlers"],
   setIsPreviewConnected: React.Dispatch<React.SetStateAction<boolean>>,
@@ -51,7 +60,8 @@ export const setupHandlers = (
   setIsTwitchConnected: React.Dispatch<React.SetStateAction<boolean>>,
   setSettingsAuthentication: React.Dispatch<
     React.SetStateAction<SettingsAuthentication>
-  >
+  >,
+  setYtApiTimeLeft: React.Dispatch<React.SetStateAction<number>>
 ) => {
   updateHandlers({
     "preview-connection": (message: any) =>
@@ -65,5 +75,8 @@ export const setupHandlers = (
 
     "authentication-present": (message: any) =>
       handleAuthenticationSave(message, setSettingsAuthentication),
+
+    "youtube-api-time-left": (message: any) =>
+      handleYtApiTimeLeft(message, setYtApiTimeLeft),
   });
 };

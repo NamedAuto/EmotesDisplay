@@ -79,6 +79,25 @@ func (handler *WebSocketHandler) EmitTwitchConnection(connected bool) {
 	emit(msg, handler)
 }
 
+/*
+Calculate time left on backend and send instead
+Frontend just displays it counting down every second or minute
+Updates if the sent value is different? Need to check
+
+*/
+
+func (handler *WebSocketHandler) EmitYoutubeApiTimeLeft(timeLeft int) {
+	handler.mu.Lock()
+	defer handler.mu.Unlock()
+
+	msg := map[string]any{
+		"eventType": "youtube-api-time-left",
+		"timeLeft":  timeLeft,
+	}
+
+	emit(msg, handler)
+}
+
 func createConnectionMessage(connected bool, eventType string) map[string]any {
 	var connection bool
 	if connected {

@@ -71,13 +71,15 @@ const SettingsPage: React.FC = () => {
   const [isPreviewConnected, setIsPreviewConnected] = useState(false);
   const [isYoutubeConnected, setIsYoutubeConnected] = useState(false);
   const [isTwitchConnected, setIsTwitchConnected] = useState(false);
+  const [ytApiTimeLeft, setYtApiTimeLeft] = useState(0);
   useEffect(() => {
     setupHandlers(
       updateHandlers,
       setIsPreviewConnected,
       setIsYoutubeConnected,
       setIsTwitchConnected,
-      setSettingsAuthentication
+      setSettingsAuthentication,
+      setYtApiTimeLeft
     );
   }, [updateHandlers]);
 
