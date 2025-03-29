@@ -18,6 +18,7 @@ interface YouTubeSettingsProps {
   settings: SettingsYoutube;
   apiKeySettings: SettingsApiKey;
   apiKeyExists: boolean;
+  ytApiTimeLeft: number;
   saveYoutubeApiKey: () => Promise<void>;
   getYoutubeApiKey: (callback: (key: string) => void) => Promise<void>;
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -36,6 +37,7 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
   settings,
   apiKeySettings,
   apiKeyExists,
+  ytApiTimeLeft,
   saveYoutubeApiKey,
   getYoutubeApiKey,
   handleInputChange,
@@ -83,6 +85,22 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
   const handleApiKey = (key: string) => {
     setApiKey(key);
   };
+
+  function convertMillisecondsToHMS(milliseconds: number): {
+    hours: number;
+    minutes: number;
+    seconds: number;
+  } {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return { hours, minutes, seconds };
+  }
+
+  const { hours, minutes, seconds } = convertMillisecondsToHMS(ytApiTimeLeft);
 
   return (
     <Box>
@@ -279,6 +297,9 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
             sx={{ marginLeft: marginLeft, marginRight: marginRight }}
           />
         </Tooltip>
+        <Typography>
+          {hours} hours, {minutes} minutes, {seconds} seconds
+        </Typography>
         {/* </Box> */}
       </Box>
     </Box>

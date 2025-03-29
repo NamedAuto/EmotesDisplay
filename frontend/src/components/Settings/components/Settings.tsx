@@ -355,6 +355,14 @@ const SettingsPage: React.FC = () => {
     setSelectedComponent(component);
   };
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setYtApiTimeLeft((prev) => (prev > 0 ? prev - 1000 : 0));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const renderSelectedComponent = () => {
     switch (selectedComponent) {
       case "YouTube":
@@ -363,6 +371,7 @@ const SettingsPage: React.FC = () => {
             settings={settingsYoutube}
             apiKeySettings={settingsApiKey}
             apiKeyExists={apiKeyExists}
+            ytApiTimeLeft={ytApiTimeLeft}
             saveYoutubeApiKey={saveYoutubeApiKey}
             getYoutubeApiKey={getYoutubeApiKey}
             handleInputChange={handleInputChange}
