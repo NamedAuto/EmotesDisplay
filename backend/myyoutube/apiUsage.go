@@ -48,31 +48,32 @@ func StartUpApiCheck(db *gorm.DB) {
 	}
 }
 
+// Not sure if google always reset the api at midnight of PST and PDT
 func getNextResetTime(now time.Time) time.Time {
 	nextDay := now.AddDate(0, 0, 1)
-	_, offset := now.Zone()
+	// _, offset := now.Zone()
 
 	// UTC-7 PDT
-	if offset == -7*60*60 {
+	// if offset == -7*60*60 {
 
-		/*
-			Handle case where the current time is already past the
-			 rest time but still in the same day
-		*/
-		if now.Hour() == 23 {
-			return time.Date(nextDay.Year(),
-				nextDay.Month(),
-				nextDay.Day(),
-				23, 0, 0, 0,
-				nextDay.Location())
-		}
+	// 	/*
+	// 		Handle case where the current time is already past the
+	// 		 rest time but still in the same day
+	// 	*/
+	// 	if now.Hour() == 23 {
+	// 		return time.Date(nextDay.Year(),
+	// 			nextDay.Month(),
+	// 			nextDay.Day(),
+	// 			23, 0, 0, 0,
+	// 			nextDay.Location())
+	// 	}
 
-		return time.Date(now.Year(),
-			now.Month(),
-			now.Day(),
-			23, 0, 0, 0,
-			now.Location())
-	}
+	// 	return time.Date(now.Year(),
+	// 		now.Month(),
+	// 		now.Day(),
+	// 		23, 0, 0, 0,
+	// 		now.Location())
+	// }
 
 	// UTC-8 PST
 	return time.Date(nextDay.Year(),
@@ -98,9 +99,9 @@ func WaitUntilQuotaReset(db *gorm.DB) {
 		<-timer.C
 		var temp database.ApiKey
 		db.First(&temp)
-		nextRestTime := getNextResetTime(time.Now().In(location))
+		nextReset = getNextResetTime(time.Now().In(location))
 
-		resetApiUsage(db, temp.ID, nextRestTime)
+		resetApiUsage(db, temp.ID, nextReset)
 		log.Println("Resetting youtube quota usage")
 	}
 }
@@ -132,8 +133,13 @@ func calculateTimeLeftForApi(db *gorm.DB, apiId uint) int {
 	db.Model(&database.ApiKey{}).Select("ApiUsage").Where("id = ?", apiId).Scan(&apiUsage)
 
 	quotaLeft := API_QUOTA - apiUsage
+	numberOfUsesLeft := quotaLeft / 5
+	totalTimeLeft := numberOfUsesLeft * youtube.MessageDelay
 
-	return quotaLeft * youtube.MessageDelay
+	/*
+		MessageDelay is stored in milliseconds so this time is in milliseconds
+	*/
+	return totalTimeLeft
 }
 
 func HandleSavingNewKey(db *gorm.DB, apiKey database.ApiKey, newKey *string) error {

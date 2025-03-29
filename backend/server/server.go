@@ -25,7 +25,7 @@ func StartServer(ctx context.Context) {
 	db = database.StartDatabase()
 
 	myyoutube.StartUpApiCheck(db)
-	go myyoutube.WaitUntilQuotaReset()
+	go myyoutube.WaitUntilQuotaReset(db)
 
 	var p database.Port
 	db.First(&p)
