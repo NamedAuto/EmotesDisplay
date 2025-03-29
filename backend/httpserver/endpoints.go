@@ -15,6 +15,7 @@ import (
 	"github.com/NamedAuto/EmotesDisplay/backend/config"
 	"github.com/NamedAuto/EmotesDisplay/backend/database"
 	"github.com/NamedAuto/EmotesDisplay/backend/github"
+	"github.com/NamedAuto/EmotesDisplay/backend/myyoutube"
 	"gorm.io/gorm"
 )
 
@@ -226,9 +227,9 @@ func configureYoutubeApiKey(mux *http.ServeMux, db *gorm.DB, endpoint string) {
 				return
 			}
 
-			apiKey.ApiKey = &aK.ApiKey
+			err := myyoutube.HandleSavingNewKey(db, apiKey, &aK.ApiKey)
 
-			if err := db.Save(&apiKey).Error; err != nil {
+			if err != nil {
 				http.Error(w, "Failed to save API key", http.StatusInternalServerError)
 				return
 			}

@@ -94,7 +94,8 @@ type AppConfig struct {
 
 type ApiKey struct {
 	gorm.Model
-	ApiKey   *string
-	ApiUsage *int
-	LastUsed time.Time
+	ApiKey    *string
+	ApiUsage  *int
+	LastUsed  time.Time
+	NextReset time.Time
 }

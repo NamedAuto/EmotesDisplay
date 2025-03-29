@@ -1,7 +1,6 @@
 package myyoutube
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -26,82 +25,83 @@ QOL?
 
 */
 
-// Youtube API Usage resets at midnight PST (UTC-8)
-func getReferenceTime(location *time.Location) time.Time {
+const API_QUOTA = 10000
+
+var location *time.Location
+
+// Check if the app starts up past the quota reset time
+func StartUpApiCheck(db *gorm.DB) {
+	var api database.ApiKey
+	db.First(&api)
+
+	var err error
+	location, err = time.LoadLocation("America/Los_Angeles")
+	if err != nil {
+		log.Println("Error loading location:", err)
+	}
+
 	now := time.Now().In(location)
-	prevDay := now.AddDate(0, 0, -1)
-	_, offset := prevDay.Zone()
+
+	if now.After(api.NextReset) {
+		newResetTime := getNextResetTime(now)
+		resetApiUsage(db, api.ID, newResetTime)
+	}
+}
+
+func getNextResetTime(now time.Time) time.Time {
+	nextDay := now.AddDate(0, 0, 1)
+	_, offset := now.Zone()
 
 	// UTC-7 PDT
 	if offset == -7*60*60 {
-		return time.Date(prevDay.Year(),
-			prevDay.Month(),
-			prevDay.Day(),
+
+		/*
+			Handle case where the current time is already past the
+			 rest time but still in the same day
+		*/
+		if now.Hour() == 23 {
+			return time.Date(nextDay.Year(),
+				nextDay.Month(),
+				nextDay.Day(),
+				23, 0, 0, 0,
+				nextDay.Location())
+		}
+
+		return time.Date(now.Year(),
+			now.Month(),
+			now.Day(),
 			23, 0, 0, 0,
-			location)
+			now.Location())
 	}
 
 	// UTC-8 PST
-	return time.Date(prevDay.Year(),
-		prevDay.Month(),
-		prevDay.Day(),
+	return time.Date(nextDay.Year(),
+		nextDay.Month(),
+		nextDay.Day(),
 		0, 0, 0, 0,
-		location)
+		nextDay.Location())
 }
 
-func hasCrossedReferenceTime(lastUsed time.Time) bool {
-	location, err := time.LoadLocation("America/Los_Angeles")
-	if err != nil {
-		log.Println("Error loading location:", err)
-		return false
-	}
+func WaitUntilQuotaReset(db *gorm.DB) {
 
-	referenceTime := getReferenceTime(location)
-
-	now := time.Now().In(location)
-
-	return lastUsed.In(location).Before(referenceTime) && now.After(referenceTime)
-}
-
-func waitUntilTime() {
-
-}
-
-func WaitUntilQuotaReset() {
-	location, err := time.LoadLocation("America/Los_Angeles")
-	if err != nil {
-		log.Println("Error loading location:", err)
-	}
+	var api database.ApiKey
+	db.First(&api)
+	nextReset := api.NextReset
 
 	for {
-		now := time.Now().In(location)
+		duration := time.Until(nextReset)
 
-		_, offset := now.Zone()
-		var referenceHour int
-		if offset == -8*60*60 {
-			referenceHour = 0
-		} else if offset == -7*60*60 {
-			referenceHour = 23
-		}
-
-		referenceTime := time.Date(now.Year(),
-			now.Month(),
-			now.Day(),
-			referenceHour, 0, 0, 0,
-			location)
-
-		if now.After(referenceTime) {
-			referenceTime = referenceTime.Add(24 * time.Hour)
-		}
-
-		duration := time.Until(referenceTime)
-
-		fmt.Printf("Waiting %v until reference time (%v)...\n", duration, referenceTime)
+		log.Printf("Waiting %s until youtube quota reset at %s\n", duration, nextReset)
 
 		timer := time.NewTimer(duration)
 
 		<-timer.C
-		fmt.Println("Reference time reached! Taking action.")
+		var temp database.ApiKey
+		db.First(&temp)
+		nextRestTime := getNextResetTime(time.Now().In(location))
+
+		resetApiUsage(db, temp.ID, nextRestTime)
+		log.Println("Resetting youtube quota usage")
 	}
 }
 
@@ -109,25 +109,41 @@ func incrementApiUsage(db *gorm.DB, id uint, amount int) error {
 	return db.Model(&database.ApiKey{}).
 		Where("id = ?", id).
 		Updates(map[string]any{
-			"ApiUsage": gorm.Expr("usage + ?", amount),
+			"ApiUsage": gorm.Expr("api_usage + ?", amount),
 			"LastUsed": time.Now(),
 		}).Error
 }
 
-func resetApiUsage(db *gorm.DB, id uint) error {
+func resetApiUsage(db *gorm.DB, id uint, resetTime time.Time) error {
 	return db.Model(&database.ApiKey{}).
 		Where("id = ?", id).
 		Updates(map[string]any{
-			"ApiUsage": 0,
-			"LastUsed": time.Now(),
+			"ApiUsage":  0,
+			"LastUsed":  time.Now(),
+			"NextReset": resetTime,
 		}).Error
 }
 
-// Check if the app starts up past the quota reset time
-func StartUpApiCheck(db *gorm.DB) {
-	var api database.ApiKey
-	db.First(&api)
-	if hasCrossedReferenceTime(api.LastUsed) {
-		resetApiUsage(db, api.ID)
-	}
+func calculateTimeLeftForApi(db *gorm.DB, apiId uint) int {
+	var youtube database.Youtube
+	db.First(&youtube)
+
+	var apiUsage int
+	db.Model(&database.ApiKey{}).Select("ApiUsage").Where("id = ?", apiId).Scan(&apiUsage)
+
+	quotaLeft := API_QUOTA - apiUsage
+
+	return quotaLeft * youtube.MessageDelay
+}
+
+func HandleSavingNewKey(db *gorm.DB, apiKey database.ApiKey, newKey *string) error {
+	usage := 0
+	now := time.Now().In(location)
+	nextReset := getNextResetTime(now)
+	apiKey.ApiKey = newKey
+	apiKey.ApiUsage = &usage
+	apiKey.LastUsed = now
+	apiKey.NextReset = nextReset
+
+	return db.Save(&apiKey).Error
 }

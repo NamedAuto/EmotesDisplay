@@ -149,8 +149,10 @@ func insertDefaultValues(db *gorm.DB) {
 	db.Create(&authentication)
 
 	key := ""
+	usage := 0
 	apiKey := ApiKey{
-		ApiKey: &key,
+		ApiKey:   &key,
+		ApiUsage: &usage,
 	}
 	db.Create(&apiKey)
 
