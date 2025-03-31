@@ -229,78 +229,103 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
           </Box>
         </Box>
 
-        {/* <Box> */}
-        <Tooltip
-          title="Found at the end of the youtube stream url. From the url, include everything after the ?v="
-          arrow
-        >
-          <TextField
-            name="videoId"
-            label="Video Id"
-            value={settings.videoId}
-            onChange={handleInputChange}
-            margin="normal"
-            sx={{
-              width: "150px",
-              marginLeft: marginLeft,
-              marginRight: marginRight,
-              "& .MuiInputLabel-root": {
-                fontSize: labelFontSize,
-              },
-              "& .MuiInputBase-input": {
-                fontSize: inputFontSize,
-              },
-            }}
-          />
-        </Tooltip>
+        <Box>
+          <Tooltip
+            title="Found at the end of the youtube stream url. From the url, include everything after the ?v="
+            arrow
+          >
+            <TextField
+              name="videoId"
+              label="Video Id"
+              value={settings.videoId}
+              onChange={handleInputChange}
+              margin="normal"
+              sx={{
+                width: "150px",
+                marginLeft: marginLeft,
+                marginRight: marginRight,
+                "& .MuiInputLabel-root": {
+                  fontSize: labelFontSize,
+                },
+                "& .MuiInputBase-input": {
+                  fontSize: inputFontSize,
+                },
+              }}
+            />
+          </Tooltip>
 
-        <Tooltip title="Check README if you change this number" arrow>
-          <TextField
-            name="messageDelay"
-            label="Message Delay"
-            value={settings.messageDelay}
-            onChange={handleInputChange}
-            type="number"
-            margin="normal"
-            sx={{
-              width: "125px",
-              marginLeft: marginLeft,
-              marginRight: marginRight,
-              "& .MuiInputLabel-root": {
-                fontSize: labelFontSize,
-              },
-              "& .MuiInputBase-input": {
-                fontSize: inputFontSize,
-              },
-            }}
-            slotProps={{
-              input: {
-                endAdornment: (
-                  <InputAdornment position="end">sec</InputAdornment>
-                ),
-              },
-            }}
-          />
-        </Tooltip>
+          <Tooltip title="Check README if you change this number" arrow>
+            <TextField
+              name="messageDelay"
+              label="Message Delay"
+              value={settings.messageDelay}
+              onChange={handleInputChange}
+              type="number"
+              margin="normal"
+              sx={{
+                width: "125px",
+                marginLeft: marginLeft,
+                marginRight: marginRight,
+                "& .MuiInputLabel-root": {
+                  fontSize: labelFontSize,
+                },
+                "& .MuiInputBase-input": {
+                  fontSize: inputFontSize,
+                },
+              }}
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">sec</InputAdornment>
+                  ),
+                },
+              }}
+            />
+          </Tooltip>
 
-        <Tooltip title="Show global YouTube emotes" arrow>
-          <FormControlLabel
-            control={
-              <Checkbox
-                name="useGlobalEmotes"
-                checked={settings.showGlobalEmotes}
-                onChange={handleInputChange}
-              />
-            }
-            label="Show Global Emotes"
-            labelPlacement="bottom"
-            sx={{ marginLeft: marginLeft, marginRight: marginRight }}
-          />
-        </Tooltip>
-        <Typography>
-          {hours} hours, {minutes} minutes, {seconds} seconds
-        </Typography>
-        {/* </Box> */}
+          <Tooltip title="Show global YouTube emotes" arrow>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="useGlobalEmotes"
+                  checked={settings.showGlobalEmotes}
+                  onChange={handleInputChange}
+                />
+              }
+              label="Show Global Emotes"
+              labelPlacement="bottom"
+              sx={{ marginLeft: marginLeft, marginRight: marginRight }}
+            />
+          </Tooltip>
+          <Box
+            padding={5}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexWrap: "wrap",
+              flexDirection: "column",
+            }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                whiteSpace: "pre-line", // Preserves line breaks
+                wordBreak: "break-word", // Ensures long words wrap properly
+              }}
+            >
+              <span style={{ fontSize: "16px" }}>
+                YouTube connection time left:{"\n"}
+              </span>
+
+              <span style={{ fontSize: "20px" }}>{hours} hours</span>
+              <span style={{ fontSize: "16px" }}>, </span>
+              <span style={{ fontSize: "20px" }}>{minutes} minutes</span>
+              <span style={{ fontSize: "16px" }}>, </span>
+              <span style={{ fontSize: "20px" }}>{seconds} seconds</span>
+            </Typography>
+          </Box>
+        </Box>
       </Box>
     </Box>
   );

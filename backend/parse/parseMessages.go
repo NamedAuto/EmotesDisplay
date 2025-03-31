@@ -1,7 +1,6 @@
 package parse
 
 import (
-	"fmt"
 	"log"
 	"regexp"
 	"strings"
@@ -34,7 +33,7 @@ func ParseYoutubeMessage(
 		if strings.HasPrefix(word, ":") {
 			loweredText := strings.ToLower((word))
 
-			fmt.Printf("Looking at: %s", loweredText)
+			// fmt.Printf("Looking at: %s", loweredText)
 
 			if _, exists := emoteMap.ChannelMap[loweredText]; exists {
 				cleanedText := strings.ReplaceAll(loweredText, ":", "")
@@ -55,12 +54,14 @@ func ParseYoutubeMessage(
 			} else {
 				log.Printf("Emote Not Found: %s\n", word)
 			}
-		} else {
-			log.Printf("Looking for emoji in : %s", word)
-			result := FindEmojis(word, emoji.EmojiMap)
-			fmt.Println(result)
-
 		}
+		// Emojis not being used right now
+		// else {
+		// 	// log.Printf("Looking for emoji in : %s", word)
+		// 	result := FindEmojis(word, emoji.EmojiMap)
+		// 	fmt.Println(result)
+
+		// }
 	}
 
 	return emoteUrls

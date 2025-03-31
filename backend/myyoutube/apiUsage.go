@@ -125,7 +125,7 @@ func resetApiUsage(db *gorm.DB, id uint, resetTime time.Time) error {
 		}).Error
 }
 
-func calculateTimeLeftForApi(db *gorm.DB, apiId uint) int {
+func CalculateTimeLeftForApi(db *gorm.DB, apiId uint) int {
 	var youtube database.Youtube
 	db.First(&youtube)
 

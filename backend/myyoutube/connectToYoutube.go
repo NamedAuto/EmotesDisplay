@@ -125,7 +125,7 @@ func GetYoutubeMessages(
 
 			// Getting the live chat messages costs 5 units
 			incrementApiUsage(db, apiKey.ID, 5)
-			timeLeft := calculateTimeLeftForApi(db, apiKey.ID)
+			timeLeft := CalculateTimeLeftForApi(db, apiKey.ID)
 			handler.EmitYoutubeApiTimeLeft(timeLeft)
 
 			if err != nil {

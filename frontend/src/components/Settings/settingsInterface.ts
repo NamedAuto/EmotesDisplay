@@ -53,3 +53,7 @@ export interface SettingsApiKey {
 export interface HasApiKeyResponse {
   exists: boolean;
 }
+
+export interface YtApiTimeLeft {
+  timeLeft: number;
+}

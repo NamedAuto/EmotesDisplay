@@ -33,6 +33,7 @@ type Endpoint struct {
 	AppInfo       string
 	YTAPiKey      string
 	CheckYTAPiKey string
+	ApiTimeLeft   string
 	Default       string
 }
 
@@ -90,6 +91,7 @@ func initEndpointNames() Endpoint {
 		AppInfo:       "/app-info",
 		YTAPiKey:      "/youtube-api-key",
 		CheckYTAPiKey: "/check-for-youtube-api-key",
+		ApiTimeLeft:   "/youtube-api-time-left",
 		Default:       "/",
 	}
 }

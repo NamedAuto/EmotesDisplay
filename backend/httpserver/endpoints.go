@@ -23,6 +23,10 @@ type HasApiKeyResponse struct {
 	Exists bool `json:"exists"`
 }
 
+type ApiTimeLeft struct {
+	TimeLeft int `json:"timeLeft"`
+}
+
 type RepoResponse struct {
 	Owner          string `json:"owner"`
 	RepoName       string `json:"repoName"`
@@ -240,6 +244,22 @@ func configureYoutubeApiKey(mux *http.ServeMux, db *gorm.DB, endpoint string) {
 	})
 }
 
+func configureYoutubeApiTimeLeft(mux *http.ServeMux, db *gorm.DB, endpoint string) {
+	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
+		var api database.ApiKey
+		timeLeft := 0
+		if err := db.First(&api).Error; err != nil || *api.ApiKey == "" {
+			timeLeft = 0
+		}
+
+		timeLeft = myyoutube.CalculateTimeLeftForApi(db, api.ID)
+
+		response := ApiTimeLeft{TimeLeft: timeLeft}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
+	})
+}
+
 func configureDefaultEndpoint(mux *http.ServeMux, endpoint string) {
 	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == endpoint || r.URL.Path == "/index.html" {
@@ -327,5 +347,6 @@ func ConfigureEndpoints(mux *http.ServeMux,
 	configureAppInfoEndpoint(mux, db, endpoints.AppInfo)
 	configureCheckForYoutubeApiKey(mux, db, endpoints.CheckYTAPiKey)
 	configureYoutubeApiKey(mux, db, endpoints.YTAPiKey)
+	configureYoutubeApiTimeLeft(mux, db, endpoints.ApiTimeLeft)
 	configureDefaultEndpoint(mux, endpoints.Default)
 }

@@ -14,7 +14,7 @@ import {
   Theme,
   ThemeProvider,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useConfig } from "../../Config/ConfigProvider";
 import { useWebSocketContext } from "../../WebSocket/WebSocketProvider";
 import AspectRatioSettings from "./AspectRatioSettings";
@@ -47,14 +47,17 @@ import {
   SettingsPreview,
   SettingsTwitch,
   SettingsYoutube,
+  YtApiTimeLeft,
 } from "../settingsInterface";
 import darkTheme from "../settingsTheme";
 
 const SettingsPage: React.FC = () => {
   const { config, reloadConfig } = useConfig();
+  const prevState = useRef(config.youtube.messageDelay);
 
   const baseURL = "http://localhost:" + config.port.port;
   const checkYtApiKeyUrl = baseURL + "/check-for-youtube-api-key";
+  const getYtApiTimeLeft = baseURL + "/youtube-api-time-left";
   const ytApiKeyUrl = baseURL + "/youtube-api-key";
   const configUrl = baseURL + "/config";
   const iconUrl = baseURL + "/icons/";
@@ -97,6 +100,7 @@ const SettingsPage: React.FC = () => {
    */
   useEffect(() => {
     checkForYoutubeApiKey();
+    getYoutubeApiTimeLeft();
   }, []);
 
   const [apiKeyExists, setApiKeyExists] = useState<boolean>(false);
@@ -148,6 +152,19 @@ const SettingsPage: React.FC = () => {
       }
       const result: HasApiKeyResponse = await response.json();
       setApiKeyExists(result.exists);
+    } catch (error) {
+      console.error("Error checking API key:", error);
+    }
+  };
+
+  const getYoutubeApiTimeLeft = async () => {
+    try {
+      const response = await fetch(getYtApiTimeLeft);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result: YtApiTimeLeft = await response.json();
+      setYtApiTimeLeft(result.timeLeft);
     } catch (error) {
       console.error("Error checking API key:", error);
     }
@@ -310,6 +327,11 @@ const SettingsPage: React.FC = () => {
 
       Object.assign(config, tempConfig);
 
+      if (prevState.current != config.youtube.messageDelay) {
+        prevState.current = config.youtube.messageDelay;
+        getYoutubeApiTimeLeft();
+      }
+
       console.log("Config Saved");
     } catch (error) {
       console.error("Error saving config: " + error);
@@ -356,12 +378,20 @@ const SettingsPage: React.FC = () => {
   };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setYtApiTimeLeft((prev) => (prev > 0 ? prev - 1000 : 0));
-    }, 1000);
+    let interval: NodeJS.Timeout | null = null;
 
-    return () => clearInterval(interval);
-  }, []);
+    if (isYoutubeConnected) {
+      interval = setInterval(() => {
+        setYtApiTimeLeft((prev) => (prev > 0 ? prev - 1000 : 0));
+      }, 1000);
+    } else {
+      if (interval) clearInterval(interval);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isYoutubeConnected]);
 
   const renderSelectedComponent = () => {
     switch (selectedComponent) {
