@@ -41,7 +41,7 @@ func main() {
 	err := wails.Run(&options.App{
 		Title:  "Emotes Display",
 		Width:  800,
-		Height: 520,
+		Height: 550,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
