@@ -25,7 +25,7 @@ func StartServer(ctx context.Context) {
 	db = database.StartDatabase()
 
 	myyoutube.StartUpApiCheck(db)
-	go myyoutube.WaitUntilQuotaReset(db)
+	go myyoutube.WaitUntilQuotaReset(db, handler)
 
 	var p database.Port
 	db.First(&p)
@@ -63,6 +63,15 @@ func isPortAvailable(port int) bool {
 	ln.Close()
 	return true
 }
+
+// func isPortInUse(port int) bool {
+//     cmd := exec.Command("lsof", "-i", fmt.Sprintf(":%d", port))
+//     output, err := cmd.Output()
+//     if err != nil {
+//         return false
+//     }
+//     return strings.Contains(string(output), fmt.Sprintf(":%d", port))
+// }
 
 func findAvailablePort(startPort, endPort int) (int, error) {
 	for port := startPort; port <= endPort; port++ {

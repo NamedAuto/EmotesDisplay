@@ -4,6 +4,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/NamedAuto/EmotesDisplay/backend/common"
 	"github.com/NamedAuto/EmotesDisplay/backend/database"
 	"gorm.io/gorm"
 )
@@ -83,7 +84,7 @@ func getNextResetTime(now time.Time) time.Time {
 		nextDay.Location())
 }
 
-func WaitUntilQuotaReset(db *gorm.DB) {
+func WaitUntilQuotaReset(db *gorm.DB, handler common.HandlerInterface) {
 
 	var api database.ApiKey
 	db.First(&api)
@@ -103,6 +104,8 @@ func WaitUntilQuotaReset(db *gorm.DB) {
 
 		resetApiUsage(db, temp.ID, nextReset)
 		log.Println("Resetting youtube quota usage")
+		timeLeft := CalculateTimeLeftForApi(db, temp.ID)
+		handler.EmitYoutubeApiTimeLeft(timeLeft)
 	}
 }
 
@@ -116,6 +119,7 @@ func incrementApiUsage(db *gorm.DB, id uint, amount int) error {
 }
 
 func resetApiUsage(db *gorm.DB, id uint, resetTime time.Time) error {
+	log.Println("Reset YouTube api usage")
 	return db.Model(&database.ApiKey{}).
 		Where("id = ?", id).
 		Updates(map[string]any{
