@@ -49,7 +49,6 @@ const handleYtApiTimeLeft = (
   message: any,
   setYtApiTimeLeft: React.Dispatch<React.SetStateAction<number>>
 ) => {
-  console.log("Time Left: ", message.timeLeft / 1000);
   setYtApiTimeLeft(message.timeLeft);
 };
 

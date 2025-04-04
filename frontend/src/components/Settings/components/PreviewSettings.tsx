@@ -85,7 +85,7 @@ const PreviewSettings: React.FC<PreviewSettingsProps> = ({
       </FormGroup>
 
       <Tooltip
-        title="The # of emotes that can potentially be used to display"
+        title="Number of emotes that are in a group. Limited by Max Per Msg in Emotes section."
         arrow
       >
         <TextField

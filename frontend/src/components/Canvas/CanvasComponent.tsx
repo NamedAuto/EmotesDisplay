@@ -43,10 +43,17 @@ const CanvasComponent: React.FC = () => {
       placeEmotesGroupInBackground(emoteUrls, nonTransparentPositions);
     };
 
+    const doNothing = (message: any) => {};
+
     updateHandlers({
       "preview-emote": handlePreviewEmotes,
       "youtube-emote": handleYoutubeEmotes,
       "twitch-emote": handleTwitchEmotes,
+
+      "youtube-connection": doNothing,
+      "twitch-connection": doNothing,
+      "preview-connection": doNothing,
+      "youtube-api-time-left": doNothing,
     });
   }, [updateHandlers]);
 

@@ -231,7 +231,7 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
 
         <Box>
           <Tooltip
-            title="Found at the end of the youtube stream url. From the url, include everything after the ?v="
+            title="Found at the end of the youtube stream url. From the url, copy everything after the ?v="
             arrow
           >
             <TextField
@@ -254,7 +254,10 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
             />
           </Tooltip>
 
-          <Tooltip title="Check README if you change this number" arrow>
+          <Tooltip
+            title="Delay before getting more messages. Affects the estimated time below"
+            arrow
+          >
             <TextField
               name="messageDelay"
               label="Message Delay"
@@ -307,23 +310,23 @@ const YouTubeSettings: React.FC<YouTubeSettingsProps> = ({
               flexDirection: "column",
             }}
           >
-            <Typography
-              variant="body1"
-              sx={{
-                whiteSpace: "pre-line", // Preserves line breaks
-                wordBreak: "break-word", // Ensures long words wrap properly
-              }}
-            >
-              <span style={{ fontSize: "16px" }}>
-                YouTube connection time left:{"\n"}
-              </span>
+            <Tooltip title="Time left for the YouTube connection">
+              <Typography
+                variant="body1"
+                sx={{
+                  whiteSpace: "pre-line", // Preserves line breaks
+                  wordBreak: "break-word", // Ensures long words wrap properly
+                }}
+              >
+                <span style={{ fontSize: "18px" }}>
+                  Estimated time left:{"\n"}
+                </span>
 
-              <span style={{ fontSize: "20px" }}>{hours} hours</span>
-              <span style={{ fontSize: "16px" }}>, </span>
-              <span style={{ fontSize: "20px" }}>{minutes} minutes</span>
-              <span style={{ fontSize: "16px" }}>, </span>
-              <span style={{ fontSize: "20px" }}>{seconds} seconds</span>
-            </Typography>
+                <span style={{ fontSize: "24px" }}>{hours} H </span>
+                <span style={{ fontSize: "24px" }}>{minutes} M </span>
+                {/* <span style={{ fontSize: "24px" }}>{seconds} S </span> */}
+              </Typography>
+            </Tooltip>
           </Box>
         </Box>
       </Box>

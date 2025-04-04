@@ -256,40 +256,131 @@ const SettingsPage: React.FC = () => {
     // console.log(`Name: ${name}, Value: ${value}`);
 
     if (name in settingsYoutube) {
-      setSettingsYoutube((prevValues) => ({
-        ...prevValues,
-        [name]: type === "checkbox" ? checked : value,
-      }));
+      setSettingsYoutube((prevValues) => {
+        let newValue: string | boolean | number =
+          type === "checkbox" ? checked : value;
+
+        if (name === "messageDelay" && typeof newValue === "string") {
+          let numericValue = parseFloat(newValue);
+          if (numericValue <= 1) {
+            numericValue = 1.5;
+          }
+          newValue = numericValue;
+        }
+        return {
+          ...prevValues,
+          [name]: newValue,
+        };
+      });
     } else if (name in settingsTwitch) {
-      setSettingsTwitch((prevValues) => ({
-        ...prevValues,
-        [name]: type === "checkbox" ? checked : value,
-      }));
+      setSettingsTwitch((prevValues) => {
+        const newValue = type === "checkbox" ? checked : value;
+
+        // Validation for the `myNum` field
+        if (name === "messageDelay" && typeof newValue === "string") {
+          console.log("OH");
+          const numericValue = parseFloat(newValue);
+          if (numericValue < 0 || numericValue > 100) {
+            // Adjust limits as needed
+            console.warn("Value out of range. Must be between 0 and 100.");
+            return prevValues; // No update if the value is out of range
+          }
+        }
+        console.log("PPP");
+        return {
+          ...prevValues,
+          [name]: newValue,
+        };
+      });
     } else if (name in settingsPort) {
       setSettingsPort((prevValues) => ({
         ...prevValues,
         [name]: type === "checkbox" ? checked : value,
       }));
     } else if (name in settingsAspectRatio) {
-      setSettingsAspectRatio((prevValues) => ({
-        ...prevValues,
-        [name]: type === "checkbox" ? checked : value,
-      }));
+      setSettingsAspectRatio((prevValues) => {
+        let newValue: string | boolean | number =
+          type === "checkbox" ? checked : value;
+
+        if (
+          (name === "canvasWidth" || name === "canvasHeight") &&
+          typeof newValue === "string"
+        ) {
+          let numericValue = parseFloat(newValue);
+          if (numericValue <= 1) {
+            numericValue = 1;
+          }
+          newValue = numericValue;
+        }
+        return {
+          ...prevValues,
+          [name]: newValue,
+        };
+      });
     } else if (name in settingsEmote) {
-      setSettingsEmote((prevValues) => ({
-        ...prevValues,
-        [name]: type === "checkbox" ? checked : value,
-      }));
+      setSettingsEmote((prevValues) => {
+        let newValue: string | boolean | number =
+          type === "checkbox" ? checked : value;
+
+        if (typeof newValue === "string") {
+          let numericValue = parseFloat(newValue);
+          if (name === "emoteRoundness") {
+            if (numericValue <= 0) {
+              numericValue = 0;
+            } else if (numericValue > 50) {
+              numericValue = 50;
+            }
+          } else if (
+            name === "randomSizeIncrease" ||
+            name === "randomSizeDecrease"
+          ) {
+            if (numericValue <= 0) {
+              numericValue = 0;
+            }
+          } else if (
+            name === "maxEmoteCount" ||
+            name === "maxEmotesPerMsg" ||
+            name === "emoteWidth"
+          ) {
+            if (numericValue <= 1) {
+              numericValue = 1;
+            }
+          }
+          newValue = numericValue;
+        }
+        return {
+          ...prevValues,
+          [name]: newValue,
+        };
+      });
     } else if (name in settingsPreview) {
-      setSettingsPreview((prevValues) => ({
-        ...prevValues,
-        [name]: type === "checkbox" ? checked : value,
-      }));
-    } else if (name in settingsAuthentication) {
-      setSettingsAuthentication((prevValues) => ({
-        ...prevValues,
-        [name]: type === "checkbox" ? checked : value,
-      }));
+      setSettingsPreview((prevValues) => {
+        let newValue: string | boolean | number =
+          type === "checkbox" ? checked : value;
+
+        if (typeof newValue === "string") {
+          let numericValue = parseFloat(newValue);
+          if (name === "maxRandomEmotes") {
+            if (numericValue <= 1) {
+              numericValue = 1;
+            }
+          } else if (name === "speedOfEmotes") {
+            if (numericValue <= 0.1) {
+              numericValue = 0.1;
+            }
+          }
+          newValue = numericValue;
+        }
+        return {
+          ...prevValues,
+          [name]: newValue,
+        };
+      });
+      // } else if (name in settingsAuthentication) {
+      //   setSettingsAuthentication((prevValues) => ({
+      //     ...prevValues,
+      //     [name]: type === "checkbox" ? checked : value,
+      //   }));
     } else if (name in settingsApiKey) {
       setSettingsApiKey((prevValues) => ({
         ...prevValues,
@@ -562,7 +653,7 @@ const SettingsPage: React.FC = () => {
               {isDrawerOpen && <ListItemText primary="Random" />}
             </ListItemButton>
 
-            <ListItemButton onClick={() => handleItemClick("Emote")}>
+            <ListItemButton onClick={() => handleItemClick("Emotes")}>
               <ListItemIcon>
                 <img
                   src={emoteUrl}
@@ -570,7 +661,7 @@ const SettingsPage: React.FC = () => {
                   style={{ width: iconWidthHeight, height: iconWidthHeight }}
                 />
               </ListItemIcon>
-              {isDrawerOpen && <ListItemText primary="Emote" />}
+              {isDrawerOpen && <ListItemText primary="Emotes" />}
             </ListItemButton>
 
             {/* <ListItemButton onClick={() => handleItemClick("Authentication")}>

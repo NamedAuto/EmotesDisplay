@@ -31,7 +31,7 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
 }) => (
   <Box>
     <Typography variant="h4" sx={{ textAlign: "center" }}>
-      Emote
+      Emotes
     </Typography>
     <Box
       sx={{
@@ -194,7 +194,10 @@ const EmoteSettings: React.FC<EmoteSettingsProps> = ({
         />
       </Tooltip>
 
-      <Tooltip title="Make emotes round. 0 does nothing. 50+ is a circle" arrow>
+      <Tooltip
+        title="Round the edges of the emote. 0 does nothing, 50 makes a circle"
+        arrow
+      >
         <TextField
           name="emoteRoundness"
           label="Roundness (0 - 50)"

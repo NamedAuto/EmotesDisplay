@@ -27,7 +27,7 @@ const TwitchSettings: React.FC<TwitchSettingsProps> = ({
         flexWrap: "wrap",
       }}
     >
-      <Tooltip title="Name of the Twitch channel to connect to" arrow>
+      <Tooltip title="Twitch channel to connect to" arrow>
         <TextField
           name="channelName"
           label="Channel Name"
