@@ -116,7 +116,7 @@ func sss(db *gorm.DB,
 			if _, exists := folderImageSet[img.Name]; exists {
 				fmt.Println(img.Name, "exists in the set!")
 
-				hash, err := getHashOfImage(img.Name)
+				hash, err := getHashOfImage(folderDir + img.Name)
 				if err != nil {
 					fmt.Println("Error getting hash of image ", err)
 					return resultMap, err
@@ -186,6 +186,17 @@ func sss(db *gorm.DB,
 			// Place in resize folder
 			// Place key and path into map
 			createAndSaveResizedImage(folderDir, resizeDir, img, 200)
+			hash, err := getHashOfImage(folderDir + img)
+			if err != nil {
+
+			}
+
+			fmt.Println("THE HASH ", hash)
+			tempImg := database.Image{Name: img, ResizedName: img, Folder: folderName, Hash: hash}
+			saveImgToDbAndFolder(db, tempImg, resizeDir+img, img)
+
+			key, value := getKeyValue(img, resizeDir, prefix, suffix)
+			resultMap[key] = value
 
 		} else {
 			fmt.Println("File smaller than criteria. Not resizing")
