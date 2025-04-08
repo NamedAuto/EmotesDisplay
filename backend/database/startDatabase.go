@@ -11,9 +11,9 @@ import (
 var appConfig *AppConfig
 var db *gorm.DB
 
-func StartDatabase() *gorm.DB {
+func StartDatabase(dbPath string) *gorm.DB {
 	var err error
-	db, err = gorm.Open(sqlite.Open("AppData/emotesDisplay.db"), &gorm.Config{})
+	db, err = gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
 	if err != nil {
 		panic("Failed to connect to the database")
 	}
@@ -34,7 +34,8 @@ func StartDatabase() *gorm.DB {
 		&Preview{},
 		&AppConfig{},
 		&ApiKey{},
-		&Authentication{}); err != nil {
+		&Authentication{},
+		&Image{}); err != nil {
 		log.Fatal("Failed to migrate the database: ", err)
 	}
 
@@ -155,6 +156,18 @@ func insertDefaultValues(db *gorm.DB) {
 		ApiUsage: &usage,
 	}
 	db.Create(&apiKey)
+
+	imageName := ""
+	resizedName := ""
+	folder := ""
+	hash := ""
+	image := Image{
+		Name:        imageName,
+		ResizedName: resizedName,
+		Folder:      folder,
+		Hash:        hash,
+	}
+	db.Create(&image)
 
 	log.Println("Created database")
 }

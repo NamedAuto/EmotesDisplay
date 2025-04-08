@@ -22,7 +22,7 @@ var db *gorm.DB
 
 func StartServer(ctx context.Context) {
 	log.Println("Server starting")
-	db = database.StartDatabase()
+	db = database.StartDatabase("AppData/emotesDisplay.db")
 
 	myyoutube.StartUpApiCheck(db)
 	go myyoutube.WaitUntilQuotaReset(db, handler)

@@ -99,3 +99,11 @@ type ApiKey struct {
 	LastUsed  time.Time
 	NextReset time.Time
 }
+
+type Image struct {
+	gorm.Model
+	Name        string
+	ResizedName string
+	Folder      string
+	Hash        string
+}

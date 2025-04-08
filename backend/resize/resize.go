@@ -2,11 +2,13 @@ package resize
 
 import (
 	"context"
+	"fmt"
 	"image"
 	"image/gif"
 	"image/jpeg"
 	"image/png"
 	"io"
+	"log"
 	"math"
 	"os"
 
@@ -98,20 +100,24 @@ func resizeGIFSimple(r io.Reader, w io.Writer, width int) error {
 	return gif.EncodeAll(w, g)
 }
 
-func thumbnail(r io.Reader, w io.Writer, mimetype string, newWidth int) error {
+func resizeImage(r io.Reader, w io.Writer, mimetype string, newWidth int) error {
 	var src image.Image
 	var err error
+
+	fmt.Println(r)
 
 	switch mimetype {
 	case "image/jpeg":
 		src, err = jpeg.Decode(r)
 	case "image/png":
+		fmt.Println("Howdy")
 		src, err = png.Decode(r)
+		fmt.Println("yhdow")
 	case "image/webp":
 		src, err = webp.Decode(r)
 	}
-
 	if err != nil {
+		fmt.Println("erm")
 		return err
 	}
 
@@ -120,12 +126,13 @@ func thumbnail(r io.Reader, w io.Writer, mimetype string, newWidth int) error {
 
 	destination := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
 
-	draw.NearestNeighbor.Scale(destination, destination.Rect, src, src.Bounds(), draw.Over, nil)
+	draw.BiLinear.Scale(destination, destination.Rect, src, src.Bounds(), draw.Over, nil)
 
 	switch mimetype {
 	case "image/jpeg":
 		err = jpeg.Encode(w, destination, nil)
 	case "image/png":
+		err = png.Encode(w, destination)
 	case "image/webp":
 		err = png.Encode(w, destination)
 	}
@@ -141,4 +148,14 @@ func check(err error) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func GetFileSize(path string) int64 {
+	fileInfo, err := os.Stat(path)
+	if err != nil {
+		log.Println("Error getting file info:", err)
+		return 0
+	}
+	return fileInfo.Size()
+	// log.Printf("File size: %d bytes (%.2f KB, %.2f MB)\n", fileSize, float64(fileSize)/1024, float64(fileSize)/(1024*1024))
 }
