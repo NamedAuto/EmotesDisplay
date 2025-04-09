@@ -15,9 +15,9 @@ func setupFilePaths(folder Folder) MyPaths {
 	channelEmote := mainBase + folder.ChannelEmote
 	resizedChannelEmote := resizeBase + folder.ResizedChannelEmote
 	globalEmote := mainBase + folder.GlobalEmote
-	resizedGlobalEmote := resizeBase + folder.GlobalEmote
+	resizedGlobalEmote := resizeBase + folder.ResizedGlobalEmote
 	previewEmote := mainBase + folder.PreviewEmote
-	resizedPreviewEmote := resizeBase + folder.PreviewEmote
+	resizedPreviewEmote := resizeBase + folder.ResizedPreviewEmote
 	icon := "Images/" + folder.Icon
 	background := "Images/" + folder.Background
 

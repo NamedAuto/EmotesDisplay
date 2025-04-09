@@ -88,41 +88,86 @@ func findAvailablePort(startPort, endPort int) (int, error) {
 }
 
 func temp(db *gorm.DB, paths config.MyPaths, folders config.Folder) {
-	channelMap, _ := resize.GenerateEmoteMap(db,
-		paths.ChannelEmotePath,
-		folders.ChannelEmote,
-		paths.ResizedChannelEmotePath,
-		":_",
-		":")
-	channelKeys := generateKeyArray(channelMap)
-
-	globalMap, _ := resize.GenerateEmoteMap(db,
-		paths.GlobalEmotePath,
-		folders.GlobalEmote,
-		paths.ResizedGlobalEmotePath,
-		":",
-		":")
-	globalKeys := generateKeyArray(globalMap)
-
-	randomMap, _ := resize.GenerateEmoteMap(db,
-		paths.PreviewEmotePath,
-		folders.PreviewEmote,
-		paths.ResizedPreviewEmotePath,
-		"",
-		"")
-	randomKeys := generateKeyArray(randomMap)
-
-	emotesMap := config.EmotesMap{
-		ChannelMap:  channelMap,
-		ChannelKeys: channelKeys,
-		GlobalMap:   globalMap,
-		GlobalKeys:  globalKeys,
-		RandomMap:   randomMap,
-		RandomKeys:  randomKeys,
+	type result struct {
+		ChannelMap  map[string]string
+		ChannelKeys []string
+		GlobalMap   map[string]string
+		GlobalKeys  []string
+		RandomMap   map[string]string
+		RandomKeys  []string
 	}
 
+	resultChan := make(chan result)
+
+	go func() {
+		channelMap, _ := resize.GenerateEmoteMap(db,
+			paths.ChannelEmotePath,
+			folders.ChannelEmote,
+			paths.ResizedChannelEmotePath,
+			":_",
+			":")
+		channelKeys := generateKeyArray(channelMap)
+		resultChan <- result{ChannelMap: channelMap, ChannelKeys: channelKeys}
+	}()
+
+	go func() {
+		globalMap, _ := resize.GenerateEmoteMap(db,
+			paths.GlobalEmotePath,
+			folders.GlobalEmote,
+			paths.ResizedGlobalEmotePath,
+			":",
+			":")
+		globalKeys := generateKeyArray(globalMap)
+		resultChan <- result{GlobalMap: globalMap, GlobalKeys: globalKeys}
+	}()
+
+	go func() {
+		randomMap, _ := resize.GenerateEmoteMap(db,
+			paths.PreviewEmotePath,
+			folders.PreviewEmote,
+			paths.ResizedPreviewEmotePath,
+			"",
+			"")
+		randomKeys := generateKeyArray(randomMap)
+		resultChan <- result{RandomMap: randomMap, RandomKeys: randomKeys}
+	}()
+
+	finalResult := result{}
+	for range 3 {
+		r := <-resultChan
+		if r.ChannelMap != nil {
+			finalResult.ChannelMap = r.ChannelMap
+			finalResult.ChannelKeys = r.ChannelKeys
+		}
+		if r.GlobalMap != nil {
+			finalResult.GlobalMap = r.GlobalMap
+			finalResult.GlobalKeys = r.GlobalKeys
+		}
+		if r.RandomMap != nil {
+			finalResult.RandomMap = r.RandomMap
+			finalResult.RandomKeys = r.RandomKeys
+		}
+	}
+
+	emotesMap := config.EmotesMap{
+		ChannelMap:  finalResult.ChannelMap,
+		ChannelKeys: finalResult.ChannelKeys,
+		GlobalMap:   finalResult.GlobalMap,
+		GlobalKeys:  finalResult.GlobalKeys,
+		RandomMap:   finalResult.RandomMap,
+		RandomKeys:  finalResult.RandomKeys,
+	}
+
+	// emotesMap := config.EmotesMap{
+	// 	ChannelMap:  channelMap,
+	// 	ChannelKeys: channelKeys,
+	// 	GlobalMap:   globalMap,
+	// 	GlobalKeys:  globalKeys,
+	// 	RandomMap:   randomMap,
+	// 	RandomKeys:  randomKeys,
+	// }
+
 	config.AssignEmoteMap(emotesMap)
-	fmt.Println("FINISHED RESIZING")
 }
 
 func generateKeyArray(myMap map[string]string) []string {

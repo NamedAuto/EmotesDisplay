@@ -58,12 +58,7 @@ var endpoints Endpoint
 var folder Folder
 
 func init() {
-	log.Println("Initializing")
-	godotenv.Load()
-
-	folder = initFolderNames()
-	myPaths = setupFilePaths(folder)
-	endpoints = initEndpointNames()
+	configSetup()
 
 	// channelMap := generateEmoteMap(myPaths.ChannelEmotePath, ":_", ":")
 	// channelKeys := generateKeyArray(channelMap)
@@ -85,6 +80,15 @@ func init() {
 	// for key, value := range emoteMap {
 	// 	fmt.Printf("%s: %s\n", key, value)
 	// }
+}
+
+func configSetup() {
+	log.Println("Initializing")
+	godotenv.Load()
+
+	folder = initFolderNames()
+	myPaths = setupFilePaths(folder)
+	endpoints = initEndpointNames()
 }
 
 func initEndpointNames() Endpoint {

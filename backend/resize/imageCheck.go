@@ -46,37 +46,37 @@ func getHashOfImage(imagePath string) (string, error) {
 }
 
 func GenerateEmoteMap(db *gorm.DB,
-	folderDir string,
-	folderName string,
+	originalDir string,
+	originalFolderName string,
 	resizeDir string,
 	prefix string,
 	suffix string) (map[string]string, error) {
 
 	resultMap := make(map[string]string)
-	folderImageSet := getImagesInFolder(folderDir)
+	folderImageSet := getImagesInFolder(originalDir)
 
 	var err error
 	resultMap, folderImageSet, err = compareDbWithFolder(folderImageSet,
-		db, resultMap, folderName, folderDir, resizeDir, prefix, suffix)
+		db, resultMap, originalFolderName, originalDir, resizeDir, prefix, suffix)
 
 	if err != nil {
 		return resultMap, err
 	}
 
 	for img := range folderImageSet {
-		fileSize := GetFileSize(filepath.Join(folderDir, img))
+		fileSize := GetFileSize(filepath.Join(originalDir, img))
 		if fileSize > 100000 {
 			// Check image size and if too big
 			// Resize image
 			// Place in resize folder
 			// Place key and path into map
-			createAndSaveResizedImage(folderDir, resizeDir, img, 200)
-			hash, err := getHashOfImage(filepath.Join(folderDir, img))
+			createAndSaveResizedImage(originalDir, resizeDir, img, 200)
+			hash, err := getHashOfImage(filepath.Join(originalDir, img))
 			if err != nil {
 
 			}
 
-			tempImg := database.Image{Name: img, ResizedName: img, Folder: folderName, Hash: hash}
+			tempImg := database.Image{Name: img, ResizedName: img, Folder: originalFolderName, Hash: hash}
 
 			result := db.Save(&tempImg)
 			if result.Error != nil {
@@ -90,7 +90,7 @@ func GenerateEmoteMap(db *gorm.DB,
 
 		} else {
 			fmt.Println("File smaller than criteria. Not resizing")
-			key, value := getKeyValue(img, folderDir, prefix, suffix)
+			key, value := getKeyValue(img, originalDir, prefix, suffix)
 			resultMap[key] = value
 		}
 	}
@@ -220,22 +220,22 @@ func getWidthAndHeight(imagePath string) (width int, height int) {
 func compareDbWithFolder(imageSet map[string]struct{},
 	db *gorm.DB,
 	resultMap map[string]string,
-	folderName string,
-	folderDir string,
+	originalFolderName string,
+	originalDir string,
 	resizeDir string,
 	prefix string,
 	suffix string,
 ) (map[string]string, map[string]struct{}, error) {
 
 	var images []database.Image
-	result := db.Where("folder = ?", folderName).Find(&images)
+	result := db.Where("folder = ?", originalFolderName).Find(&images)
 
 	if result.Error != nil {
-		fmt.Println("Error retrieving db info for images:", result.Error)
+		fmt.Println("Error retrieving db info for images: ", result.Error)
 		return resultMap, imageSet, result.Error
 
 	} else if result.RowsAffected == 0 {
-		fmt.Println("No matches in db to the folder images:", folderName)
+		fmt.Println("No matches in db to the folder images in: ", originalFolderName)
 		return resultMap, imageSet, nil
 
 	}
@@ -246,7 +246,7 @@ func compareDbWithFolder(imageSet map[string]struct{},
 		if _, exists := imageSet[img.Name]; exists {
 			fmt.Println(img.Name, "exists in the set!")
 
-			hash, err := getHashOfImage(filepath.Join(folderDir, img.Name))
+			hash, err := getHashOfImage(filepath.Join(originalDir, img.Name))
 			if err != nil {
 				fmt.Println("Error getting hash of image ", err)
 				return resultMap, imageSet, err
@@ -268,7 +268,7 @@ func compareDbWithFolder(imageSet map[string]struct{},
 			*/
 			if hash != img.Hash {
 
-				fileSize := GetFileSize(filepath.Join(folderDir, img.Name))
+				fileSize := GetFileSize(filepath.Join(originalDir, img.Name))
 				if fileSize > 100000 {
 					fmt.Println("Resizing image")
 					img.Hash = hash
@@ -281,7 +281,7 @@ func compareDbWithFolder(imageSet map[string]struct{},
 						fmt.Println("Image saved successfully!")
 					}
 
-					createAndSaveResizedImage(folderDir, resizeDir, img.Name, 200)
+					createAndSaveResizedImage(originalDir, resizeDir, img.Name, 200)
 
 					key, value := getKeyValue(img.Name, resizeDir, prefix, suffix)
 					resultMap[key] = value
@@ -289,7 +289,7 @@ func compareDbWithFolder(imageSet map[string]struct{},
 				} else {
 					fmt.Println("Db image hash no longer matches and is smaller than criteria")
 					deleteImgFromDbAndFolder(db, img, resizeDir+img.Name)
-					key, value := getKeyValue(img.Name, folderDir, prefix, suffix)
+					key, value := getKeyValue(img.Name, originalDir, prefix, suffix)
 					resultMap[key] = value
 
 				}

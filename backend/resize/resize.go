@@ -143,16 +143,10 @@ func resizeImage(r io.Reader, w io.Writer, mimetype string, newWidth int) error 
 	return nil
 }
 
-func check(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
 func GetFileSize(path string) int64 {
 	fileInfo, err := os.Stat(path)
 	if err != nil {
-		log.Println("Error getting file info:", err)
+		log.Println("Error getting file size: ", err)
 		return 0
 	}
 	return fileInfo.Size()
