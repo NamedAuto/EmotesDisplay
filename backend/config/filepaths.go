@@ -9,12 +9,15 @@ import (
 func setupFilePaths(folder Folder) MyPaths {
 	env := os.Getenv("ENV")
 
-	channelEmote := "Images/Emotes/" + folder.ChannelEmote
-	resizedChannelEmote := "AppData/" + channelEmote
-	globalEmote := "Images/Emotes/" + folder.GlobalEmote
-	resizedGlobalEmote := "AppData/" + globalEmote
-	previewEmote := "Images/Emotes/" + folder.PreviewEmote
-	resizedPreviewEmote := "AppData/" + previewEmote
+	mainBase := "Images/Emotes/"
+	resizeBase := "AppData/ResizedImages/"
+
+	channelEmote := mainBase + folder.ChannelEmote
+	resizedChannelEmote := resizeBase + folder.ResizedChannelEmote
+	globalEmote := mainBase + folder.GlobalEmote
+	resizedGlobalEmote := resizeBase + folder.GlobalEmote
+	previewEmote := mainBase + folder.PreviewEmote
+	resizedPreviewEmote := resizeBase + folder.PreviewEmote
 	icon := "Images/" + folder.Icon
 	background := "Images/" + folder.Background
 

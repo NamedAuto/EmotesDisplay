@@ -64,14 +64,14 @@ func GenerateEmoteMap(db *gorm.DB,
 	}
 
 	for img := range folderImageSet {
-		fileSize := GetFileSize(folderDir + img)
+		fileSize := GetFileSize(filepath.Join(folderDir, img))
 		if fileSize > 100000 {
 			// Check image size and if too big
 			// Resize image
 			// Place in resize folder
 			// Place key and path into map
 			createAndSaveResizedImage(folderDir, resizeDir, img, 200)
-			hash, err := getHashOfImage(folderDir + img)
+			hash, err := getHashOfImage(filepath.Join(folderDir, img))
 			if err != nil {
 
 			}
@@ -149,19 +149,12 @@ func createAndSaveResizedImage(originalDir string,
 	fmt.Println(resizedDir)
 	fmt.Println(file)
 
-	inputFile, err := os.Open(originalDir + file)
+	inputFile, err := os.Open(filepath.Join(originalDir, file))
 	if err != nil {
 		fmt.Println("Error opening input file:", err)
 		return
 	}
 	defer inputFile.Close()
-
-	outputFile, err := os.Create(resizedDir + file)
-	if err != nil {
-		fmt.Println("Error creating output file:", err)
-		return
-	}
-	defer outputFile.Close()
 
 	mimetype, err := getMimeType(inputFile)
 
@@ -170,7 +163,15 @@ func createAndSaveResizedImage(originalDir string,
 	}
 	fmt.Println(mimetype)
 
-	if mimetype == "img/jpeg" || mimetype == "img/png" || mimetype == "img/webp" {
+	if mimetype == "image/jpeg" || mimetype == "image/png" || mimetype == "image/webp" {
+
+		outputFile, err := os.Create(filepath.Join(resizedDir, file))
+		if err != nil {
+			fmt.Println("Error creating output file:", err)
+			return
+		}
+		defer outputFile.Close()
+
 		err = resizeImage(inputFile, outputFile, mimetype, newSize)
 		if err != nil {
 			fmt.Println("Error generating resized image:", err)
@@ -245,7 +246,7 @@ func compareDbWithFolder(imageSet map[string]struct{},
 		if _, exists := imageSet[img.Name]; exists {
 			fmt.Println(img.Name, "exists in the set!")
 
-			hash, err := getHashOfImage(folderDir + img.Name)
+			hash, err := getHashOfImage(filepath.Join(folderDir, img.Name))
 			if err != nil {
 				fmt.Println("Error getting hash of image ", err)
 				return resultMap, imageSet, err
@@ -267,7 +268,7 @@ func compareDbWithFolder(imageSet map[string]struct{},
 			*/
 			if hash != img.Hash {
 
-				fileSize := GetFileSize(folderDir + img.Name)
+				fileSize := GetFileSize(filepath.Join(folderDir, img.Name))
 				if fileSize > 100000 {
 					fmt.Println("Resizing image")
 					img.Hash = hash
@@ -312,7 +313,7 @@ func compareDbWithFolder(imageSet map[string]struct{},
 				fmt.Println("Image deleted successfully!")
 			}
 
-			err := os.Remove(resizeDir + img.Name)
+			err := os.Remove(filepath.Join(resizeDir, img.Name))
 			if err != nil {
 				// error deleting file
 			}
