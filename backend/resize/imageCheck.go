@@ -108,33 +108,6 @@ func GenerateEmoteMap(db *gorm.DB,
 	return resultMap, basicMap, nil
 }
 
-func removeExtFromName(name string) string {
-	temp := strings.TrimSuffix(name, filepath.Ext(name))
-	return strings.ToLower(temp)
-}
-
-func getKeyValue(imageName string, path string, prefix string, suffix string) (string, string) {
-	// name := strings.TrimSuffix(imageName, filepath.Ext(imageName))
-	key := fmt.Sprintf("%s%s%s", prefix, imageName, suffix)
-	newPath := filepath.Join(path, imageName)
-
-	return key, newPath
-}
-
-func saveImgToDbAndFolder(db *gorm.DB, img database.Image, folderPath string, image string) error {
-	result := db.Save(&img)
-	if result.Error != nil {
-		fmt.Println("Error saving image info from db:", result.Error)
-		return result.Error
-	} else {
-		fmt.Println("Image saved successfully!")
-	}
-
-	// TODO: Save image to resizedDir folder
-
-	return nil
-}
-
 func deleteImgFromDbAndFolder(db *gorm.DB, img database.Image, folderPath string) error {
 	result := db.Delete(&img)
 	if result.Error != nil {
@@ -339,10 +312,12 @@ func updateMaps(resultMap map[string]config.EmotePathInfo,
 	prefix string,
 	suffix string,
 	isResized bool) {
-	cleanName := removeExtFromName(imageName)
-	key, value := getKeyValue(imageName, dir, prefix, suffix)
+	cleanName := strings.TrimSuffix(imageName, filepath.Ext(imageName))
+	key := fmt.Sprintf("%s%s%s", prefix, strings.ToLower(cleanName), suffix)
+
 	basicMap[cleanName] = imageName
-	resultMap[key] = config.EmotePathInfo{Path: value, IsResized: isResized}
+	path := filepath.Join(dir, imageName)
+	resultMap[key] = config.EmotePathInfo{Path: path, IsResized: isResized}
 }
 
 /*

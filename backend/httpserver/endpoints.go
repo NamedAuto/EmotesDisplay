@@ -46,27 +46,31 @@ func configureEmoteEndpoint(mux *http.ServeMux,
 	path string,
 	resizedPath string,
 	endpoint string,
-	basicMap map[string]string,
+	prefix string,
+	suffix string,
 	emoteMap map[string]config.EmotePathInfo,
 	errMsg string,
 ) {
 	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
 		filename := strings.TrimPrefix(r.URL.Path, endpoint)
+		key := prefix + filename + suffix
 
-		if info, exists := emoteMap[filename]; exists {
-			fmt.Printf("Key exists! File: %s\n", filename)
-			// info := emoteMap[file]
-
-			var filePath string
+		if info, exists := emoteMap[key]; exists {
+			fmt.Printf("Key exists! File: %s\n", key)
+			var filePathToUse string
 			if info.IsResized {
-				filePath = resizedPath
+				filePathToUse = resizedPath
 			} else {
-				filePath = path
+				filePathToUse = path
 			}
 
-			fmt.Println(filePath)
-			http.ServeFile(w, r, filepath.Join(filePath, filename))
-			return
+			for _, ext := range extensions {
+				fullPath := filepath.Join(filePathToUse, filename+ext)
+				if _, err := os.Stat(fullPath); err == nil {
+					http.ServeFile(w, r, fullPath)
+					return
+				}
+			}
 
 		} else {
 			fmt.Println("Key does not exist!")
@@ -382,7 +386,8 @@ func ConfigureEndpoints(mux *http.ServeMux,
 		myPaths.PreviewEmotePath,
 		myPaths.ResizedPreviewEmotePath,
 		endpoints.PreviewEmote,
-		emotesMap.RandomMapBasic,
+		"",
+		"",
 		emotesMap.RandomMap,
 		"Random Emote not found",
 	)

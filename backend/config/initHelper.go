@@ -25,6 +25,11 @@ func generateEmoteMap(path string, prefix string, suffix string) map[string]stri
 		}
 	}
 
+	println("OLD ONE")
+	for key, value := range emoteMap {
+		fmt.Printf("Key: %s, Value: %v\n", key, value)
+	}
+
 	return emoteMap
 }
 

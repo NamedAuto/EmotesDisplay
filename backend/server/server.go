@@ -179,6 +179,7 @@ func temp(db *gorm.DB, paths config.MyPaths, folders config.Folder) config.Emote
 	// 	RandomKeys:  randomKeys,
 	// }
 
+	printEmotesMap(emotesMap)
 	return emotesMap
 }
 
