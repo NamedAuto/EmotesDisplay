@@ -27,9 +27,9 @@ func StartServer(ctx context.Context) {
 
 	myPaths := config.GetMyPaths()
 	endpoints := config.GetMyEndpoints()
-	emoteMap := config.GetEmoteMap()
+	// emoteMap := config.GetEmoteMap()
 	folders := config.GetFolderNames()
-	go temp(db, myPaths, folders)
+	emoteMap := temp(db, myPaths, folders)
 
 	myyoutube.StartUpApiCheck(db)
 	go myyoutube.WaitUntilQuotaReset(db, handler)
@@ -55,7 +55,7 @@ func StartServer(ctx context.Context) {
 	}
 
 	go websocketserver.StartWebSocketServer(ctx, mux, handler, db, emoteMap, endpoints)
-	go httpserver.StartHttpServer(mux, db, myPaths, endpoints)
+	go httpserver.StartHttpServer(mux, db, myPaths, endpoints, emoteMap)
 }
 
 func isPortAvailable(port int) bool {
@@ -87,49 +87,61 @@ func findAvailablePort(startPort, endPort int) (int, error) {
 	return 0, fmt.Errorf("no available port found in the range %d-%d", startPort, endPort)
 }
 
-func temp(db *gorm.DB, paths config.MyPaths, folders config.Folder) {
+func temp(db *gorm.DB, paths config.MyPaths, folders config.Folder) config.EmotesMap {
 	type result struct {
-		ChannelMap  map[string]string
-		ChannelKeys []string
-		GlobalMap   map[string]string
-		GlobalKeys  []string
-		RandomMap   map[string]string
-		RandomKeys  []string
+		ChannelMap      map[string]config.EmotePathInfo
+		ChannelMapBasic map[string]string
+		ChannelKeys     []string
+		GlobalMap       map[string]config.EmotePathInfo
+		GlobalMapBasic  map[string]string
+		GlobalKeys      []string
+		RandomMap       map[string]config.EmotePathInfo
+		RandomMapBasic  map[string]string
+		RandomKeys      []string
 	}
 
 	resultChan := make(chan result)
 
 	go func() {
-		channelMap, _ := resize.GenerateEmoteMap(db,
+		channelMap, basicMap, _ := resize.GenerateEmoteMap(db,
 			paths.ChannelEmotePath,
 			folders.ChannelEmote,
 			paths.ResizedChannelEmotePath,
 			":_",
 			":")
 		channelKeys := generateKeyArray(channelMap)
-		resultChan <- result{ChannelMap: channelMap, ChannelKeys: channelKeys}
+		resultChan <- result{ChannelMap: channelMap,
+			ChannelMapBasic: basicMap,
+			ChannelKeys:     channelKeys,
+		}
 	}()
 
 	go func() {
-		globalMap, _ := resize.GenerateEmoteMap(db,
+		globalMap, basicMap, _ := resize.GenerateEmoteMap(db,
 			paths.GlobalEmotePath,
 			folders.GlobalEmote,
 			paths.ResizedGlobalEmotePath,
 			":",
 			":")
 		globalKeys := generateKeyArray(globalMap)
-		resultChan <- result{GlobalMap: globalMap, GlobalKeys: globalKeys}
+		resultChan <- result{GlobalMap: globalMap,
+			GlobalMapBasic: basicMap,
+			GlobalKeys:     globalKeys,
+		}
 	}()
 
 	go func() {
-		randomMap, _ := resize.GenerateEmoteMap(db,
+		randomMap, basicMap, _ := resize.GenerateEmoteMap(db,
 			paths.PreviewEmotePath,
 			folders.PreviewEmote,
 			paths.ResizedPreviewEmotePath,
 			"",
 			"")
 		randomKeys := generateKeyArray(randomMap)
-		resultChan <- result{RandomMap: randomMap, RandomKeys: randomKeys}
+		resultChan <- result{RandomMap: randomMap,
+			RandomMapBasic: basicMap,
+			RandomKeys:     randomKeys,
+		}
 	}()
 
 	finalResult := result{}
@@ -167,14 +179,34 @@ func temp(db *gorm.DB, paths config.MyPaths, folders config.Folder) {
 	// 	RandomKeys:  randomKeys,
 	// }
 
-	config.AssignEmoteMap(emotesMap)
+	return emotesMap
 }
 
-func generateKeyArray(myMap map[string]string) []string {
+func generateKeyArray(myMap map[string]config.EmotePathInfo) []string {
 	keys := make([]string, 0, len(myMap))
 	for key := range myMap {
 		keys = append(keys, key)
 	}
 
 	return keys
+}
+
+func printEmotesMap(emotesMap config.EmotesMap) {
+	// Print contents of ChannelMap
+	fmt.Println("ChannelMap:")
+	for key, value := range emotesMap.ChannelMap {
+		fmt.Printf("Key: %s, Value: %v\n", key, value)
+	}
+
+	// Print contents of GlobalMap
+	fmt.Println("\nGlobalMap:")
+	for key, value := range emotesMap.GlobalMap {
+		fmt.Printf("Key: %s, Value: %v\n", key, value)
+	}
+
+	// Print contents of RandomMap
+	fmt.Println("\nRandomMap:")
+	for key, value := range emotesMap.RandomMap {
+		fmt.Printf("Key: %s, Value: %v\n", key, value)
+	}
 }

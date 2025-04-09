@@ -43,13 +43,21 @@ type Endpoint struct {
 	Default       string
 }
 
+type EmotePathInfo struct {
+	Path      string
+	IsResized bool
+}
+
 type EmotesMap struct {
-	ChannelMap  map[string]string
-	ChannelKeys []string
-	GlobalMap   map[string]string
-	GlobalKeys  []string
-	RandomMap   map[string]string
-	RandomKeys  []string
+	ChannelMap      map[string]EmotePathInfo
+	ChannelMapBasic map[string]string
+	ChannelKeys     []string
+	GlobalMap       map[string]EmotePathInfo
+	GlobalKeys      []string
+	GlobalMapBasic  map[string]string
+	RandomMap       map[string]EmotePathInfo
+	RandomMapBasic  map[string]string
+	RandomKeys      []string
 }
 
 var myPaths MyPaths

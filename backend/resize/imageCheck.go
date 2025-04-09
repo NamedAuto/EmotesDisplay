@@ -16,6 +16,7 @@ import (
 	// "strings"
 
 	// "github.com/NamedAuto/EmotesDisplay/backend/database"
+	"github.com/NamedAuto/EmotesDisplay/backend/config"
 	"github.com/NamedAuto/EmotesDisplay/backend/database"
 	"gorm.io/gorm"
 )
@@ -50,17 +51,25 @@ func GenerateEmoteMap(db *gorm.DB,
 	originalFolderName string,
 	resizeDir string,
 	prefix string,
-	suffix string) (map[string]string, error) {
+	suffix string) (map[string]config.EmotePathInfo, map[string]string, error) {
 
-	resultMap := make(map[string]string)
+	resultMap := make(map[string]config.EmotePathInfo)
+	basicMap := make(map[string]string)
 	folderImageSet := getImagesInFolder(originalDir)
 
 	var err error
 	resultMap, folderImageSet, err = compareDbWithFolder(folderImageSet,
-		db, resultMap, originalFolderName, originalDir, resizeDir, prefix, suffix)
+		db,
+		resultMap,
+		basicMap,
+		originalFolderName,
+		originalDir,
+		resizeDir,
+		prefix,
+		suffix)
 
 	if err != nil {
-		return resultMap, err
+		return resultMap, basicMap, err
 	}
 
 	for img := range folderImageSet {
@@ -85,25 +94,28 @@ func GenerateEmoteMap(db *gorm.DB,
 				fmt.Println("Image saved to db successfully!")
 			}
 
-			key, value := getKeyValue(img, resizeDir, prefix, suffix)
-			resultMap[key] = value
+			updateMaps(resultMap, basicMap, img, resizeDir, prefix, suffix, true)
 
 		} else {
 			fmt.Println("File smaller than criteria. Not resizing")
-			key, value := getKeyValue(img, originalDir, prefix, suffix)
-			resultMap[key] = value
+			updateMaps(resultMap, basicMap, img, originalDir, prefix, suffix, false)
 		}
 	}
 
 	// loop through remaining set
 	// save to resultMap
 
-	return resultMap, nil
+	return resultMap, basicMap, nil
+}
+
+func removeExtFromName(name string) string {
+	temp := strings.TrimSuffix(name, filepath.Ext(name))
+	return strings.ToLower(temp)
 }
 
 func getKeyValue(imageName string, path string, prefix string, suffix string) (string, string) {
-	name := strings.TrimSuffix(imageName, filepath.Ext(imageName))
-	key := fmt.Sprintf("%s%s%s", prefix, strings.ToLower(name), suffix)
+	// name := strings.TrimSuffix(imageName, filepath.Ext(imageName))
+	key := fmt.Sprintf("%s%s%s", prefix, imageName, suffix)
 	newPath := filepath.Join(path, imageName)
 
 	return key, newPath
@@ -219,13 +231,14 @@ func getWidthAndHeight(imagePath string) (width int, height int) {
 
 func compareDbWithFolder(imageSet map[string]struct{},
 	db *gorm.DB,
-	resultMap map[string]string,
+	resultMap map[string]config.EmotePathInfo,
+	basicMap map[string]string,
 	originalFolderName string,
 	originalDir string,
 	resizeDir string,
 	prefix string,
 	suffix string,
-) (map[string]string, map[string]struct{}, error) {
+) (map[string]config.EmotePathInfo, map[string]struct{}, error) {
 
 	var images []database.Image
 	result := db.Where("folder = ?", originalFolderName).Find(&images)
@@ -282,20 +295,16 @@ func compareDbWithFolder(imageSet map[string]struct{},
 					}
 
 					createAndSaveResizedImage(originalDir, resizeDir, img.Name, 200)
-
-					key, value := getKeyValue(img.Name, resizeDir, prefix, suffix)
-					resultMap[key] = value
+					updateMaps(resultMap, basicMap, img.Name, resizeDir, prefix, suffix, true)
 
 				} else {
 					fmt.Println("Db image hash no longer matches and is smaller than criteria")
 					deleteImgFromDbAndFolder(db, img, resizeDir+img.Name)
-					key, value := getKeyValue(img.Name, originalDir, prefix, suffix)
-					resultMap[key] = value
+					updateMaps(resultMap, basicMap, img.Name, originalDir, prefix, suffix, false)
 
 				}
 			} else {
-				key, value := getKeyValue(img.Name, resizeDir, prefix, suffix)
-				resultMap[key] = value
+				updateMaps(resultMap, basicMap, img.Name, resizeDir, prefix, suffix, true)
 			}
 
 			delete(imageSet, img.Name)
@@ -321,6 +330,19 @@ func compareDbWithFolder(imageSet map[string]struct{},
 	}
 
 	return resultMap, imageSet, nil
+}
+
+func updateMaps(resultMap map[string]config.EmotePathInfo,
+	basicMap map[string]string,
+	imageName string,
+	dir string,
+	prefix string,
+	suffix string,
+	isResized bool) {
+	cleanName := removeExtFromName(imageName)
+	key, value := getKeyValue(imageName, dir, prefix, suffix)
+	basicMap[cleanName] = imageName
+	resultMap[key] = config.EmotePathInfo{Path: value, IsResized: isResized}
 }
 
 /*

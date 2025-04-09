@@ -14,9 +14,10 @@ import (
 func StartHttpServer(mux *http.ServeMux,
 	db *gorm.DB,
 	myPaths config.MyPaths,
-	endpoints config.Endpoint) {
+	endpoints config.Endpoint,
+	emotesMap config.EmotesMap) {
 
-	ConfigureEndpoints(mux, db, myPaths, endpoints)
+	ConfigureEndpoints(mux, db, myPaths, endpoints, emotesMap)
 
 	var port database.Port
 	db.First(&port)

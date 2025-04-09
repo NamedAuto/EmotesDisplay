@@ -42,12 +42,55 @@ func AssignAssets(embed embed.FS) {
 	assets = embed
 }
 
-func configureFolderEndpoint(mux *http.ServeMux, path string, endpoint string, errMsg string) {
+func configureEmoteEndpoint(mux *http.ServeMux,
+	path string,
+	resizedPath string,
+	endpoint string,
+	basicMap map[string]string,
+	emoteMap map[string]config.EmotePathInfo,
+	errMsg string,
+) {
+	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
+		filename := strings.TrimPrefix(r.URL.Path, endpoint)
+
+		if info, exists := emoteMap[filename]; exists {
+			fmt.Printf("Key exists! File: %s\n", filename)
+			// info := emoteMap[file]
+
+			var filePath string
+			if info.IsResized {
+				filePath = resizedPath
+			} else {
+				filePath = path
+			}
+
+			fmt.Println(filePath)
+			http.ServeFile(w, r, filepath.Join(filePath, filename))
+			return
+
+		} else {
+			fmt.Println("Key does not exist!")
+		}
+
+		http.Error(w, errMsg, http.StatusNotFound)
+	})
+}
+
+func configureFolderEndpoint(mux *http.ServeMux,
+	path string,
+	resizedPath string,
+	endpoint string,
+	emotesMap config.EmotesMap,
+	errMsg string,
+) {
 	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
 		filename := strings.TrimPrefix(r.URL.Path, endpoint)
 		var filePath string
 
 		for _, ext := range extensions {
+
+			// if(emotesMap[filename])
+
 			filePath = filepath.Join(path, filename+ext)
 			if _, err := os.Stat(filePath); err == nil {
 				http.ServeFile(w, r, filePath)
@@ -313,32 +356,43 @@ func configureDefaultEndpoint(mux *http.ServeMux, endpoint string) {
 func ConfigureEndpoints(mux *http.ServeMux,
 	db *gorm.DB,
 	myPaths config.MyPaths,
-	endpoints config.Endpoint) {
+	endpoints config.Endpoint,
+	emotesMap config.EmotesMap,
+) {
 	configureFolderEndpoint(
 		mux,
 		myPaths.ChannelEmotePath,
+		myPaths.ResizedChannelEmotePath,
 		endpoints.ChannelEmote,
+		emotesMap,
 		"Channel Emote not found",
 	)
 
 	configureFolderEndpoint(
 		mux,
 		myPaths.GlobalEmotePath,
+		myPaths.ResizedGlobalEmotePath,
 		endpoints.GlobalEmote,
+		emotesMap,
 		"Global Emote not found",
 	)
 
-	configureFolderEndpoint(
+	configureEmoteEndpoint(
 		mux,
 		myPaths.PreviewEmotePath,
+		myPaths.ResizedPreviewEmotePath,
 		endpoints.PreviewEmote,
+		emotesMap.RandomMapBasic,
+		emotesMap.RandomMap,
 		"Random Emote not found",
 	)
 
 	configureFolderEndpoint(
 		mux,
 		myPaths.IconPath,
+		"",
 		endpoints.Icon,
+		emotesMap,
 		"Icon not found",
 	)
 
