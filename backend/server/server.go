@@ -11,6 +11,7 @@ import (
 	"github.com/NamedAuto/EmotesDisplay/backend/database"
 	"github.com/NamedAuto/EmotesDisplay/backend/httpserver"
 	"github.com/NamedAuto/EmotesDisplay/backend/myyoutube"
+	"github.com/NamedAuto/EmotesDisplay/backend/resize"
 	"github.com/NamedAuto/EmotesDisplay/backend/websocketserver"
 	"gorm.io/gorm"
 )
@@ -23,6 +24,12 @@ var db *gorm.DB
 func StartServer(ctx context.Context) {
 	log.Println("Server starting")
 	db = database.StartDatabase("AppData/emotesDisplay.db")
+
+	myPaths := config.GetMyPaths()
+	endpoints := config.GetMyEndpoints()
+	emoteMap := config.GetEmoteMap()
+	folders := config.GetFolderNames()
+	go temp(db, myPaths, folders)
 
 	myyoutube.StartUpApiCheck(db)
 	go myyoutube.WaitUntilQuotaReset(db, handler)
@@ -46,10 +53,6 @@ func StartServer(ctx context.Context) {
 			db.Model(&p).Update("Port", port)
 		}
 	}
-
-	myPaths := config.GetMyPaths()
-	endpoints := config.GetMyEndpoints()
-	emoteMap := config.GetEmoteMap()
 
 	go websocketserver.StartWebSocketServer(ctx, mux, handler, db, emoteMap, endpoints)
 	go httpserver.StartHttpServer(mux, db, myPaths, endpoints)
@@ -82,4 +85,51 @@ func findAvailablePort(startPort, endPort int) (int, error) {
 		}
 	}
 	return 0, fmt.Errorf("no available port found in the range %d-%d", startPort, endPort)
+}
+
+func temp(db *gorm.DB, paths config.MyPaths, folders config.Folder) {
+	channelMap, _ := resize.GenerateEmoteMap(db,
+		paths.ChannelEmotePath,
+		folders.ChannelEmote,
+		paths.ResizedChannelEmotePath,
+		":_",
+		":")
+	channelKeys := generateKeyArray(channelMap)
+
+	globalMap, _ := resize.GenerateEmoteMap(db,
+		paths.GlobalEmotePath,
+		folders.GlobalEmote,
+		paths.ResizedGlobalEmotePath,
+		":",
+		":")
+	globalKeys := generateKeyArray(globalMap)
+
+	randomMap, _ := resize.GenerateEmoteMap(db,
+		paths.PreviewEmotePath,
+		folders.PreviewEmote,
+		paths.ResizedPreviewEmotePath,
+		"",
+		"")
+	randomKeys := generateKeyArray(randomMap)
+
+	emotesMap := config.EmotesMap{
+		ChannelMap:  channelMap,
+		ChannelKeys: channelKeys,
+		GlobalMap:   globalMap,
+		GlobalKeys:  globalKeys,
+		RandomMap:   randomMap,
+		RandomKeys:  randomKeys,
+	}
+
+	config.AssignEmoteMap(emotesMap)
+	fmt.Println("FINISHED RESIZING")
+}
+
+func generateKeyArray(myMap map[string]string) []string {
+	keys := make([]string, 0, len(myMap))
+	for key := range myMap {
+		keys = append(keys, key)
+	}
+
+	return keys
 }

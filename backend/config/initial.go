@@ -7,20 +7,26 @@ import (
 )
 
 type MyPaths struct {
-	ChannelEmotePath string
-	GlobalEmotePath  string
-	PreviewEmotePath string
-	IconPath         string
-	BackgroundPath   string
+	ChannelEmotePath        string
+	ResizedChannelEmotePath string
+	GlobalEmotePath         string
+	ResizedGlobalEmotePath  string
+	PreviewEmotePath        string
+	ResizedPreviewEmotePath string
+	IconPath                string
+	BackgroundPath          string
 }
 
 type Folder struct {
-	ChannelEmote string
-	GlobalEmote  string
-	PreviewEmote string
-	Icon         string
-	Yaml         string
-	Background   string
+	ChannelEmote        string
+	ResizedChannelEmote string
+	GlobalEmote         string
+	ResizedGlobalEmote  string
+	PreviewEmote        string
+	ResizedPreviewEmote string
+	Icon                string
+	Yaml                string
+	Background          string
 }
 
 type Endpoint struct {
@@ -49,30 +55,31 @@ type EmotesMap struct {
 var myPaths MyPaths
 var emotesMap EmotesMap
 var endpoints Endpoint
+var folder Folder
 
 func init() {
 	log.Println("Initializing")
 	godotenv.Load()
 
-	folder := initFolderNames()
+	folder = initFolderNames()
 	myPaths = setupFilePaths(folder)
 	endpoints = initEndpointNames()
 
-	channelMap := generateEmoteMap(myPaths.ChannelEmotePath, ":_", ":")
-	channelKeys := generateKeyArray(channelMap)
-	globalMap := generateEmoteMap(myPaths.GlobalEmotePath, ":", ":")
-	globalKeys := generateKeyArray(globalMap)
-	randomMap := generateEmoteMap(myPaths.PreviewEmotePath, "", "")
-	randomKeys := generateKeyArray(randomMap)
+	// channelMap := generateEmoteMap(myPaths.ChannelEmotePath, ":_", ":")
+	// channelKeys := generateKeyArray(channelMap)
+	// globalMap := generateEmoteMap(myPaths.GlobalEmotePath, ":", ":")
+	// globalKeys := generateKeyArray(globalMap)
+	// randomMap := generateEmoteMap(myPaths.PreviewEmotePath, "", "")
+	// randomKeys := generateKeyArray(randomMap)
 
-	emotesMap = EmotesMap{
-		ChannelMap:  channelMap,
-		ChannelKeys: channelKeys,
-		GlobalMap:   globalMap,
-		GlobalKeys:  globalKeys,
-		RandomMap:   randomMap,
-		RandomKeys:  randomKeys,
-	}
+	// emotesMap = EmotesMap{
+	// 	ChannelMap:  channelMap,
+	// 	ChannelKeys: channelKeys,
+	// 	GlobalMap:   globalMap,
+	// 	GlobalKeys:  globalKeys,
+	// 	RandomMap:   randomMap,
+	// 	RandomKeys:  randomKeys,
+	// }
 
 	// fmt.Println("Formatted Emote Map:")
 	// for key, value := range emoteMap {
@@ -98,12 +105,15 @@ func initEndpointNames() Endpoint {
 
 func initFolderNames() Folder {
 	return Folder{
-		ChannelEmote: "ChannelEmotesYT",
-		GlobalEmote:  "GlobalEmotesYT",
-		PreviewEmote: "RandomEmotes",
-		Icon:         "Icons",
-		Yaml:         "Config",
-		Background:   "Background",
+		ChannelEmote:        "ChannelEmotesYT",
+		ResizedChannelEmote: "ResizedChannelEmotesYT",
+		GlobalEmote:         "GlobalEmotesYT",
+		ResizedGlobalEmote:  "ResizedGlobalEmotesYT",
+		PreviewEmote:        "RandomEmotes",
+		ResizedPreviewEmote: "ResizedRandomEmotes",
+		Icon:                "Icons",
+		Yaml:                "Config",
+		Background:          "Background",
 	}
 }
 
@@ -117,4 +127,12 @@ func GetMyEndpoints() Endpoint {
 
 func GetEmoteMap() EmotesMap {
 	return emotesMap
+}
+
+func GetFolderNames() Folder {
+	return folder
+}
+
+func AssignEmoteMap(myMap EmotesMap) {
+	emotesMap = myMap
 }

@@ -10,8 +10,11 @@ func setupFilePaths(folder Folder) MyPaths {
 	env := os.Getenv("ENV")
 
 	channelEmote := "Images/Emotes/" + folder.ChannelEmote
+	resizedChannelEmote := "AppData/" + channelEmote
 	globalEmote := "Images/Emotes/" + folder.GlobalEmote
+	resizedGlobalEmote := "AppData/" + globalEmote
 	previewEmote := "Images/Emotes/" + folder.PreviewEmote
+	resizedPreviewEmote := "AppData/" + previewEmote
 	icon := "Images/" + folder.Icon
 	background := "Images/" + folder.Background
 
@@ -35,14 +38,20 @@ func setupFilePaths(folder Folder) MyPaths {
 	}
 
 	channelEmotePath := filepath.Join(dir, channelEmote)
+	resizedChannelEmotePath := filepath.Join(dir, resizedChannelEmote)
 	globalEmotePath := filepath.Join(dir, globalEmote)
+	resizedGlobalEmotePath := filepath.Join(dir, resizedGlobalEmote)
 	previewEmotePath := filepath.Join(dir, previewEmote)
+	resizedPreviewEmotePath := filepath.Join(dir, resizedPreviewEmote)
 	iconPath := filepath.Join(dir, icon)
 	backgroundPath := filepath.Join(dir, background)
 
 	return MyPaths{ChannelEmotePath: channelEmotePath,
-		GlobalEmotePath:  globalEmotePath,
-		PreviewEmotePath: previewEmotePath,
-		IconPath:         iconPath,
-		BackgroundPath:   backgroundPath}
+		ResizedChannelEmotePath: resizedChannelEmotePath,
+		GlobalEmotePath:         globalEmotePath,
+		ResizedGlobalEmotePath:  resizedGlobalEmotePath,
+		PreviewEmotePath:        previewEmotePath,
+		ResizedPreviewEmotePath: resizedPreviewEmotePath,
+		IconPath:                iconPath,
+		BackgroundPath:          backgroundPath}
 }

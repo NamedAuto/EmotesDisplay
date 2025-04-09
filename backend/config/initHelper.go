@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -12,7 +13,7 @@ func generateEmoteMap(path string, prefix string, suffix string) map[string]stri
 
 	emoteFiles, err := os.ReadDir(path)
 	if err != nil {
-		fmt.Printf("Error reading directory %s for emotes: %s", path, err)
+		log.Printf("Error reading directory %s for emotes: %s", path, err)
 		return emoteMap
 	}
 

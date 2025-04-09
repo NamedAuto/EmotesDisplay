@@ -110,14 +110,12 @@ func resizeImage(r io.Reader, w io.Writer, mimetype string, newWidth int) error 
 	case "image/jpeg":
 		src, err = jpeg.Decode(r)
 	case "image/png":
-		fmt.Println("Howdy")
 		src, err = png.Decode(r)
-		fmt.Println("yhdow")
 	case "image/webp":
 		src, err = webp.Decode(r)
 	}
 	if err != nil {
-		fmt.Println("erm")
+		fmt.Println("Error decoding image: ", err)
 		return err
 	}
 
@@ -138,6 +136,7 @@ func resizeImage(r io.Reader, w io.Writer, mimetype string, newWidth int) error 
 	}
 
 	if err != nil {
+		fmt.Println("Error encoding image: ", err)
 		return err
 	}
 

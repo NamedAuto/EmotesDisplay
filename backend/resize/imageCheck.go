@@ -5,6 +5,7 @@ import (
 
 	"crypto/sha256"
 	"fmt"
+	"image"
 	"log"
 	"net/http"
 	"os"
@@ -19,57 +20,12 @@ import (
 	"gorm.io/gorm"
 )
 
-func checkFolderForImageChanges(folderSuffix string, folderPath string, db *gorm.DB) {
-	// currentFiles := getCurrentImages(folderPath)
-
-	// var images []database.Image
-	// db.Where("folder = ?", folderSuffix).Find(&images)
-
-	// fileNames := make(map[string]struct{})
-
-	// imageFiles, err := os.ReadDir(folderPath)
-	// if err != nil {
-	// 	fmt.Printf("Error reading directory %s for emotes: %s", folderPath, err)
-	// 	// return emoteMap
-	// }
-
-	// for _, file := range imageFiles {
-	// 	if !file.IsDir() {
-	// 		emoteName := strings.TrimSuffix(file.Name(), filepath.Ext(file.Name()))
-	// 		fileNames[emoteName] := struct{}{}
-	// 	}
-	// }
-
-	var images []database.Image
-	result := db.Find(&images)
-	if result.Error != nil {
-		log.Fatalf("Error retrieving images: %v", result.Error)
-	}
-
-	// Loop through all images
-	for _, img := range images {
-		fmt.Printf("Original: %s, Resized: %s, Hash: %s\n", img.Name, img.ResizedName, img.Hash)
-	}
-
-	var image database.Image
-	nameToSearch := "example.jpg" // The name of the image
-	folderToSearch := "folder1"   // The folder where the image is stored
-
-	result2 := db.Where("name = ? AND folder = ?", nameToSearch, folderToSearch).First(&image)
-	if result2.Error != nil {
-		fmt.Println("Image not found:", result2.Error)
-	} else {
-		fmt.Printf("Found image: Name: %s, Folder: %s, Resized: %s, Hash: %s\n",
-			image.Name, image.Folder, image.ResizedName, image.Hash)
-	}
-}
-
-func getCurrentImages(folderPath string) map[string]struct{} {
+func getImagesInFolder(folderPath string) map[string]struct{} {
 	imageSet := make(map[string]struct{})
 
 	files, err := os.ReadDir(folderPath)
 	if err != nil {
-		log.Printf("Error reading directory %s for emotes: %s", folderPath, err)
+		log.Printf("Error reading directory %s for images: %s", folderPath, err)
 		return imageSet
 	}
 
@@ -89,7 +45,7 @@ func getHashOfImage(imagePath string) (string, error) {
 	return fmt.Sprintf("%x", hash), nil
 }
 
-func sss(db *gorm.DB,
+func GenerateEmoteMap(db *gorm.DB,
 	folderDir string,
 	folderName string,
 	resizeDir string,
@@ -97,90 +53,19 @@ func sss(db *gorm.DB,
 	suffix string) (map[string]string, error) {
 
 	resultMap := make(map[string]string)
-	folderImageSet := getCurrentImages(folderDir)
+	folderImageSet := getImagesInFolder(folderDir)
 
-	var images []database.Image
-	result := db.Where("folder = ?", folderName).Find(&images)
+	var err error
+	resultMap, folderImageSet, err = compareDbWithFolder(folderImageSet,
+		db, resultMap, folderName, folderDir, resizeDir, prefix, suffix)
 
-	if result.Error != nil {
-		fmt.Println("Error retrieving images:", result.Error)
-		return resultMap, result.Error
-
-	} else if result.RowsAffected == 0 {
-		fmt.Println("No images found in folder:", folderName)
-		// return resultMap, nil
-
-	} else {
-		for _, img := range images {
-
-			if _, exists := folderImageSet[img.Name]; exists {
-				fmt.Println(img.Name, "exists in the set!")
-
-				hash, err := getHashOfImage(folderDir + img.Name)
-				if err != nil {
-					fmt.Println("Error getting hash of image ", err)
-					return resultMap, err
-				}
-
-				if hash != img.Hash {
-
-					tempPath := filepath.Join(folderDir, img.Name) //folderDir + img.Name
-					fileSize := GetFileSize(tempPath)
-					if fileSize > 1 {
-						img.Hash = hash
-
-						result := db.Save(&img)
-						if result.Error != nil {
-							fmt.Println("Error saving image info from db:", result.Error)
-							return resultMap, result.Error
-						} else {
-							fmt.Println("Image saved successfully!")
-						}
-
-						createAndSaveResizedImage(folderDir, resizeDir, img.Name, 200)
-
-						key, value := getKeyValue(img.Name, resizeDir, prefix, suffix)
-						resultMap[key] = value
-
-					} else {
-						fmt.Println("Image no longer in db and is smaller than criteria")
-						deleteImgFromDbAndFolder(db, img, resizeDir+img.Name)
-						key, value := getKeyValue(img.Name, folderDir, prefix, suffix)
-						resultMap[key] = value
-
-					}
-				} else {
-					key, value := getKeyValue(img.Name, resizeDir, prefix, suffix)
-					resultMap[key] = value
-				}
-
-				delete(folderImageSet, img.Name)
-
-			} else {
-				fmt.Println(img.Name, "is not in the set.")
-				result := db.Delete(&img)
-				if result.Error != nil {
-					fmt.Println("Error deleting image:", result.Error)
-				} else {
-					fmt.Println("Image deleted successfully!")
-				}
-
-				tempPath := filepath.Join(resizeDir, img.Name)
-				err := os.Remove(tempPath)
-				if err != nil {
-					// error deleting file
-				}
-			}
-		}
+	if err != nil {
+		return resultMap, err
 	}
 
-	// check mimetype
 	for img := range folderImageSet {
-		// Check image size and skip if already small
-		tempPath := filepath.Join(folderDir, img) //folderDir + img
-		fileSize := GetFileSize(tempPath)
-		if fileSize > 1 {
-			fmt.Println("HHHH")
+		fileSize := GetFileSize(folderDir + img)
+		if fileSize > 100000 {
 			// Check image size and if too big
 			// Resize image
 			// Place in resize folder
@@ -191,9 +76,14 @@ func sss(db *gorm.DB,
 
 			}
 
-			fmt.Println("THE HASH ", hash)
 			tempImg := database.Image{Name: img, ResizedName: img, Folder: folderName, Hash: hash}
-			saveImgToDbAndFolder(db, tempImg, resizeDir+img, img)
+
+			result := db.Save(&tempImg)
+			if result.Error != nil {
+				fmt.Println("Error saving image info from db:", result.Error)
+			} else {
+				fmt.Println("Image saved to db successfully!")
+			}
 
 			key, value := getKeyValue(img, resizeDir, prefix, suffix)
 			resultMap[key] = value
@@ -274,11 +164,19 @@ func createAndSaveResizedImage(originalDir string,
 	defer outputFile.Close()
 
 	mimetype, err := getMimeType(inputFile)
+
+	if err != nil {
+		fmt.Printf("Error getting the mimetype of: %s %s", file, err)
+	}
 	fmt.Println(mimetype)
 
-	err = resizeImage(inputFile, outputFile, mimetype, newSize)
-	if err != nil {
-		fmt.Println("Error generating resized image:", err)
+	if mimetype == "img/jpeg" || mimetype == "img/png" || mimetype == "img/webp" {
+		err = resizeImage(inputFile, outputFile, mimetype, newSize)
+		if err != nil {
+			fmt.Println("Error generating resized image:", err)
+		}
+	} else {
+		fmt.Println("Skipping non static images")
 	}
 }
 
@@ -291,6 +189,7 @@ func getMimeType(file *os.File) (string, error) {
 		return "", err
 	}
 
+	// Reset to start of file after reading
 	_, err = file.Seek(0, 0)
 	if err != nil {
 		return "", err
@@ -298,6 +197,129 @@ func getMimeType(file *os.File) (string, error) {
 
 	mimeType := http.DetectContentType(buffer)
 	return mimeType, nil
+}
+
+func getWidthAndHeight(imagePath string) (width int, height int) {
+	file, err := os.Open(imagePath)
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return 0, 0
+	}
+	defer file.Close()
+
+	img, _, err := image.DecodeConfig(file)
+	if err != nil {
+		fmt.Println("Error decoding image:", err)
+		return 0, 0
+	}
+
+	return img.Width, img.Height
+}
+
+func compareDbWithFolder(imageSet map[string]struct{},
+	db *gorm.DB,
+	resultMap map[string]string,
+	folderName string,
+	folderDir string,
+	resizeDir string,
+	prefix string,
+	suffix string,
+) (map[string]string, map[string]struct{}, error) {
+
+	var images []database.Image
+	result := db.Where("folder = ?", folderName).Find(&images)
+
+	if result.Error != nil {
+		fmt.Println("Error retrieving db info for images:", result.Error)
+		return resultMap, imageSet, result.Error
+
+	} else if result.RowsAffected == 0 {
+		fmt.Println("No matches in db to the folder images:", folderName)
+		return resultMap, imageSet, nil
+
+	}
+
+	// Loop through Images and check if the names match the ones in the folder set
+	for _, img := range images {
+
+		if _, exists := imageSet[img.Name]; exists {
+			fmt.Println(img.Name, "exists in the set!")
+
+			hash, err := getHashOfImage(folderDir + img.Name)
+			if err != nil {
+				fmt.Println("Error getting hash of image ", err)
+				return resultMap, imageSet, err
+			}
+
+			/*
+				Check if the hash matches
+				If yes
+					the image is unchanged
+					skip over
+				If no
+					The image has been modified
+					Check if it should be resized
+						If yes
+							Resize image, save it and update Image with the new hash
+						If no
+							Skip over image
+							Delete Image from db and resized image from folder
+			*/
+			if hash != img.Hash {
+
+				fileSize := GetFileSize(folderDir + img.Name)
+				if fileSize > 100000 {
+					fmt.Println("Resizing image")
+					img.Hash = hash
+
+					result := db.Save(&img)
+					if result.Error != nil {
+						fmt.Println("Error saving image info from db:", result.Error)
+						return resultMap, imageSet, result.Error
+					} else {
+						fmt.Println("Image saved successfully!")
+					}
+
+					createAndSaveResizedImage(folderDir, resizeDir, img.Name, 200)
+
+					key, value := getKeyValue(img.Name, resizeDir, prefix, suffix)
+					resultMap[key] = value
+
+				} else {
+					fmt.Println("Db image hash no longer matches and is smaller than criteria")
+					deleteImgFromDbAndFolder(db, img, resizeDir+img.Name)
+					key, value := getKeyValue(img.Name, folderDir, prefix, suffix)
+					resultMap[key] = value
+
+				}
+			} else {
+				key, value := getKeyValue(img.Name, resizeDir, prefix, suffix)
+				resultMap[key] = value
+			}
+
+			delete(imageSet, img.Name)
+
+			/*
+			 The image the db Image was based on is no longer in the folder
+			 Delete Image from db and the resized image
+			*/
+		} else {
+			fmt.Println(img.Name, "is not in the set.")
+			result := db.Delete(&img)
+			if result.Error != nil {
+				fmt.Println("Error deleting image:", result.Error)
+			} else {
+				fmt.Println("Image deleted successfully!")
+			}
+
+			err := os.Remove(resizeDir + img.Name)
+			if err != nil {
+				// error deleting file
+			}
+		}
+	}
+
+	return resultMap, imageSet, nil
 }
 
 /*
