@@ -49,15 +49,12 @@ type EmotePathInfo struct {
 }
 
 type EmotesMap struct {
-	ChannelMap      map[string]EmotePathInfo
-	ChannelMapBasic map[string]string
-	ChannelKeys     []string
-	GlobalMap       map[string]EmotePathInfo
-	GlobalKeys      []string
-	GlobalMapBasic  map[string]string
-	RandomMap       map[string]EmotePathInfo
-	RandomMapBasic  map[string]string
-	RandomKeys      []string
+	ChannelMap  map[string]EmotePathInfo
+	ChannelKeys []string
+	GlobalMap   map[string]EmotePathInfo
+	GlobalKeys  []string
+	RandomMap   map[string]EmotePathInfo
+	RandomKeys  []string
 }
 
 var myPaths MyPaths
@@ -67,27 +64,6 @@ var folder Folder
 
 func init() {
 	configSetup()
-
-	// channelMap := generateEmoteMap(myPaths.ChannelEmotePath, ":_", ":")
-	// channelKeys := generateKeyArray(channelMap)
-	// globalMap := generateEmoteMap(myPaths.GlobalEmotePath, ":", ":")
-	// globalKeys := generateKeyArray(globalMap)
-	// randomMap := generateEmoteMap(myPaths.PreviewEmotePath, "", "")
-	// randomKeys := generateKeyArray(randomMap)
-
-	// emotesMap = EmotesMap{
-	// 	ChannelMap:  channelMap,
-	// 	ChannelKeys: channelKeys,
-	// 	GlobalMap:   globalMap,
-	// 	GlobalKeys:  globalKeys,
-	// 	RandomMap:   randomMap,
-	// 	RandomKeys:  randomKeys,
-	// }
-
-	// fmt.Println("Formatted Emote Map:")
-	// for key, value := range emoteMap {
-	// 	fmt.Printf("%s: %s\n", key, value)
-	// }
 }
 
 func configSetup() {

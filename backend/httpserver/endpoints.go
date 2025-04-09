@@ -46,9 +46,9 @@ func configureEmoteEndpoint(mux *http.ServeMux,
 	path string,
 	resizedPath string,
 	endpoint string,
+	emoteMap map[string]config.EmotePathInfo,
 	prefix string,
 	suffix string,
-	emoteMap map[string]config.EmotePathInfo,
 	errMsg string,
 ) {
 	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
@@ -56,7 +56,6 @@ func configureEmoteEndpoint(mux *http.ServeMux,
 		key := prefix + filename + suffix
 
 		if info, exists := emoteMap[key]; exists {
-			fmt.Printf("Key exists! File: %s\n", key)
 			var filePathToUse string
 			if info.IsResized {
 				filePathToUse = resizedPath
@@ -72,8 +71,6 @@ func configureEmoteEndpoint(mux *http.ServeMux,
 				}
 			}
 
-		} else {
-			fmt.Println("Key does not exist!")
 		}
 
 		http.Error(w, errMsg, http.StatusNotFound)
@@ -82,9 +79,7 @@ func configureEmoteEndpoint(mux *http.ServeMux,
 
 func configureFolderEndpoint(mux *http.ServeMux,
 	path string,
-	resizedPath string,
 	endpoint string,
-	emotesMap config.EmotesMap,
 	errMsg string,
 ) {
 	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
@@ -363,21 +358,25 @@ func ConfigureEndpoints(mux *http.ServeMux,
 	endpoints config.Endpoint,
 	emotesMap config.EmotesMap,
 ) {
-	configureFolderEndpoint(
+	configureEmoteEndpoint(
 		mux,
 		myPaths.ChannelEmotePath,
 		myPaths.ResizedChannelEmotePath,
 		endpoints.ChannelEmote,
-		emotesMap,
+		emotesMap.ChannelMap,
+		":_",
+		":",
 		"Channel Emote not found",
 	)
 
-	configureFolderEndpoint(
+	configureEmoteEndpoint(
 		mux,
 		myPaths.GlobalEmotePath,
 		myPaths.ResizedGlobalEmotePath,
 		endpoints.GlobalEmote,
-		emotesMap,
+		emotesMap.GlobalMap,
+		":",
+		":",
 		"Global Emote not found",
 	)
 
@@ -386,18 +385,16 @@ func ConfigureEndpoints(mux *http.ServeMux,
 		myPaths.PreviewEmotePath,
 		myPaths.ResizedPreviewEmotePath,
 		endpoints.PreviewEmote,
-		"",
-		"",
 		emotesMap.RandomMap,
+		"",
+		"",
 		"Random Emote not found",
 	)
 
 	configureFolderEndpoint(
 		mux,
 		myPaths.IconPath,
-		"",
 		endpoints.Icon,
-		emotesMap,
 		"Icon not found",
 	)
 
