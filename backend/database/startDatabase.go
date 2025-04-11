@@ -187,3 +187,13 @@ func GetAppConfig() *AppConfig {
 
 func SetAppConfig() {
 }
+
+func GetPort() int {
+	var port Port
+	db.First(&port)
+	return port.Port
+}
+
+func GetDb() *gorm.DB {
+	return db
+}

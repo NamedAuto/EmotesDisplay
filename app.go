@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/NamedAuto/EmotesDisplay/backend/database"
+	"github.com/NamedAuto/EmotesDisplay/backend/myport"
 	"github.com/NamedAuto/EmotesDisplay/backend/server"
 )
 
@@ -31,5 +32,8 @@ func (a *App) Greet(name string) string {
 }
 
 func (a *App) GetPort() int {
-	return database.GetAppConfig().Port.Port
+	db := database.GetDb()
+	myport.CheckPort(db)
+	port := database.GetPort()
+	return port
 }
