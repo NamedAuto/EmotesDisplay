@@ -30,22 +30,26 @@ type Folder struct {
 }
 
 type Endpoint struct {
-	ChannelEmote  string
-	GlobalEmote   string
-	PreviewEmote  string
-	Icon          string
-	Config        string
-	Background    string
-	AppInfo       string
-	YTAPiKey      string
-	CheckYTAPiKey string
-	ApiTimeLeft   string
-	Default       string
+	ChannelEmote   string
+	GlobalEmote    string
+	PreviewEmote   string
+	ChannelEmoteMd string
+	GlobalEmoteMd  string
+	PreviewEmoteMd string
+	Icon           string
+	Config         string
+	Background     string
+	AppInfo        string
+	YTAPiKey       string
+	CheckYTAPiKey  string
+	ApiTimeLeft    string
+	Default        string
 }
 
 type EmotePathInfo struct {
 	Path      string
 	IsResized bool
+	Ratio     float32
 }
 
 type EmotesMap struct {
@@ -77,17 +81,20 @@ func configSetup() {
 
 func initEndpointNames() Endpoint {
 	return Endpoint{
-		ChannelEmote:  "/channel-emotes/",
-		GlobalEmote:   "/global-emotes/",
-		PreviewEmote:  "/random-emotes/",
-		Icon:          "/icons/",
-		Config:        "/config",
-		Background:    "/background",
-		AppInfo:       "/app-info",
-		YTAPiKey:      "/youtube-api-key",
-		CheckYTAPiKey: "/check-for-youtube-api-key",
-		ApiTimeLeft:   "/youtube-api-time-left",
-		Default:       "/",
+		ChannelEmote:   "/channel-emotes/",
+		ChannelEmoteMd: "/channel-emotes-md/",
+		GlobalEmote:    "/global-emotes/",
+		GlobalEmoteMd:  "/global-emotes-md/",
+		PreviewEmote:   "/random-emotes/",
+		PreviewEmoteMd: "/random-emotes-md/",
+		Icon:           "/icons/",
+		Config:         "/config",
+		Background:     "/background",
+		AppInfo:        "/app-info",
+		YTAPiKey:       "/youtube-api-key",
+		CheckYTAPiKey:  "/check-for-youtube-api-key",
+		ApiTimeLeft:    "/youtube-api-time-left",
+		Default:        "/",
 	}
 }
 

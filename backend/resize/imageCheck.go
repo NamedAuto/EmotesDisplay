@@ -3,6 +3,10 @@ package resize
 import (
 	"crypto/sha256"
 	"fmt"
+	"image"
+	"image/gif"
+	"image/jpeg"
+	"image/png"
 	"log"
 	"net/http"
 	"os"
@@ -11,6 +15,7 @@ import (
 
 	"github.com/NamedAuto/EmotesDisplay/backend/config"
 	"github.com/NamedAuto/EmotesDisplay/backend/database"
+	"golang.org/x/image/webp"
 	"gorm.io/gorm"
 )
 
@@ -43,7 +48,7 @@ func getHashOfImage(imagePath string) (string, error) {
 
 func GenerateEmoteMap(db *gorm.DB,
 	originalDir string,
-	originalFolderName string,
+	folderName string,
 	resizeDir string,
 	prefix string,
 	suffix string) (map[string]config.EmotePathInfo, error) {
@@ -54,7 +59,7 @@ func GenerateEmoteMap(db *gorm.DB,
 	err := compareDbWithFolder(folderImageSet,
 		db,
 		resultMap,
-		originalFolderName,
+		folderName,
 		originalDir,
 		resizeDir,
 		prefix,
@@ -71,26 +76,50 @@ func GenerateEmoteMap(db *gorm.DB,
 			// Resize image
 			// Place in resize folder
 			// Place key and path into map
-			createAndSaveResizedImage(originalDir, resizeDir, img, RESIZE)
-			hash, err := getHashOfImage(filepath.Join(originalDir, img))
+
+			inputFile, err := os.Open(filepath.Join(originalDir, img))
 			if err != nil {
-
+				fmt.Println("Error opening input file:", err)
+				// return
 			}
+			defer inputFile.Close()
 
-			tempImg := database.Image{Name: img, ResizedName: img, Folder: originalFolderName, Hash: hash}
+			mimetype, err := getMimeType(inputFile)
 
-			result := db.Save(&tempImg)
-			if result.Error != nil {
-				fmt.Println("Error saving image info from db:", result.Error)
+			if err != nil {
+				fmt.Printf("Error getting the mimetype of: %s %s", img, err)
+			}
+			if mimetype == "image/gif" {
+				// Skip resiziing gifs for now
+				updateResultMap(resultMap, img, originalDir, prefix, suffix, false)
 			} else {
-				fmt.Println("Image saved to db successfully!")
-			}
 
-			updateMaps(resultMap, img, resizeDir, prefix, suffix, true)
+				createAndSaveResizedImage(inputFile, mimetype, resizeDir, img, RESIZE)
+				hash, err := getHashOfImage(filepath.Join(originalDir, img))
+				if err != nil {
+
+				}
+
+				tempImg := database.Image{
+					Name:        img,
+					ResizedName: img,
+					Folder:      folderName,
+					Hash:        hash,
+				}
+
+				result := db.Save(&tempImg)
+				if result.Error != nil {
+					fmt.Println("Error saving image info from db:", result.Error)
+				} else {
+					fmt.Println("Image saved to db successfully!")
+				}
+
+				updateResultMap(resultMap, img, resizeDir, prefix, suffix, true)
+			}
 
 		} else {
 			fmt.Println("File smaller than criteria. Not resizing")
-			updateMaps(resultMap, img, originalDir, prefix, suffix, false)
+			updateResultMap(resultMap, img, originalDir, prefix, suffix, false)
 		}
 	}
 
@@ -117,29 +146,12 @@ func deleteImgFromDbAndFolder(db *gorm.DB, img database.Image, folderPath string
 	return nil
 }
 
-func createAndSaveResizedImage(originalDir string,
+func createAndSaveResizedImage(inputFile *os.File,
+	mimetype string,
 	resizedDir string,
 	file string,
 	newSize int,
 ) {
-	fmt.Println(originalDir)
-	fmt.Println(resizedDir)
-	fmt.Println(file)
-
-	inputFile, err := os.Open(filepath.Join(originalDir, file))
-	if err != nil {
-		fmt.Println("Error opening input file:", err)
-		return
-	}
-	defer inputFile.Close()
-
-	mimetype, err := getMimeType(inputFile)
-
-	if err != nil {
-		fmt.Printf("Error getting the mimetype of: %s %s", file, err)
-	}
-	fmt.Println(mimetype)
-
 	if mimetype == "image/jpeg" || mimetype == "image/png" || mimetype == "image/webp" {
 
 		outputFile, err := os.Create(filepath.Join(resizedDir, file))
@@ -154,8 +166,34 @@ func createAndSaveResizedImage(originalDir string,
 			fmt.Println("Error generating resized image:", err)
 		}
 	} else {
-		fmt.Println("Skipping non static images")
+		fmt.Println("Skipping file: ", mimetype)
 	}
+}
+
+func createAndSaveResizedImageUseDir(originalDir string,
+	resizedDir string,
+	file string,
+	newSize int,
+) {
+	// fmt.Println(originalDir)
+	// fmt.Println(resizedDir)
+	// fmt.Println(file)
+
+	inputFile, err := os.Open(filepath.Join(originalDir, file))
+	if err != nil {
+		fmt.Println("Error opening input file:", err)
+		return
+	}
+	defer inputFile.Close()
+
+	mimetype, err := getMimeType(inputFile)
+
+	if err != nil {
+		fmt.Printf("Error getting the mimetype of: %s %s", file, err)
+	}
+	// fmt.Println(mimetype)
+
+	createAndSaveResizedImage(inputFile, mimetype, resizedDir, file, newSize)
 }
 
 func getMimeType(file *os.File) (string, error) {
@@ -197,7 +235,6 @@ func compareDbWithFolder(imageSet map[string]struct{},
 	} else if result.RowsAffected == 0 {
 		fmt.Println("No matches in db to the folder images in: ", originalFolderName)
 		return nil
-
 	}
 
 	// Loop through Images and check if the names match the ones in the folder set
@@ -241,17 +278,17 @@ func compareDbWithFolder(imageSet map[string]struct{},
 						fmt.Println("Image saved successfully!")
 					}
 
-					createAndSaveResizedImage(originalDir, resizeDir, img.Name, RESIZE)
-					updateMaps(resultMap, img.Name, resizeDir, prefix, suffix, true)
+					createAndSaveResizedImageUseDir(originalDir, resizeDir, img.Name, RESIZE)
+					updateResultMap(resultMap, img.Name, resizeDir, prefix, suffix, true)
 
 				} else {
 					fmt.Println("Db image hash no longer matches and is smaller than criteria")
 					deleteImgFromDbAndFolder(db, img, resizeDir+img.Name)
-					updateMaps(resultMap, img.Name, originalDir, prefix, suffix, false)
+					updateResultMap(resultMap, img.Name, originalDir, prefix, suffix, false)
 
 				}
 			} else {
-				updateMaps(resultMap, img.Name, resizeDir, prefix, suffix, true)
+				updateResultMap(resultMap, img.Name, resizeDir, prefix, suffix, true)
 			}
 
 			delete(imageSet, img.Name)
@@ -279,7 +316,44 @@ func compareDbWithFolder(imageSet map[string]struct{},
 	return nil
 }
 
-func updateMaps(resultMap map[string]config.EmotePathInfo,
+func getWidthAndHeight(dir string, file string) (int, int, error) {
+	inputFile, err := os.Open(filepath.Join(dir, file))
+	if err != nil {
+		fmt.Println("Error opening input file:", err)
+		return 0, 0, err
+	}
+	defer inputFile.Close()
+
+	mimetype, err := getMimeType(inputFile)
+
+	if err != nil {
+		fmt.Printf("Error getting the mimetype of: %s %s", file, err)
+		return 0, 0, err
+	}
+
+	var cfg image.Config
+
+	switch mimetype {
+	case "image/jpeg":
+		cfg, err = jpeg.DecodeConfig(inputFile)
+	case "image/png":
+		cfg, err = png.DecodeConfig(inputFile)
+	case "image/webp":
+		cfg, err = webp.DecodeConfig(inputFile)
+	case "image/gif":
+		cfg, err = gif.DecodeConfig(inputFile)
+	}
+	if err != nil {
+		fmt.Println("Error decoding image: ", err)
+		return 0, 0, err
+	}
+
+	x := cfg.Width
+	y := cfg.Height
+	return x, y, nil
+}
+
+func updateResultMap(resultMap map[string]config.EmotePathInfo,
 	imageName string,
 	dir string,
 	prefix string,
@@ -288,6 +362,9 @@ func updateMaps(resultMap map[string]config.EmotePathInfo,
 	cleanName := strings.TrimSuffix(imageName, filepath.Ext(imageName))
 	key := fmt.Sprintf("%s%s%s", prefix, strings.ToLower(cleanName), suffix)
 
+	x, y, _ := getWidthAndHeight(dir, imageName)
+	ratio := float32(y) / float32(x)
+
 	path := filepath.Join(dir, imageName)
-	resultMap[key] = config.EmotePathInfo{Path: path, IsResized: isResized}
+	resultMap[key] = config.EmotePathInfo{Path: path, IsResized: isResized, Ratio: ratio}
 }

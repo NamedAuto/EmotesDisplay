@@ -4,6 +4,7 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -32,6 +33,11 @@ type RepoResponse struct {
 	RepoName       string `json:"repoName"`
 	CurrentVersion string `json:"currentVersion"`
 	LatestVersion  string `json:"latestVersion"`
+}
+
+type EmoteInfo struct {
+	// FilePath string  `json:"filePath"`
+	Ratio float32 `json:"ratio"`
 }
 
 var assets embed.FS
@@ -71,6 +77,36 @@ func configureEmoteEndpoint(mux *http.ServeMux,
 				}
 			}
 
+		}
+
+		http.Error(w, errMsg, http.StatusNotFound)
+	})
+}
+
+func configureEmoteMetaDataEndpoint(mux *http.ServeMux,
+	endpoint string,
+	emoteMap map[string]config.EmotePathInfo,
+	prefix string,
+	suffix string,
+	errMsg string,
+) {
+	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
+		filename := strings.TrimPrefix(r.URL.Path, endpoint)
+		key := prefix + filename + suffix
+
+		if _, exists := emoteMap[key]; exists {
+
+			log.Println("Key: ", emoteMap[key])
+			log.Println("Ratio: ", emoteMap[key].Ratio)
+
+			emoteInfo := EmoteInfo{Ratio: emoteMap[key].Ratio}
+			w.Header().Set("Content-Type", "application/json")
+			err := json.NewEncoder(w).Encode(emoteInfo)
+			if err != nil {
+				http.Error(w, "Failed to encode Emote JSON", http.StatusInternalServerError)
+			}
+
+			return
 		}
 
 		http.Error(w, errMsg, http.StatusNotFound)
@@ -358,6 +394,7 @@ func ConfigureEndpoints(mux *http.ServeMux,
 	endpoints config.Endpoint,
 	emotesMap config.EmotesMap,
 ) {
+	// Youtube Channel Emotes
 	configureEmoteEndpoint(
 		mux,
 		myPaths.ChannelEmotePath,
@@ -369,6 +406,16 @@ func ConfigureEndpoints(mux *http.ServeMux,
 		"Channel Emote not found",
 	)
 
+	configureEmoteMetaDataEndpoint(
+		mux,
+		endpoints.ChannelEmoteMd,
+		emotesMap.ChannelMap,
+		":_",
+		":",
+		"Channel Emote metadata not found",
+	)
+
+	// Youtube Global Emotes
 	configureEmoteEndpoint(
 		mux,
 		myPaths.GlobalEmotePath,
@@ -380,6 +427,16 @@ func ConfigureEndpoints(mux *http.ServeMux,
 		"Global Emote not found",
 	)
 
+	configureEmoteMetaDataEndpoint(
+		mux,
+		endpoints.GlobalEmoteMd,
+		emotesMap.GlobalMap,
+		":",
+		":",
+		"Global Emote metadata not found",
+	)
+
+	// Random Emotes
 	configureEmoteEndpoint(
 		mux,
 		myPaths.PreviewEmotePath,
@@ -389,6 +446,15 @@ func ConfigureEndpoints(mux *http.ServeMux,
 		"",
 		"",
 		"Random Emote not found",
+	)
+
+	configureEmoteMetaDataEndpoint(
+		mux,
+		endpoints.PreviewEmoteMd,
+		emotesMap.RandomMap,
+		"",
+		"",
+		"Random Emote metadata not found",
 	)
 
 	configureFolderEndpoint(

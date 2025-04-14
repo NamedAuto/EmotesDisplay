@@ -119,7 +119,10 @@ func resizeImage(r io.Reader, w io.Writer, mimetype string, newWidth int) error 
 		return err
 	}
 
-	ratio := (float64)(src.Bounds().Max.Y) / (float64)(src.Bounds().Max.X)
+	x := src.Bounds().Dx()
+	y := src.Bounds().Dy()
+
+	ratio := (float64)(y) / (float64)(x)
 	newHeight := int(math.Round(float64(newWidth) * ratio))
 
 	destination := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))

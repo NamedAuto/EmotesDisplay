@@ -23,9 +23,7 @@ var db *gorm.DB
 func StartServer(ctx context.Context) {
 	log.Println("Server starting")
 	db = database.StartDatabase("AppData/emotesDisplay.db")
-	log.Println("HI")
 	myport.CheckPort(db)
-	log.Println("HI2")
 
 	myPaths := config.GetMyPaths()
 	endpoints := config.GetMyEndpoints()
