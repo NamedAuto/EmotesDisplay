@@ -119,3 +119,10 @@ func TestFolders(t *testing.T) {
 
 	GenerateEmoteMap(db, dir, "RandomEmotes", resize, ":", "_")
 }
+
+func TestRatio(t *testing.T) {
+	dir := "../../Images/Emotes/RandomEmotes/"
+	file := "meimi.gif"
+	x, y, _ := getWidthAndHeight(dir, file)
+	fmt.Println("X, Y", x, y)
+}

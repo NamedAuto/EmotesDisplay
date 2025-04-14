@@ -7,7 +7,8 @@ import { EmoteInfo } from "./CanvasComponent";
 interface Emote {
   src: string;
   pos: Position;
-  size: number;
+  width: number;
+  height: number;
   animation: string;
   roundness: string;
 }
@@ -38,17 +39,22 @@ export const UseEmotes = (
     Translate the Y by subtracting half of the [emoteSize] from it
     This is translated down since images start on their top left corner
     transform: "translate(0%, -50%)"
+
+    posToCenterOn.y - newHeight -> sets bottom of image as baseline
+    posToCenterOn.y - newHeight / 2-> sets center of image as baseline
     */
     let d = new Date();
     const midpoint = (emoteInfo.length * emoteSize) / 2;
     for (let i = 0; i < emoteInfo.length; i++) {
+      let newHeight = emoteSize * emoteInfo[i].ratio;
       emoteGroup.push({
         src: `${emoteInfo[i].url}?${d.getTime()}`,
         pos: {
           x: posToCenterOn.x + newX - midpoint,
-          y: posToCenterOn.y - emoteSize / 2,
+          y: posToCenterOn.y - newHeight,
         },
-        size: emoteSize,
+        width: emoteSize,
+        height: newHeight,
         animation: animation,
         roundness: roundness,
       });

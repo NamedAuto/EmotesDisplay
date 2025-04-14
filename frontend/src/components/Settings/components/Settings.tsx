@@ -91,7 +91,7 @@ const SettingsPage: React.FC = () => {
    */
   useEffect(() => {
     if (isConnected) {
-      checkForKeys();
+      // checkForKeys();
     }
   }, [isConnected]);
 
@@ -262,8 +262,8 @@ const SettingsPage: React.FC = () => {
 
         if (name === "messageDelay" && typeof newValue === "string") {
           let numericValue = parseFloat(newValue);
-          if (numericValue <= 1) {
-            numericValue = 1.5;
+          if (numericValue < 1) {
+            numericValue = 1;
           }
           newValue = numericValue;
         }
@@ -307,7 +307,7 @@ const SettingsPage: React.FC = () => {
           typeof newValue === "string"
         ) {
           let numericValue = parseFloat(newValue);
-          if (numericValue <= 1) {
+          if (numericValue < 1) {
             numericValue = 1;
           }
           newValue = numericValue;
@@ -325,7 +325,7 @@ const SettingsPage: React.FC = () => {
         if (typeof newValue === "string") {
           let numericValue = parseFloat(newValue);
           if (name === "emoteRoundness") {
-            if (numericValue <= 0) {
+            if (numericValue < 0) {
               numericValue = 0;
             } else if (numericValue > 50) {
               numericValue = 50;
@@ -334,7 +334,7 @@ const SettingsPage: React.FC = () => {
             name === "randomSizeIncrease" ||
             name === "randomSizeDecrease"
           ) {
-            if (numericValue <= 0) {
+            if (numericValue < 0) {
               numericValue = 0;
             }
           } else if (
@@ -361,11 +361,11 @@ const SettingsPage: React.FC = () => {
         if (typeof newValue === "string") {
           let numericValue = parseFloat(newValue);
           if (name === "maxRandomEmotes") {
-            if (numericValue <= 1) {
+            if (numericValue < 1) {
               numericValue = 1;
             }
           } else if (name === "speedOfEmotes") {
-            if (numericValue <= 0.1) {
+            if (numericValue < 0.1) {
               numericValue = 0.1;
             }
           }

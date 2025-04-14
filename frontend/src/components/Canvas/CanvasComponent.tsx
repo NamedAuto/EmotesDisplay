@@ -216,8 +216,8 @@ const CanvasComponent: React.FC = () => {
                   position: "absolute",
                   left: emote.pos.x,
                   top: emote.pos.y,
-                  width: emote.size,
-                  height: emote.size,
+                  width: emote.width,
+                  height: emote.height,
                   // animation: `${
                   //   animationMap[emote.animation]
                   // } 5s linear infinite`,
@@ -229,8 +229,8 @@ const CanvasComponent: React.FC = () => {
                   className={`emote ${emote.animation}`}
                   crossOrigin="anonymous"
                   style={{
-                    width: emote.size,
-                    height: emote.size,
+                    width: emote.width,
+                    height: emote.height,
                     borderRadius: `${emote.roundness}%`,
                     backgroundColor: config.emote.backgroundColor,
                   }}
