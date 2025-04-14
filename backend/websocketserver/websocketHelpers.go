@@ -6,6 +6,7 @@ import (
 	"math/rand/v2"
 	"regexp"
 
+	"github.com/NamedAuto/EmotesDisplay/backend/common"
 	"github.com/NamedAuto/EmotesDisplay/backend/config"
 	"github.com/NamedAuto/EmotesDisplay/backend/database"
 )
@@ -13,24 +14,28 @@ import (
 func generateRandomUrls(port int,
 	emoteMap config.EmotesMap,
 	endpoints config.Endpoint,
-	random database.Preview) []string {
+	random database.Preview) []common.EmoteInfo {
 	count := rand.IntN(random.MaxRandomEmotes) + 1
-	var urls []string
+	var emoteInfo []common.EmoteInfo
 
 	if !*random.UseChannelEmotes && !*random.UseGlobalEmotes && !*random.UseRandomEmotes {
 		log.Printf("No folder in use for emotes")
-		return urls
+		return emoteInfo
 	}
 
 	for range count {
-		keysToUse, endpoint := decideMapAndEndpoint(emoteMap, endpoints, random)
+		mapToUse, keysToUse, endpoint := decideMapAndEndpoint(emoteMap, endpoints, random)
 		emote := keysToUse[rand.IntN((len(keysToUse)))]
-		url := generateEmotesUrl(port, endpoint)
-		message := parseEmoteToURL(emote, url)
-		urls = append(urls, message)
+		baseUrl := generateEmotesUrl(port, endpoint)
+		message := parseEmoteToURL(emote, baseUrl)
+		temp := common.EmoteInfo{
+			Url:   message,
+			Ratio: mapToUse[emote].Ratio,
+		}
+		emoteInfo = append(emoteInfo, temp)
 	}
 
-	return urls
+	return emoteInfo
 }
 
 func generateEmotesUrl(port int, endpoint string) string {
@@ -40,7 +45,7 @@ func generateEmotesUrl(port int, endpoint string) string {
 func decideMapAndEndpoint(
 	emoteMap config.EmotesMap,
 	endpoints config.Endpoint,
-	random database.Preview) ([]string, string) {
+	random database.Preview) (map[string]config.EmotePathInfo, []string, string) {
 	count := 0
 	channelCount := 0
 	globalCount := 0
@@ -62,25 +67,29 @@ func decideMapAndEndpoint(
 	}
 
 	if count == 0 {
-		return nil, ""
+		return nil, nil, ""
 	}
 
 	randomNum := rand.IntN(count) + 1
 
+	var eMap map[string]config.EmotePathInfo
 	var randomKey []string
 	var endpoint string
 	if *random.UseChannelEmotes && randomNum < channelCount {
+		eMap = emoteMap.ChannelMap
 		randomKey = emoteMap.ChannelKeys
 		endpoint = endpoints.ChannelEmote
 	} else if *random.UseGlobalEmotes && randomNum < channelCount+globalCount {
+		eMap = emoteMap.GlobalMap
 		randomKey = emoteMap.GlobalKeys
 		endpoint = endpoints.GlobalEmote
 	} else {
+		eMap = emoteMap.RandomMap
 		randomKey = emoteMap.RandomKeys
 		endpoint = endpoints.PreviewEmote
 	}
 
-	return randomKey, endpoint
+	return eMap, randomKey, endpoint
 }
 
 func parseEmoteToURL(emote string, url string) string {

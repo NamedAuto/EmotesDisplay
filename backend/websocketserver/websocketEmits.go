@@ -27,7 +27,7 @@ func (handler *WebSocketHandler) EmitRandom(port int,
 	emit(msg, handler)
 }
 
-func (handler *WebSocketHandler) EmitYoutubeEmotes(emoteUrls []string) {
+func (handler *WebSocketHandler) EmitYoutubeEmotes(emoteUrls []common.EmoteInfo) {
 	handler.mu.Lock()
 	defer handler.mu.Unlock()
 
@@ -36,7 +36,7 @@ func (handler *WebSocketHandler) EmitYoutubeEmotes(emoteUrls []string) {
 	emit(msg, handler)
 }
 
-func (handler *WebSocketHandler) EmitTwitchEmotes(emoteUrls []string) {
+func (handler *WebSocketHandler) EmitTwitchEmotes(emoteUrls []common.EmoteInfo) {
 	handler.mu.Lock()
 	defer handler.mu.Unlock()
 
@@ -45,7 +45,7 @@ func (handler *WebSocketHandler) EmitTwitchEmotes(emoteUrls []string) {
 	emit(msg, handler)
 }
 
-func createEmoteMessage(eventType string, data []string) map[string]any {
+func createEmoteMessage(eventType string, data []common.EmoteInfo) map[string]any {
 	return map[string]any{
 		"eventType": eventType,
 		"data":      data,

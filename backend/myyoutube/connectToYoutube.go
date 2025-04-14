@@ -151,7 +151,7 @@ func GetYoutubeMessages(
 						fmt.Sprintf("http://localhost:%d/%s/", port.Port, endpoints.ChannelEmote)
 					baseGlobalUrl :=
 						fmt.Sprintf("http://localhost:%d/%s/", port.Port, endpoints.GlobalEmote)
-					emoteUrls := parse.ParseYoutubeMessage(
+					emoteInfo := parse.ParseYoutubeMessage(
 						msg,
 						baseChannelUrl,
 						baseGlobalUrl,
@@ -162,13 +162,13 @@ func GetYoutubeMessages(
 						The sleep() is used to prevent the browser from becoming unresponsive from
 						receiving too many emotes at once
 					*/
-					if len(emoteUrls) > 0 {
+					if len(emoteInfo) > 0 {
 						time.Sleep(100 * time.Millisecond)
 						// log.Printf("These are the emoteUrls: ")
 						// for _, url := range emoteUrls {
 						// 	log.Println(url)
 						// }
-						handler.EmitYoutubeEmotes(emoteUrls)
+						handler.EmitYoutubeEmotes(emoteInfo)
 					}
 				}
 			}

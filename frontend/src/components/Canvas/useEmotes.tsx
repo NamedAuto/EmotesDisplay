@@ -2,6 +2,7 @@ import { RefObject, useState } from "react";
 import { Config } from "../Config/ConfigInterface";
 import { Position } from "./positionInterface";
 import "../../style.css";
+import { EmoteInfo } from "./CanvasComponent";
 
 interface Emote {
   src: string;
@@ -19,7 +20,7 @@ export const UseEmotes = (
   const [emotesGroups, setEmotesGroups] = useState<{ emotes: Emote[] }[]>([]);
 
   const createEmoteGroup = (
-    emoteUrls: string[],
+    emoteInfo: EmoteInfo[],
     emoteSize: number,
     posToCenterOn: Position,
     animation: string,
@@ -39,10 +40,10 @@ export const UseEmotes = (
     transform: "translate(0%, -50%)"
     */
     let d = new Date();
-    const midpoint = (emoteUrls.length * emoteSize) / 2;
-    for (let i = 0; i < emoteUrls.length; i++) {
+    const midpoint = (emoteInfo.length * emoteSize) / 2;
+    for (let i = 0; i < emoteInfo.length; i++) {
       emoteGroup.push({
-        src: `${emoteUrls[i]}?${d.getTime()}`,
+        src: `${emoteInfo[i].url}?${d.getTime()}`,
         pos: {
           x: posToCenterOn.x + newX - midpoint,
           y: posToCenterOn.y - emoteSize / 2,
@@ -109,19 +110,19 @@ export const UseEmotes = (
   };
 
   const placeEmotesGroupInBackground = (
-    emoteUrls: string[],
+    emoteInfo: EmoteInfo[],
     nonTransparentPositions: RefObject<Position[]>
   ) => {
     const randomAnimation = getRandomAnimation();
 
-    if (emoteUrls.length > config.emote.maxEmotesPerMsg) {
-      emoteUrls.length = config.emote.maxEmotesPerMsg;
+    if (emoteInfo.length > config.emote.maxEmotesPerMsg) {
+      emoteInfo.length = config.emote.maxEmotesPerMsg;
     }
 
     if (config.emote.groupEmotes) {
-      placeEmotes(emoteUrls, nonTransparentPositions, randomAnimation);
+      placeEmotes(emoteInfo, nonTransparentPositions, randomAnimation);
     } else {
-      for (let emote of emoteUrls) {
+      for (let emote of emoteInfo) {
         const tempArray = [emote];
         placeEmotes(tempArray, nonTransparentPositions, randomAnimation);
       }
@@ -129,7 +130,7 @@ export const UseEmotes = (
   };
 
   const placeEmotes = (
-    emoteUrls: string[],
+    emoteInfo: EmoteInfo[],
     nonTransparentPositions: RefObject<Position[]>,
     randomAnimation: string
   ) => {
@@ -140,7 +141,7 @@ export const UseEmotes = (
     const roundness = config.emote.roundness + "";
     const randomPos = getRandomPosition(nonTransparentPositions.current);
     const newEmoteGroup = createEmoteGroup(
-      emoteUrls,
+      emoteInfo,
       emoteSize,
       randomPos,
       randomAnimation,

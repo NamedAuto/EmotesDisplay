@@ -9,6 +9,11 @@ import { useWebSocketContext } from "../WebSocket/WebSocketProvider";
 import { Position } from "./positionInterface";
 import { UseEmotes } from "./useEmotes";
 
+export interface EmoteInfo {
+  url: string;
+  ratio: number; // Use 'number' for float values in TypeScript
+}
+
 const CanvasComponent: React.FC = () => {
   const backgroundImageRef = useRef<HTMLImageElement>(null);
   const backgroundCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -25,19 +30,19 @@ const CanvasComponent: React.FC = () => {
   );
 
   useEffect(() => {
-    const handlePreviewEmotes = (message: any) => {
+    const handlePreviewEmotes = (message: { data: EmoteInfo[] }) => {
       const emoteUrls = message.data;
       console.log("Received preview emotes:", emoteUrls);
       placeEmotesGroupInBackground(emoteUrls, nonTransparentPositions);
     };
 
-    const handleYoutubeEmotes = (message: any) => {
+    const handleYoutubeEmotes = (message: { data: EmoteInfo[] }) => {
       const emoteUrls = message.data;
       console.log("Received youtube emotes:", emoteUrls);
       placeEmotesGroupInBackground(emoteUrls, nonTransparentPositions);
     };
 
-    const handleTwitchEmotes = (message: any) => {
+    const handleTwitchEmotes = (message: { data: EmoteInfo[] }) => {
       const emoteUrls = message.data;
       console.log("Received twitch emotes:", emoteUrls);
       placeEmotesGroupInBackground(emoteUrls, nonTransparentPositions);

@@ -7,6 +7,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+	"github.com/NamedAuto/EmotesDisplay/backend/common"
 	"github.com/NamedAuto/EmotesDisplay/backend/config"
 	emoji "github.com/NamedAuto/goemoji"
 	"github.com/gempir/go-twitch-irc/v4"
@@ -22,8 +23,9 @@ func ParseYoutubeMessage(
 	globalUrl string,
 	emoteMap config.EmotesMap,
 	useGlobalEmotes bool,
-) []string {
-	emoteUrls := []string{}
+) []common.EmoteInfo {
+	// emoteUrls := []string{}
+	emoteInfo := []common.EmoteInfo{}
 	regex := regexp.MustCompile((`:(_.*?|.*?):`))
 
 	separatedMessage := regex.ReplaceAllString(message, " $0 ")
@@ -40,14 +42,27 @@ func ParseYoutubeMessage(
 				cleanedText = strings.ReplaceAll(cleanedText, "_", "")
 				newEmoteUrl := channelUrl + cleanedText
 
-				emoteUrls = append(emoteUrls, newEmoteUrl)
+				temp := common.EmoteInfo{
+					Url:   newEmoteUrl,
+					Ratio: emoteMap.ChannelMap[loweredText].Ratio,
+				}
+				emoteInfo = append(emoteInfo, temp)
+
+				// emoteUrls = append(emoteUrls, newEmoteUrl)
 
 			} else if _, exists := emoteMap.GlobalMap[loweredText]; exists {
 				if useGlobalEmotes {
 					cleanedText := strings.ReplaceAll(loweredText, ":", "")
 					newEmoteUrl := globalUrl + cleanedText
 
-					emoteUrls = append(emoteUrls, newEmoteUrl)
+					// emoteUrls = append(emoteUrls, newEmoteUrl)
+
+					temp := common.EmoteInfo{
+						Url:   newEmoteUrl,
+						Ratio: emoteMap.ChannelMap[loweredText].Ratio,
+					}
+					emoteInfo = append(emoteInfo, temp)
+
 				} else {
 					log.Printf("Ignoring global emote %s", word)
 				}
@@ -64,20 +79,24 @@ func ParseYoutubeMessage(
 		// }
 	}
 
-	return emoteUrls
+	return emoteInfo
 }
 
-func ParseTwitchMessage(emotes []*twitch.Emote) []string {
-	var emoteUrls []string
+func ParseTwitchMessage(emotes []*twitch.Emote) []common.EmoteInfo {
+	var emoteInfo []common.EmoteInfo
 
 	for _, emote := range emotes {
 		var url = base + emote.ID + end
 		for range emote.Count {
-			emoteUrls = append(emoteUrls, url)
+			temp := common.EmoteInfo{
+				Url:   url,
+				Ratio: 1,
+			}
+			emoteInfo = append(emoteInfo, temp)
 		}
 	}
 
-	return emoteUrls
+	return emoteInfo
 }
 
 func FindEmojisLessEfficient(text string, emojiMap map[string]emoji.Emoji) []emoji.Emoji {

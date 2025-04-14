@@ -78,7 +78,6 @@ export async function loadConfigFront(): Promise<Config> {
 
 export function useConfig() {
   const config = useContext(ConfigContext);
-  console.log("HI");
   if (!config) {
     throw new Error(
       "Config not available! Ensure ConfigProvider is used correctly."
