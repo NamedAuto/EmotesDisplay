@@ -11,16 +11,21 @@ import (
 	"log"
 	"math"
 	"os"
+	"path/filepath"
 
 	"github.com/logica0419/resigif"
 	"golang.org/x/image/draw"
 	"golang.org/x/image/webp"
 )
 
-func resizeGif(ctx context.Context, fileName string, rename string, size int) {
-	dir := "Images/Emotes/RandomEmotes/"
-
-	src, err := os.Open(dir + fileName)
+func resizeGif(ctx context.Context,
+	dir string,
+	dstDir string,
+	fileName string,
+	size int,
+	ratio float32,
+) {
+	src, err := os.Open(filepath.Join(dir, fileName))
 	if err != nil {
 		panic(err)
 	}
@@ -32,14 +37,22 @@ func resizeGif(ctx context.Context, fileName string, rename string, size int) {
 	}
 
 	width := size
-	height := 100
+	height := int(float32(width) * ratio)
 
-	dstImg, err := resigif.Resize(ctx, srcImg, width, height, resigif.WithAspectRatio(resigif.Maintain), resigif.WithParallel(3), resigif.WithImageResizeFunc(resigif.FromDrawScaler(draw.BiLinear)))
+	dstImg, err := resigif.Resize(ctx,
+		srcImg,
+		width,
+		height,
+		resigif.WithAspectRatio(resigif.Ignore),
+		// resigif.WithParallel(3),
+		resigif.WithImageResizeFunc(resigif.FromDrawScaler(draw.BiLinear)))
 	if err != nil {
 		panic(err)
 	}
 
-	dst, err := os.OpenFile(dir+rename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o644)
+	dst, err := os.OpenFile(filepath.Join(dstDir, fileName),
+		os.O_RDWR|os.O_CREATE|os.O_TRUNC,
+		0o644)
 	if err != nil {
 		panic(err)
 	}

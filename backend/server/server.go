@@ -31,7 +31,7 @@ func StartServer(ctx context.Context) {
 
 	resultChan := make(chan config.EmotesMap)
 	go func() {
-		resultChan <- helper.GenerateEmoteMap(db, myPaths, folders)
+		resultChan <- helper.GenerateEmoteMap(ctx, db, myPaths, folders)
 	}()
 
 	myyoutube.StartUpApiCheck(db)

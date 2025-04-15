@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/NamedAuto/EmotesDisplay/backend/config"
@@ -8,7 +9,11 @@ import (
 	"gorm.io/gorm"
 )
 
-func GenerateEmoteMap(db *gorm.DB, paths config.MyPaths, folders config.Folder) config.EmotesMap {
+func GenerateEmoteMap(ctx context.Context,
+	db *gorm.DB,
+	paths config.MyPaths,
+	folders config.Folder,
+) config.EmotesMap {
 	type result struct {
 		ChannelMap  map[string]config.EmotePathInfo
 		ChannelKeys []string
@@ -21,7 +26,8 @@ func GenerateEmoteMap(db *gorm.DB, paths config.MyPaths, folders config.Folder) 
 	resultChan := make(chan result)
 
 	go func() {
-		channelMap, _ := resize.GenerateEmoteMap(db,
+		channelMap, _ := resize.GenerateEmoteMap(ctx,
+			db,
 			paths.ChannelEmotePath,
 			folders.ChannelEmote,
 			paths.ResizedChannelEmotePath,
@@ -34,7 +40,8 @@ func GenerateEmoteMap(db *gorm.DB, paths config.MyPaths, folders config.Folder) 
 	}()
 
 	go func() {
-		globalMap, _ := resize.GenerateEmoteMap(db,
+		globalMap, _ := resize.GenerateEmoteMap(ctx,
+			db,
 			paths.GlobalEmotePath,
 			folders.GlobalEmote,
 			paths.ResizedGlobalEmotePath,
@@ -47,7 +54,8 @@ func GenerateEmoteMap(db *gorm.DB, paths config.MyPaths, folders config.Folder) 
 	}()
 
 	go func() {
-		randomMap, _ := resize.GenerateEmoteMap(db,
+		randomMap, _ := resize.GenerateEmoteMap(ctx,
+			db,
 			paths.PreviewEmotePath,
 			folders.PreviewEmote,
 			paths.ResizedPreviewEmotePath,
