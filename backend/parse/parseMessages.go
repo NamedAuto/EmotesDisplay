@@ -21,7 +21,7 @@ func ParseYoutubeMessage(
 	message string,
 	channelUrl string,
 	globalUrl string,
-	emoteMap config.EmotesMap,
+	emoteMap *config.EmotesMap,
 	useGlobalEmotes bool,
 ) []common.EmoteInfo {
 	// emoteUrls := []string{}

@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -29,7 +30,10 @@ func StartServer(ctx context.Context) {
 	endpoints := config.GetMyEndpoints()
 	folders := config.GetFolderNames()
 
+	var emotesMap config.EmotesMap
 	resultChan := make(chan config.EmotesMap)
+	resultHttp := make(chan config.EmotesMap)
+	// resultWs := make(chan config.EmotesMap)
 	go func() {
 		resultChan <- helper.GenerateEmoteMap(ctx, db, myPaths, folders)
 	}()
@@ -37,7 +41,14 @@ func StartServer(ctx context.Context) {
 	myyoutube.StartUpApiCheck(db)
 	go myyoutube.WaitUntilQuotaReset(db, handler)
 
-	emoteMap := <-resultChan
-	go websocketserver.StartWebSocketServer(ctx, mux, handler, db, emoteMap, endpoints)
-	go httpserver.StartHttpServer(mux, db, myPaths, endpoints, emoteMap)
+	go httpserver.StartHttpServer(mux, db, myPaths, endpoints, resultHttp)
+
+	// go func() {
+	// 	resultWs <- emotesMap
+	// }()
+	go websocketserver.StartWebSocketServer(ctx, mux, handler, db, &emotesMap, &endpoints)
+	emotesMap = <-resultChan
+	resultHttp <- emotesMap
+
+	fmt.Println("FINISHED")
 }

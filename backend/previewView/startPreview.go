@@ -17,8 +17,8 @@ var (
 
 func StartPreview(handler common.HandlerInterface,
 	db *gorm.DB,
-	emoteMap config.EmotesMap,
-	endpoints config.Endpoint) {
+	emoteMap *config.EmotesMap,
+	endpoints *config.Endpoint) {
 	mu.Lock()
 	defer mu.Unlock()
 

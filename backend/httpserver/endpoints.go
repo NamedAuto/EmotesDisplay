@@ -392,70 +392,76 @@ func ConfigureEndpoints(mux *http.ServeMux,
 	db *gorm.DB,
 	myPaths config.MyPaths,
 	endpoints config.Endpoint,
-	emotesMap config.EmotesMap,
+	emotesChannel chan config.EmotesMap,
 ) {
-	// Youtube Channel Emotes
-	configureEmoteEndpoint(
-		mux,
-		myPaths.ChannelEmotePath,
-		myPaths.ResizedChannelEmotePath,
-		endpoints.ChannelEmote,
-		emotesMap.ChannelMap,
-		":_",
-		":",
-		"Channel Emote not found",
-	)
 
-	configureEmoteMetaDataEndpoint(
-		mux,
-		endpoints.ChannelEmoteMd,
-		emotesMap.ChannelMap,
-		":_",
-		":",
-		"Channel Emote metadata not found",
-	)
+	go func() {
+		emotesMap := <-emotesChannel
+		fmt.Println(emotesMap)
 
-	// Youtube Global Emotes
-	configureEmoteEndpoint(
-		mux,
-		myPaths.GlobalEmotePath,
-		myPaths.ResizedGlobalEmotePath,
-		endpoints.GlobalEmote,
-		emotesMap.GlobalMap,
-		":",
-		":",
-		"Global Emote not found",
-	)
+		// Youtube Channel Emotes
+		configureEmoteEndpoint(
+			mux,
+			myPaths.ChannelEmotePath,
+			myPaths.ResizedChannelEmotePath,
+			endpoints.ChannelEmote,
+			emotesMap.ChannelMap,
+			":_",
+			":",
+			"Channel Emote not found",
+		)
 
-	configureEmoteMetaDataEndpoint(
-		mux,
-		endpoints.GlobalEmoteMd,
-		emotesMap.GlobalMap,
-		":",
-		":",
-		"Global Emote metadata not found",
-	)
+		configureEmoteMetaDataEndpoint(
+			mux,
+			endpoints.ChannelEmoteMd,
+			emotesMap.ChannelMap,
+			":_",
+			":",
+			"Channel Emote metadata not found",
+		)
 
-	// Random Emotes
-	configureEmoteEndpoint(
-		mux,
-		myPaths.PreviewEmotePath,
-		myPaths.ResizedPreviewEmotePath,
-		endpoints.PreviewEmote,
-		emotesMap.RandomMap,
-		"",
-		"",
-		"Random Emote not found",
-	)
+		// Youtube Global Emotes
+		configureEmoteEndpoint(
+			mux,
+			myPaths.GlobalEmotePath,
+			myPaths.ResizedGlobalEmotePath,
+			endpoints.GlobalEmote,
+			emotesMap.GlobalMap,
+			":",
+			":",
+			"Global Emote not found",
+		)
 
-	configureEmoteMetaDataEndpoint(
-		mux,
-		endpoints.PreviewEmoteMd,
-		emotesMap.RandomMap,
-		"",
-		"",
-		"Random Emote metadata not found",
-	)
+		configureEmoteMetaDataEndpoint(
+			mux,
+			endpoints.GlobalEmoteMd,
+			emotesMap.GlobalMap,
+			":",
+			":",
+			"Global Emote metadata not found",
+		)
+
+		// Random Emotes
+		configureEmoteEndpoint(
+			mux,
+			myPaths.PreviewEmotePath,
+			myPaths.ResizedPreviewEmotePath,
+			endpoints.PreviewEmote,
+			emotesMap.RandomMap,
+			"",
+			"",
+			"Random Emote not found",
+		)
+
+		configureEmoteMetaDataEndpoint(
+			mux,
+			endpoints.PreviewEmoteMd,
+			emotesMap.RandomMap,
+			"",
+			"",
+			"Random Emote metadata not found",
+		)
+	}()
 
 	configureFolderEndpoint(
 		mux,

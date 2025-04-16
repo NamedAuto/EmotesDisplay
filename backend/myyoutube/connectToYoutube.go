@@ -28,8 +28,8 @@ func ConnectToYoutube(
 	ctx context.Context,
 	handler common.HandlerInterface,
 	db *gorm.DB,
-	emoteMap config.EmotesMap,
-	endpoints config.Endpoint,
+	emoteMap *config.EmotesMap,
+	endpoints *config.Endpoint,
 ) {
 	log.Println("Connecting to youtube")
 	mu.Lock()
@@ -78,8 +78,8 @@ func GetYoutubeMessages(
 	handler common.HandlerInterface,
 	db *gorm.DB,
 	youtubeService *youtube.Service,
-	emoteMap config.EmotesMap,
-	endpoints config.Endpoint,
+	emoteMap *config.EmotesMap,
+	endpoints *config.Endpoint,
 ) {
 
 	defer wg.Done()

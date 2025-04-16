@@ -15,9 +15,9 @@ func StartHttpServer(mux *http.ServeMux,
 	db *gorm.DB,
 	myPaths config.MyPaths,
 	endpoints config.Endpoint,
-	emotesMap config.EmotesMap) {
+	emotesChannel chan config.EmotesMap) {
 
-	ConfigureEndpoints(mux, db, myPaths, endpoints, emotesMap)
+	ConfigureEndpoints(mux, db, myPaths, endpoints, emotesChannel)
 
 	var port database.Port
 	db.First(&port)

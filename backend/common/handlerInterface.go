@@ -16,14 +16,14 @@ type HandlerInterface interface {
 	HandleConnections(ctx context.Context,
 		allowedOrigin string,
 		db *gorm.DB,
-		emoteMap config.EmotesMap,
-		endpoints config.Endpoint) http.HandlerFunc
+		emoteMap *config.EmotesMap,
+		endpoints *config.Endpoint) http.HandlerFunc
 	HandleMessage(ctx context.Context,
 		ws *websocket.Conn,
 		message []byte,
 		db *gorm.DB,
-		emoteMap config.EmotesMap,
-		endpoints config.Endpoint)
+		emoteMap *config.EmotesMap,
+		endpoints *config.Endpoint)
 	EmitRandom(port int, emoteMap config.EmotesMap, endpoints config.Endpoint, db *gorm.DB)
 	EmitYoutubeEmotes(emoteUrls []EmoteInfo)
 	EmitTwitchEmotes(emoteUrls []EmoteInfo)
