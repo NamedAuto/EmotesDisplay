@@ -12,8 +12,8 @@ import (
 )
 
 func (handler *WebSocketHandler) EmitRandom(port int,
-	emoteMap config.EmotesMap,
-	endpoints config.Endpoint,
+	emoteMap *config.EmotesMap,
+	endpoints *config.Endpoint,
 	db *gorm.DB) {
 	handler.mu.Lock()
 	defer handler.mu.Unlock()

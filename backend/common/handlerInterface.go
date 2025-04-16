@@ -24,7 +24,7 @@ type HandlerInterface interface {
 		db *gorm.DB,
 		emoteMap *config.EmotesMap,
 		endpoints *config.Endpoint)
-	EmitRandom(port int, emoteMap config.EmotesMap, endpoints config.Endpoint, db *gorm.DB)
+	EmitRandom(port int, emoteMap *config.EmotesMap, endpoints *config.Endpoint, db *gorm.DB)
 	EmitYoutubeEmotes(emoteUrls []EmoteInfo)
 	EmitTwitchEmotes(emoteUrls []EmoteInfo)
 	EmitPreviewConnection(connected bool)

@@ -12,8 +12,8 @@ import (
 )
 
 func generateRandomUrls(port int,
-	emoteMap config.EmotesMap,
-	endpoints config.Endpoint,
+	emoteMap *config.EmotesMap,
+	endpoints *config.Endpoint,
 	random database.Preview) []common.EmoteInfo {
 	count := rand.IntN(random.MaxRandomEmotes) + 1
 	var emoteInfo []common.EmoteInfo
@@ -25,14 +25,16 @@ func generateRandomUrls(port int,
 
 	for range count {
 		mapToUse, keysToUse, endpoint := decideMapAndEndpoint(emoteMap, endpoints, random)
-		emote := keysToUse[rand.IntN((len(keysToUse)))]
-		baseUrl := generateEmotesUrl(port, endpoint)
-		message := parseEmoteToURL(emote, baseUrl)
-		temp := common.EmoteInfo{
-			Url:   message,
-			Ratio: mapToUse[emote].Ratio,
+		if len(keysToUse) > 0 {
+			emote := keysToUse[rand.IntN((len(keysToUse)))]
+			baseUrl := generateEmotesUrl(port, endpoint)
+			message := parseEmoteToURL(emote, baseUrl)
+			temp := common.EmoteInfo{
+				Url:   message,
+				Ratio: mapToUse[emote].Ratio,
+			}
+			emoteInfo = append(emoteInfo, temp)
 		}
-		emoteInfo = append(emoteInfo, temp)
 	}
 
 	return emoteInfo
@@ -43,8 +45,8 @@ func generateEmotesUrl(port int, endpoint string) string {
 }
 
 func decideMapAndEndpoint(
-	emoteMap config.EmotesMap,
-	endpoints config.Endpoint,
+	emoteMap *config.EmotesMap,
+	endpoints *config.Endpoint,
 	random database.Preview) (map[string]config.EmotePathInfo, []string, string) {
 	count := 0
 	channelCount := 0
